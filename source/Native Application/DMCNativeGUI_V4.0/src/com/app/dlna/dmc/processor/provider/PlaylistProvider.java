@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.util.Log;
 
 public class PlaylistProvider extends ContentProvider {
-	private static final String AUTHORITY = "com.app.dlna.dmc.processor.provider.playlistprovider";
+	private static final String AUTHORITY = "com.app.dlna.dmc.native.processor.provider.playlistprovider";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/");
 	public static final Uri PLAYLIST_URI = Uri.parse("content://" + AUTHORITY + "/playlist");
 	public static final Uri PLAYLIST_ITEM_URI = Uri.parse("content://" + AUTHORITY + "/playlist_item");

@@ -54,7 +54,7 @@
 
         <provider
             android:name="com.app.dlna.dmc.processor.provider.PlaylistProvider"
-            android:authorities="com.app.dlna.dmc.processor.provider.playlistprovider" >
+            android:authorities="com.app.dlna.dmc.native.processor.provider.playlistprovider" >
         </provider>
     </application>
 

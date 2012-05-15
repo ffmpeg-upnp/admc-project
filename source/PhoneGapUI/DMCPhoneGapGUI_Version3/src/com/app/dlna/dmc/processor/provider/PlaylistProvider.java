@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.util.Log;
 
 public class PlaylistProvider extends ContentProvider {
-	private static final String AUTHORITY = "com.app.dlna.dmc.processor.provider.playlistprovider";
+	private static final String AUTHORITY = "com.app.dlna.dmc.phonegap.processor.provider.playlistprovider";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/");
 	public static final Uri PLAYLIST_URI = Uri.parse("content://" + AUTHORITY + "/playlist");
 	public static final Uri PLAYLIST_ITEM_URI = Uri.parse("content://" + AUTHORITY + "/playlist_item");
@@ -36,7 +36,7 @@ public class PlaylistProvider extends ContentProvider {
 			return deleted;
 		}
 		case PLAYLIST_ITEM: {
-			Log.i(TAG,"Delete item, id = " + selectionArgs[0]);
+			Log.i(TAG, "Delete item, id = " + selectionArgs[0]);
 			SQLiteDatabase database = dbPlaylistHelper.getWritableDatabase();
 			int deleted = database.delete(PlaylistSQLiteHelper.TABLE_PLAYLIST_ITEMS, selection, selectionArgs);
 			Log.i(TAG, "Delete item count = " + deleted);

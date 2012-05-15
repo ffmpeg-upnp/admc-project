@@ -30,8 +30,8 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
-import app.dlna.controller.v4.phonegap.R;
 
+import com.app.dlna.dmc.R;
 import com.app.dlna.dmc.processor.impl.UpnpProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
 import com.app.dlna.dmc.processor.nfc.NFCUtils;
@@ -67,6 +67,7 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.e(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		UPNP_PROCESSOR = new UpnpProcessorImpl(MainActivity.this);
 		UPNP_PROCESSOR.bindUpnpService();
@@ -111,6 +112,7 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 	}
 
 	protected void onResume() {
+		Log.e(TAG, "onResume");
 		super.onResume();
 		if (m_nfcAdapter != null)
 			m_nfcAdapter.enableForegroundDispatch(this, m_pendingIntent, m_filters, m_techLists);
@@ -118,12 +120,14 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 
 	@Override
 	protected void onPause() {
+		Log.e(TAG, "onPaused");
 		super.onPause();
 		if (m_nfcAdapter != null)
 			m_nfcAdapter.disableForegroundDispatch(MainActivity.this);
 	}
 
 	public void onDestroy() {
+		Log.e(TAG, "onDestroy");
 		super.onDestroy();
 		UPNP_PROCESSOR.unbindUpnpService();
 		unregisterReceiver(m_mountedReceiver);
@@ -238,7 +242,7 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						moveTaskToBack(true);
+						moveTaskToBack(false);
 					}
 				}).setNegativeButton(R.string.close, new OnClickListener() {
 

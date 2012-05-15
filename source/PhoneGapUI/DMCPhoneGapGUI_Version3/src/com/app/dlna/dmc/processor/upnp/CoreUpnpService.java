@@ -40,8 +40,8 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-import app.dlna.controller.v4.phonegap.R;
 
+import com.app.dlna.dmc.R;
 import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.processor.cache.Cache;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
@@ -225,6 +225,7 @@ public class CoreUpnpService extends Service {
 		}
 
 		Cache.clear();
+		android.os.Process.killProcess(android.os.Process.myPid());
 	}
 
 	@Override

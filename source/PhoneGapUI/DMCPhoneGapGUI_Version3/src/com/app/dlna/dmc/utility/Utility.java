@@ -22,8 +22,8 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import app.dlna.controller.v4.phonegap.R;
 
+import com.app.dlna.dmc.R;
 import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;

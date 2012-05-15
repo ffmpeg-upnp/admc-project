@@ -1,0 +1,89 @@
+
+#div_global_container{
+	position: fixed;
+	display: block;
+	height: 10%;
+	top: 0px;
+	left: 0px;
+	padding: 0px;
+	margin: 0px;
+	width: 100%;
+	z-index: 10;
+	background-color: black;
+}
+
+#div_global_tabs{
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	height: 100%;
+	float: left;
+	width: 90%;
+	background-color: #33B5E5;
+}
+
+#div_navbar_1{
+	position: relative;
+	height: 88%;
+	float: left;
+	width: 50%;
+	text-align: center;
+	background-color: black;
+}
+
+#div_navbar_1 img{
+	padding: 0px;
+	margin: 0px;
+	height: 90%;
+	width: auto;
+}
+
+#div_navbar_1 div{
+	position: relative;
+	display: block;
+	background-color: #33B5E5;
+	width: 100%;
+	height: 10%;
+}
+
+#div_navbar_2{
+	position: relative;
+	height: 88%;
+	float: left;
+	width: 50%;
+	text-align: center;
+	background-color: black;
+}
+
+#div_navbar_2 div{
+	position: relative;
+	display: block;
+	background-color: black;
+	width: 100%;
+	height: 10%;
+}
+
+#div_navbar_2 img{
+	padding: 0px;
+	margin: 0px;
+	height: 90%;
+	width: auto;
+}
+
+#div_global_setting{
+	position: relative;
+	height: 100%;
+	float: left;
+	width: 10%;
+	background-color: black;
+}
+
+#div_global_setting img{
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	height: 64%;
+	width: 95%;
+	top: 26%;
+	left: 5%;
+}

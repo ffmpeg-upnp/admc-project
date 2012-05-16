@@ -68,13 +68,13 @@
 		<div id="div_global_setting_table"
 			ontouchmove="preventTouchMove(event);">
 			<div style="border-bottom: solid 1px #33B5E5;">
-				<img src="img/ic_refresh_option.png">
+				<img id="img_btn_refresh" src="img/ic_refresh_option.png">
 			</div>
 			<div>
-				<img src="img/ic_settings_option.png">
+				<img id="img_btn_settings" src="img/ic_settings_option.png">
 			</div>
 			<div style="border-top: solid 1px #33B5E5;">
-				<img src="img/ic_about_option.png">
+			 	<img id="img_btn_about" src="img/ic_about_option.png">
 			</div>
 		</div>
 
@@ -99,23 +99,29 @@
 			class="content_controler library_tab"
 			ontouchmove="preventTouchMove(event);">
 			<div class="content_controler_list_item">
-				<div class="content_controler_item">
-					<img src="img/ic_btn_back_normal.png" class="img_normal"
+				<div class="content_controler_item" >
+					<img id="img_btn_back_homenetwork"
+						src="img/ic_btn_back_normal.png" 
+						class="img_normal"
 						data-enable="true"
 						data-highlight-image="img/ic_btn_back_pressed.png"
 						data-normal-image="img/ic_btn_back_normal.png">
 				</div>
 
 				<div class="content_controler_item">
-					<img src="img/ic_btn_container_selectall_normal.png"
-						class="img_normal" data-enable="true"
+					<img id="img_btn_selectall"
+						src="img/ic_btn_container_selectall_normal.png" 
+						class="img_normal"
+						data-enable="true"
 						data-highlight-image="img/ic_btn_container_selectall_pressed.png"
 						data-normal-image="img/ic_btn_container_selectall_normal.png">
 				</div>
 
 				<div class="content_controler_item">
-					<img src="img/ic_btn_container_deselectall_normal.png"
-						class="img_normal" data-enable="true"
+					<img id="img_btn_deselectall"
+						src="img/ic_btn_container_deselectall_normal.png" 
+						class="img_normal"
+						data-enable="true"
 						data-highlight-image="img/ic_btn_container_deselectall_pressed.png"
 						data-normal-image="img/ic_btn_container_deselectall_normal.png">
 				</div>
@@ -130,22 +136,28 @@
 			class="content_controler library_tab"
 			ontouchmove="preventTouchMove(event);">
 			<div class="content_controler_list_item">
-				<div class="content_controler_item">
-					<img src="img/ic_btn_back_normal.png" class="img_normal"
+				<div class="content_controler_item" >
+					<img id="img_btn_back_playlist"
+						src="img/ic_btn_back_normal.png" 
+						class="img_normal"
 						data-enable="true"
 						data-highlight-image="img/ic_btn_back_pressed.png"
 						data-normal-image="img/ic_btn_back_normal.png">
 				</div>
 
 				<div class="content_controler_item">
-					<img src="img/ic_btn_save_normal.png" class="img_normal"
+					<img id="img_btn_save"
+						src="img/ic_btn_save_normal.png" 
+						class="img_normal"
 						data-enable="true"
 						data-highlight-image="img/ic_btn_save_pressed.png"
 						data-normal-image="img/ic_btn_save_normal.png">
 				</div>
 
 				<div class="content_controler_item">
-					<img src="img/ic_btn_clear_normal.png" class="img_normal"
+					<img id="img_btn_clear"
+						src="img/ic_btn_clear_normal.png" 
+						class="img_normal"
 						data-enable="true"
 						data-highlight-image="img/ic_btn_clear_pressed.png"
 						data-normal-image="img/ic_btn_clear_normal.png">
@@ -188,7 +200,9 @@
 				<input type="text" placeholder="Enter keyword here">
 			</div>
 			<div id="div_content_internet_searchbar_right">
-				<img src="img/ic_btn_search_normal.png" class="img_normal"
+				<img id="img_btn_search_youtube"
+					src="img/ic_btn_search_normal.png" 
+					class="img_normal"
 					data-enable="true"
 					data-highlight-image="img/ic_btn_search_pressed.png"
 					data-normal-image="img/ic_btn_search_normal.png">
@@ -239,14 +253,17 @@
 				<div>
 					<div id="div_nowplaying_media_controlBar">
 						<div class="media_controlBar_item">
-							<img src="img/ic_btn_media_previous_normal.png"
-								class="img_normal" data-enable="true"
+							<img id="img_btn_media_previous"
+								src="img/ic_btn_media_previous_normal.png" 
+								class="img_normal"
+								data-enable="true"
 								data-highlight-image="img/ic_btn_media_previous_pressed.png"
 								data-normal-image="img/ic_btn_media_previous_normal.png">
 						</div>
 
 						<div class="media_controlBar_item">
-							<img src="img/ic_btn_media_pause_normal.png"
+							<img id="img_btn_media_pause_play" 
+								src="img/ic_btn_media_pause_normal.png"
 								class="img_double_state" data-my-state="true" data-enable="true"
 								data-highlight-a="img/ic_btn_media_pause_pressed.png"
 								data-highlight-b="img/ic_btn_media_play_pressed.png"
@@ -256,47 +273,62 @@
 						</div>
 
 						<div class="media_controlBar_item">
-							<img src="img/ic_btn_media_stop_normal.png" class="img_normal"
+							<img id="img_btn_media_stop"
+								src="img/ic_btn_media_stop_normal.png" 
+								class="img_normal"
 								data-enable="true"
 								data-highlight-image="img/ic_btn_media_stop_pressed.png"
 								data-normal-image="img/ic_btn_media_stop_normal.png">
 						</div>
 
 						<div class="media_controlBar_item">
-							<img src="img/ic_btn_media_next_normal.png" class="img_normal"
+							<img id="img_btn_media_next"
+								src="img/ic_btn_media_next_normal.png" 
+								class="img_normal"
 								data-enable="true"
 								data-highlight-image="img/ic_btn_media_next_pressed.png"
 								data-normal-image="img/ic_btn_media_next_normal.png">
 						</div>
 
 						<div class="media_controlBar_item">
-							<img src="img/ic_btn_media_changeitem_normal.png"
-								class="img_normal" data-enable="true"
+							<img id="img_btn_media_changeitem"
+								src="img/ic_btn_media_changeitem_normal.png" 
+								class="img_normal"
+								data-enable="true"
 								data-highlight-image="img/ic_btn_media_changeitem_pressed.png"
 								data-normal-image="img/ic_btn_media_changeitem_normal.png">
 						</div>
 
 						<div class="media_controlBar_item">
-							<img src="img/ic_btn_media_changeplaylist_normal.png"
-								class="img_normal" data-enable="true"
+							<img id="img_btn_media_changeplaylist"
+								src="img/ic_btn_media_changeplaylist_normal.png" 
+								class="img_normal"
+								data-enable="true"
 								data-highlight-image="img/ic_btn_media_changeplaylist_pressed.png"
 								data-normal-image="img/ic_btn_media_changeplaylist_normal.png">
 						</div>
 
 					</div>
 					<div id="div_nowplaying_media_seekBar">
-						<input type="range" id="slider_seek_bar" value="50" min="0"
-							max="300" style="display: none;" data-highlight="true"
-							data-theme="a" />
+						<input id="slider_seek_bar"
+							data-seeking="false"
+							type="range" 
+							value="50" min="0" max="300" 
+							style="display: none;"
+							data-highlight="true" 
+							data-theme="a"/>
 					</div>
 					<div id="div_nowplaying_media_infoBar">
 						<div id="div_nowplaying_media_durationTime">
 							00:00:00/00:00:00</div>
 
 						<div id="div_nowplaying_media_volumeBar">
-							<input type="range" id="slider_volume_bar" value="20" min="0"
-								max="50" style="display: none;" data-highlight="true"
-								data-theme="a" />
+							<input id="slider_volume_bar" 
+								type="range" 
+								value="20" min="0" max="50" 
+								style="display: none;"
+								data-highlight="true" 
+								data-theme="a"/>
 						</div>
 
 						<div id="div_nowplaying_media_volumeImage">
@@ -341,6 +373,5 @@
 			</div>
 		</div>
 	</div>
-
 </body>
 </html>

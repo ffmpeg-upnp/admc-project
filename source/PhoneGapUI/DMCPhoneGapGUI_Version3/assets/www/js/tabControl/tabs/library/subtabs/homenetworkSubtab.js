@@ -2,11 +2,30 @@ var homeNetworkSubTab;
 var homenetworkContentControler;
 var homenetworkContentControler_visible = false;
 
+var btn_back_homenetwork;
+var btn_selectAll;
+var btn_deselectAll;
+
 function initHomenetworkSubtab (){
 	homeNetworkSubTab = $('#div_content_homenetwork');
 	
 	homenetworkContentControler = $('#div_content_network_controler');
 	homenetworkContentControler.hide();
+	
+	btn_back_homenetwork = $('#img_btn_back_homenetwork');
+	btn_back_homenetwork.bind('tap', function(){
+		onTap_Back_Homenetwork($(this));
+	});
+	
+	btn_selectAll = $('#img_btn_selectall');
+	btn_selectAll.bind('tap', function(){
+		onTap_SelectAll($(this));
+	});
+	
+	btn_deselectAll = $('#img_btn_deselectall');
+	btn_deselectAll.bind('tap', function(){
+		onTap_DeselectAll($(this));
+	});
 }
 
 function getPadding_HomeNetworkSubtab (dmrContentVisible, networkContentControlerVisible){
@@ -62,3 +81,17 @@ function animateDown_HomeNetworkSubtab (){
 function animateUp_HomeNetworkSubtab (){
 	homenetworkContentControler.animate({bottom: '21%'}, "fast");
 }
+
+//----------------------------------EVENT FUNCTION------------------------------
+function onTap_Back_Homenetwork (sender){
+	
+}
+
+function onTap_SelectAll (sender){
+	
+}
+
+function onTap_DeselectAll (sender){
+	
+}
+

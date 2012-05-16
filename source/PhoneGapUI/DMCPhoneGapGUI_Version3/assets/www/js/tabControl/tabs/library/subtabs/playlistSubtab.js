@@ -3,12 +3,31 @@ var playlistSubTab;
 var playlistContentControler;
 var playlistContentControler_visible = false;
 
+var btn_back_playlist;
+var btn_save;
+var btn_clear;
+
 function initPlaylistSubtab (){
 	playlistSubTab = $('#div_content_playlist');
 	playlistSubTab.hide();
 	
 	playlistContentControler = $('#div_content_playlist_controler');
 	playlistContentControler.hide();
+	
+	btn_back_playlist = $('#img_btn_back_playlist');
+	btn_back_playlist.bind('tap', function (){
+		onTap_Back_Playlist($(this));
+	});
+	
+	btn_save = $('#img_btn_save');
+	btn_save.bind('tap', function (){
+		onTap_Save_Playlist($(this));
+	});
+	
+	btn_clear = $('#img_btn_clear');
+	btn_clear.bind('tap', function (){
+		onTap_Clear_Playlist($(this));
+	});
 }
 
 function getPadding_PlaylistSubTab (dmrContentVisible, playlistContentControlerVisible){
@@ -63,4 +82,17 @@ function animateDown_PlaylistSubtab (){
 
 function animateUp_PlaylistSubtab (){
 	playlistContentControler.animate({bottom: '21%'}, "fast");
+}
+
+//---------------------EVENT FUNCTION-----------------------------------
+function onTap_Back_Playlist (sender){
+	
+}
+
+function onTap_Save_Playlist (sender){
+	
+}
+
+function onTap_Clear_Playlist (sender){
+
 }

@@ -3,8 +3,6 @@ var btn_footerControler;
 
 var dmrController;
 var dmrControllerVisible_GlobalFooter;
-var btn_dmrPlayController;
-
 var dmrList;
 
 function initGlobalFooter (){
@@ -13,13 +11,9 @@ function initGlobalFooter (){
 	dmrRemoteControler = $('#div_remote_footer_controler');
 	btn_footerControler = $('#div_remote_footer_controler img');
 	dmrController = $('#div_dmr_controler');
-	btn_dmrPlayController = $('#div_dmr_play img');
 	
 	btn_footerControler.bind('tap', function(){
 		onTap_btn_footerControler ($(this));
-	});
-	btn_dmrPlayController.bind('tap', function(){
-		onTap_playButton ($(this));
 	});
 	
 	init_DMRManagement();
@@ -77,8 +71,4 @@ function onTap_btn_footerControler (sender){
 		open_GlobalFooter();
 	}
 	changeStateImage(sender);
-}
-
-function onTap_playButton (sender){
-	
 }

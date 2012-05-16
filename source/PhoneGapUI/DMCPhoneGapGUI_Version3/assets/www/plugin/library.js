@@ -1,7 +1,7 @@
 var LibraryPlugin = function() {
 };
 LibraryPlugin.prototype.browse = function(objectID) {
-//	showLoadingIcon();
+	// showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'browse', [ objectID ]);
 };
 
@@ -10,27 +10,27 @@ LibraryPlugin.prototype.addToPlaylist = function(objectID) {
 };
 
 LibraryPlugin.prototype.back = function() {
-//	showLoadingIcon();
+	// showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'back', [ "" ]);
 };
 
 LibraryPlugin.prototype.nextPage = function() {
-//	showLoadingIcon();
+	// showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'nextPage', [ "" ]);
 };
 
 LibraryPlugin.prototype.previousPage = function() {
-//	showLoadingIcon();
+	// showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'previousPage', [ "" ]);
 };
 
 LibraryPlugin.prototype.selectAll = function() {
-//	showLoadingIcon();
+	// showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'selectAll', [ "" ]);
 };
 
 LibraryPlugin.prototype.deselectAll = function() {
-//	showLoadingIcon();
+	// showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'deselectAll', [ "" ]);
 };
 
@@ -123,4 +123,8 @@ function removeItemFromPlaylist(url) {
 				}
 			});
 	listview_homenetwork.listview('refresh');
+}
+
+function upToDMSList() {
+	window.plugins.DevicesPlugin.refresh();
 }

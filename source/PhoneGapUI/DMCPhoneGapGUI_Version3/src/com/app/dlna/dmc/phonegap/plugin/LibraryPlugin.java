@@ -260,7 +260,9 @@ public class LibraryPlugin extends Plugin {
 		public void onBrowseFail(String message) {
 			Log.e(TAG, "Call browse fail. Error: " + message);
 			if (message.equals("Root")) {
-				MainActivity.INSTANCE.refreshDMSList();
+				// MainActivity.INSTANCE.refreshDMSList();
+				sendJavascript("upToDMSList();");
+
 			}
 			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
 

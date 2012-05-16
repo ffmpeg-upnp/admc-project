@@ -8,6 +8,10 @@ DevicesPlugin.prototype.setDMS = function(udn) {
 DevicesPlugin.prototype.setDMR = function(udn) {
 	PhoneGap.exec(null, null, 'DevicesPlugin', 'setDMR', [ udn ]);
 };
+
+DevicesPlugin.prototype.refresh = function() {
+	PhoneGap.exec(null, null, 'DevicesPlugin', 'refreshDMS', [ "" ]);
+};
 PhoneGap.addConstructor(function() {
 	PhoneGap.addPlugin("DevicesPlugin", new DevicesPlugin());
 });

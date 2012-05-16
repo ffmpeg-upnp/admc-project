@@ -3,7 +3,8 @@
 	position: fixed;
 	display: block;
 	height: 10%;
-	top: 0px;
+	top: -1px;
+	border-bottom: solid 1px black;
 	left: 0px;
 	padding: 0px;
 	margin: 0px;

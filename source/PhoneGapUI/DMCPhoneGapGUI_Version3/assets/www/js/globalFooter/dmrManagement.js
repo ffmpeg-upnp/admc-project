@@ -8,6 +8,7 @@ var dmr_xOffset;
 var dmr_handlerWidth;
 var dmr_tolerance;
 var dmr_delayTime;
+var dmr_infotextHeight;
 
 var dmr_selectedItem;
 var btn_dmrPlayController;
@@ -25,8 +26,12 @@ function init_DMRManagement (){
 	dmr_slider = $('#div_dmr_list_container');
 	dmr_handler = $('#div_dmr_handler');
 	dmr_handlerWidth = dmr_handler.width();
-	resetWidth_dmrItems();
-	selectDMRitem($('#div_dmr_list_container div:eq(0)'));
+	dmr_infotextHeight = dmr_handler.height() * 0.15;
+	
+	resetCSS_dmrItems();
+	console.log(dmr_handlerWidth + 'px');
+	
+	selectDMRitem($('#div_dmr_list_container div.div_dmr_item:eq(0)'));
 	
 	dmr_handler.bind('vmousedown', function(event){
 		onMouseDown_dmrHandler(event);
@@ -50,9 +55,10 @@ function init_DMRManagement (){
 	});
 }
 
-function resetWidth_dmrItems (){
+function resetCSS_dmrItems (){
 	var listOfDMRitem = $('.div_dmr_item');
 	listOfDMRitem.css("width", dmr_handlerWidth + 'px');
+	$('.div_dmr_info').css('fontSize', dmr_infotextHeight + 'px');
 }
 
 function selectDMRitem (item){
@@ -115,17 +121,20 @@ function onMouseUp_dmrHandler (event){
 	return true;
 }
 //-----------------------------PUBLIC FUNCTION--------------
-function addNewDMRitem (imageUrl, deviceUrl){
+function addNewDMRitem (imageUrl, deviceUrl, deviceName){
 	if (imageUrl == null){
 		imageUrl = "img/ic_device_unknow_player.png";
 	}
 	var containerWidth = dmr_slider.width();
 	containerWidth += dmr_handlerWidth;
 	dmr_slider.css('width', containerWidth + 'px');
-	dmr_slider.append('<div class="div_dmr_item" data-selected="false">' + 
-			'<img class ="img_dmr_item" data-url="' + deviceUrl + '" src="' + imageUrl + '">' +
+	dmr_slider.append('<div class="div_dmr_item" data-selected="false" align="center" data-url="' + deviceUrl + '">' + 
+			'<img class ="img_dmr_item" src="' + imageUrl + '">' +
+			'<div class="div_dmr_info">' +
+				deviceName + 
+			'</div>' +
 			'</div>');
-	resetWidth_dmrItems();
+	resetCSS_dmrItems();
 	dmr_lenght++;
 }
 
@@ -135,7 +144,7 @@ function removeDMRitem (deviceUrl){
 
 //------------------------------EVENT FUNCTION---------------------------
 function onTap_dmrItem (sender){
-	selectDMRitem($('#div_dmr_list_container div:eq(' + dmr_currentIndex + ')'));
+	selectDMRitem($('#div_dmr_list_container div.div_dmr_item:eq(' + dmr_currentIndex + ')'));
 }
 
 function onTap_playButton (sender){

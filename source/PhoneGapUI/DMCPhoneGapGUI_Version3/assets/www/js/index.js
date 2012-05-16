@@ -25,8 +25,8 @@ function initPage() {
 };
 
 function ontap_settingButton(sender) {
-	// toggleNetworkContentControler();
-	// addNewDMRitem("img/ic_device_unknow_player.png", "localhost")
-	// addNewContentItem("video", "hahaha", null, "");
+	//toggleNetworkContentControler();
+	//addNewDMRitem("img/ic_device_unknow_player.png", "a", "Vice car lone device");
+	//addNewContentItem("video", "hahaha", null, "");
 	toggle_settingTable_settingField();
 }

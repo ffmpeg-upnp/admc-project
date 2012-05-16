@@ -27,7 +27,7 @@
 	position: fixed;
 	display: block;
 	height: 12%;
-	bottom: 21%;
+	bottom: 19%;
 	left: 0px;
 	padding: 0px;
 	margin: 0px;
@@ -45,6 +45,7 @@
 	border: solid 1px #3C3C3C;
 	-webkit-border-radius: 5px;
 	background: rgba(255, 255, 255, 0.15);
+	z-index: 12;
 }
 
 .content_controler_item{

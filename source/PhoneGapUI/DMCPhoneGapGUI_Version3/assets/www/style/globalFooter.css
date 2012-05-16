@@ -85,7 +85,6 @@
 	padding: 0px;
 	margin: 0px;
 	height: 100%;
-	text-align: center;
 	float: left;
 }
 
@@ -93,7 +92,19 @@
 	position: relative;
 	padding: 0px;
 	margin: 0px;
-	height: 80%;
-	top: 10%;
+	height: 70%;
+	top: 5%;
 	width: auto;
+}
+
+.div_dmr_info{
+	position: absolute;
+	padding: 0px;
+	margin: 0px;
+	height: 15%;
+	width: 100%;
+	bottom: 5%;
+	color: #EBEBEB;
+	text-align: center;
+	font-weight: bold;
 }

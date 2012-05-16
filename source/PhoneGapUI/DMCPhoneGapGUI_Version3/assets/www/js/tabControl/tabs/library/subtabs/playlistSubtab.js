@@ -77,11 +77,11 @@ function repadding_PlaylistSubtab (){
 }
 
 function animateDown_PlaylistSubtab (){
-	playlistContentControler.animate({bottom: '6%'}, "fast");
+	playlistContentControler.animate({bottom: '4%'}, "fast");
 }
 
 function animateUp_PlaylistSubtab (){
-	playlistContentControler.animate({bottom: '21%'}, "fast");
+	playlistContentControler.animate({bottom: '19%'}, "fast");
 }
 
 //---------------------EVENT FUNCTION-----------------------------------

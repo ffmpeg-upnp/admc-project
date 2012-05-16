@@ -75,11 +75,11 @@ function repadding_HomeNetworkSubtab (){
 }
 
 function animateDown_HomeNetworkSubtab (){
-	homenetworkContentControler.animate({bottom: '6%'}, "fast");
+	homenetworkContentControler.animate({bottom: '4%'}, "fast");
 }
 
 function animateUp_HomeNetworkSubtab (){
-	homenetworkContentControler.animate({bottom: '21%'}, "fast");
+	homenetworkContentControler.animate({bottom: '19%'}, "fast");
 }
 
 //----------------------------------EVENT FUNCTION------------------------------

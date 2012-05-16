@@ -129,6 +129,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 			m_traceID.remove(m_traceID.size() - 1);
 			m_traceID.remove(m_traceID.size() - 1);
 		} else {
+			listener.onBrowseFail("Root");
 		}
 	}
 

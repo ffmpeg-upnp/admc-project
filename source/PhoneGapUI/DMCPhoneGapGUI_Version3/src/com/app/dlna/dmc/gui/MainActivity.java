@@ -6,6 +6,8 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.teleal.cling.model.meta.Device;
 import org.teleal.cling.model.types.UDN;
 
@@ -66,6 +68,7 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 
 				}
 			});
+	private DevicesPlugin devicesPlugin;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -138,7 +141,17 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 	@Override
 	public void onStartComplete() {
 		super.onStartComplete();
-		UPNP_PROCESSOR.addDevicesListener(new DevicesPlugin(MainActivity.this));
+		devicesPlugin = new DevicesPlugin(MainActivity.this);
+		UPNP_PROCESSOR.addDevicesListener(devicesPlugin);
+	}
+
+	public void refreshDMSList() {
+		if (devicesPlugin != null)
+			try {
+				devicesPlugin.execute(DevicesPlugin.ACTION_REFRESH_DMS, new JSONArray("[]"), "");
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 var LibraryPlugin = function() {
 };
 LibraryPlugin.prototype.browse = function(objectID) {
-	showLoadingIcon();
+//	showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'browse', [ objectID ]);
 };
 
@@ -10,27 +10,27 @@ LibraryPlugin.prototype.addToPlaylist = function(objectID) {
 };
 
 LibraryPlugin.prototype.back = function() {
-	showLoadingIcon();
+//	showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'back', [ "" ]);
 };
 
 LibraryPlugin.prototype.nextPage = function() {
-	showLoadingIcon();
+//	showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'nextPage', [ "" ]);
 };
 
 LibraryPlugin.prototype.previousPage = function() {
-	showLoadingIcon();
+//	showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'previousPage', [ "" ]);
 };
 
 LibraryPlugin.prototype.selectAll = function() {
-	showLoadingIcon();
+//	showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'selectAll', [ "" ]);
 };
 
 LibraryPlugin.prototype.deselectAll = function() {
-	showLoadingIcon();
+//	showLoadingIcon();
 	PhoneGap.exec(null, null, 'LibraryPlugin', 'deselectAll', [ "" ]);
 };
 
@@ -46,15 +46,15 @@ function loadBrowseResult(e) {
 		var obj = result[i];
 		addItemToListView(obj);
 	}
-//	myScroll_library.scrollTo(0, 0, 0);
-	hideLoadingIcon();
-	library_listview.listview('refresh');
+	listview_homenetwork.listview('refresh');
+	// myScroll_library.scrollTo(0, 0, 0);
+	// hideLoadingIcon();
 	// myScroll_library.refresh();
 }
 
 function clearLibraryList() {
-	library_listview.html('');
-	library_listview.listview('refresh');
+	listview_homenetwork.html('');
+	listview_homenetwork.listview('refresh');
 }
 
 function addItemToListView(item) {
@@ -73,10 +73,14 @@ function addItemToListView(item) {
 		html += "onclick='onContainerClick(\"" + item.id + "\");'>";
 	} else
 		html += "onclick='onItemClick(\"" + item.id + "\");'>";
-	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='" + item.icon
-			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>" + item.name + "</h3><p>"
-			+ (item.childCount != null ? (item.childCount.toString() + " childs") : " ") + "</p></a></li>";
-	library_listview.append(html);
+	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='"
+			+ item.icon
+			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>"
+			+ item.name
+			+ "</h3><p>"
+			+ (item.childCount != null ? (item.childCount.toString() + " childs")
+					: " ") + "</p></a></li>";
+	listview_homenetwork.append(html);
 }
 
 function onContainerClick(id) {
@@ -99,20 +103,24 @@ function notifyBrowseComplete() {
 }
 
 function addItemToPlaylist(url) {
-	$('#div_wrapper_libs li').each(function(index) {
-		if ($(this).attr('url') != null && $(this).attr('url').toString() == url) {
-			if ($(this).find('span:first').length <= 0)
-				$(this).find('div:first').append(active_span);
-		}
-	});
-	library_listview.listview('refresh');
+	$('#div_wrapper_libs li').each(
+			function(index) {
+				if ($(this).attr('url') != null
+						&& $(this).attr('url').toString() == url) {
+					if ($(this).find('span:first').length <= 0)
+						$(this).find('div:first').append(active_span);
+				}
+			});
+	listview_homenetwork.listview('refresh');
 }
 
 function removeItemFromPlaylist(url) {
-	$('#div_wrapper_libs li').each(function(index) {
-		if ($(this).attr('url') != null && $(this).attr('url').toString() == url) {
-			$(this).find('span:first').remove();
-		}
-	});
-	library_listview.listview('refresh');
+	$('#div_wrapper_libs li').each(
+			function(index) {
+				if ($(this).attr('url') != null
+						&& $(this).attr('url').toString() == url) {
+					$(this).find('span:first').remove();
+				}
+			});
+	listview_homenetwork.listview('refresh');
 }

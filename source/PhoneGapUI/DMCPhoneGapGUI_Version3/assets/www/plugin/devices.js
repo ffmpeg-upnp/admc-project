@@ -36,6 +36,12 @@ var add_device = function(element, type) {
 	// }
 };
 
+var clearDevicesList = function() {
+	listview_homenetwork.html('');
+	listview_homenetwork.listview('refresh');
+	showContentController_HomeNetworkSubtab();
+};
+
 var remove_device = function(udn) {
 	$("#content_devices li[udn='" + udn + "']").remove();
 };
@@ -45,6 +51,7 @@ var onDeviceClick = function(e) {
 	var udn = e.getAttribute('udn');
 	if (type == 'dms') {
 		choseDMS(udn);
+		homenetwork_browsestate = 1;// browse content of dms
 	} else if (type == 'dmr') {
 		choseDMR(udn);
 	}

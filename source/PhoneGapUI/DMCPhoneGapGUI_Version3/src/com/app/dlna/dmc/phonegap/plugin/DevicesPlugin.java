@@ -25,14 +25,14 @@ import com.phonegap.api.PluginResult.Status;
 
 public class DevicesPlugin extends Plugin implements DevicesListener {
 	private static final String TAG = DevicesPlugin.class.getSimpleName();
-	private static final String ACTION_START = "start";
-	private static final String ACTION_STOP = "stop";
-	private static final String ACTION_SET_DMS = "setDMS";
-	private static final String ACTION_SET_DMR = "setDMR";
+	public static final String ACTION_REFRESH_DMS = "refreshDMS";
+	public static final String ACTION_SET_DMS = "setDMS";
+	public static final String ACTION_SET_DMR = "setDMR";
 	@SuppressWarnings("rawtypes")
 	private List<Device> m_dms_list = new ArrayList<Device>();
 	@SuppressWarnings("rawtypes")
 	private List<Device> m_dmr_list = new ArrayList<Device>();
+	PhonegapActivity m_activity;
 
 	public DevicesPlugin() {
 	}
@@ -40,6 +40,7 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 	@SuppressWarnings("rawtypes")
 	public DevicesPlugin(PhonegapActivity ctx) {
 		super.setContext(ctx);
+		m_activity = ctx;
 		Log.e(TAG, "Set context");
 		for (Device device : MainActivity.UPNP_PROCESSOR.getDMSList()) {
 			addDMS(device);
@@ -54,17 +55,17 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 	public PluginResult execute(String action, JSONArray data, String callID) {
 
 		PluginResult result = new PluginResult(Status.OK);
-		if (ACTION_START.equals(action)) {
-			Log.i(TAG, "Call start");
+		if (ACTION_REFRESH_DMS.equals(action)) {
+			Log.i(TAG, "Call refresh DMS");
+			sendJavascript("clearDevicesList();");
+			m_dmr_list.clear();
+			m_dms_list.clear();
 			for (Device device : MainActivity.UPNP_PROCESSOR.getDMSList()) {
 				addDMS(device);
 			}
 			for (Device device : MainActivity.UPNP_PROCESSOR.getDMRList()) {
 				addDMR(device);
 			}
-		} else if (ACTION_STOP.equals(action)) {
-			Log.e(TAG, "Call stop");
-			MainActivity.UPNP_PROCESSOR.removeDevicesListener(this);
 		} else if (ACTION_SET_DMS.equals(action)) {
 			Log.e(TAG, "Call SetDMS");
 			try {
@@ -102,26 +103,28 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 
 		@Override
 		public void onUpdatePosition(long current, long max) {
-//			PlaylistPlugin playlistPlugin = new PlaylistPlugin();
-//			playlistPlugin.setContext(MainActivity.INSTANCE);
-//			playlistPlugin.sendJavascript("playlist_updateDurationSeekbar(" + current + ", " + max + ");");
-//			playlistPlugin.sendJavascript("playlist_updateDurationString('" + Utility.getTimeString(current) + " / "
-//					+ Utility.getTimeString(max) + "');");
+			// PlaylistPlugin playlistPlugin = new PlaylistPlugin();
+			// playlistPlugin.setContext(MainActivity.INSTANCE);
+			// playlistPlugin.sendJavascript("playlist_updateDurationSeekbar(" +
+			// current + ", " + max + ");");
+			// playlistPlugin.sendJavascript("playlist_updateDurationString('" +
+			// Utility.getTimeString(current) + " / "
+			// + Utility.getTimeString(max) + "');");
 		}
 
 		@Override
 		public void onStoped() {
-//			PlaylistPlugin playlistPlugin = new PlaylistPlugin();
-//			playlistPlugin.setContext(MainActivity.INSTANCE);
-//			playlistPlugin.sendJavascript("playlist_onStop();");
+			// PlaylistPlugin playlistPlugin = new PlaylistPlugin();
+			// playlistPlugin.setContext(MainActivity.INSTANCE);
+			// playlistPlugin.sendJavascript("playlist_onStop();");
 
 		}
 
 		@Override
 		public void onPlaying() {
-//			PlaylistPlugin playlistPlugin = new PlaylistPlugin();
-//			playlistPlugin.setContext(MainActivity.INSTANCE);
-//			playlistPlugin.sendJavascript("playlist_onPlaying();");
+			// PlaylistPlugin playlistPlugin = new PlaylistPlugin();
+			// playlistPlugin.setContext(MainActivity.INSTANCE);
+			// playlistPlugin.sendJavascript("playlist_onPlaying();");
 		}
 
 		@Override
@@ -156,12 +159,19 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 	@SuppressWarnings("rawtypes")
 	private void setDMS(String udn) {
 		MainActivity.UPNP_PROCESSOR.setCurrentDMS(new UDN(udn));
-		Device device = MainActivity.UPNP_PROCESSOR.getCurrentDMS();
-		if (device != null) {
-			sendJavascript("setCurrentDMS('" + device.getIdentity().getUdn().getIdentifierString() + "');");
-		} else {
-			Log.i(TAG, "Selected device is null");
+		sendJavascript("clearDevicesList();");
+		try {
+			new LibraryPlugin(DevicesPlugin.this.ctx).execute(LibraryPlugin.ACTION_BROWSE, new JSONArray("['0']"), "0");
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
+		// Device device = MainActivity.UPNP_PROCESSOR.getCurrentDMS();
+		// if (device != null) {
+		// sendJavascript("setCurrentDMS('" +
+		// device.getIdentity().getUdn().getIdentifierString() + "');");
+		// } else {
+		// Log.i(TAG, "Selected device is null");
+		// }
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -274,5 +284,4 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 	public void onDMRChanged() {
 
 	}
-
 }

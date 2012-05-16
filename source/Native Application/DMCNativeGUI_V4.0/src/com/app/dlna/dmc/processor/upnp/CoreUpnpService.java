@@ -1,7 +1,6 @@
 package com.app.dlna.dmc.processor.upnp;
 
 import java.net.NetworkInterface;
-import java.util.concurrent.Executor;
 
 import org.teleal.cling.UpnpService;
 import org.teleal.cling.UpnpServiceConfiguration;

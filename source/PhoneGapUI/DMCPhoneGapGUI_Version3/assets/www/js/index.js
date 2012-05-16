@@ -3,25 +3,30 @@ preventTouchMove = function(event) {
 	event.preventDefault();
 };
 
+var listview_homenetwork;
+
 var settingButton;
 
 $(document).ready(function() {
 	initPage();
-	initGlobalFooter ();
+	initGlobalFooter();
 	initTabs();
 	initImagesManagement();
+
+	listview_homenetwork = $('#listview_homenetwork');
+
 });
 
-function initPage (){
+function initPage() {
 	settingButton = $('#div_global_setting img');
-	settingButton.bind('tap', function(){
+	settingButton.bind('tap', function() {
 		ontap_settingButton($(this));
 	});
 };
 
-function ontap_settingButton (sender){
-	//toggleNetworkContentControler();
-	//addNewDMRitem("img/ic_device_unknow_player.png", "localhost")
-	//addNewContentItem("video", "hahaha", null, "");
+function ontap_settingButton(sender) {
+	// toggleNetworkContentControler();
+	// addNewDMRitem("img/ic_device_unknow_player.png", "localhost")
+	// addNewContentItem("video", "hahaha", null, "");
 	toggle_settingTable_settingField();
 }

@@ -2,4 +2,10 @@
 <plugins>
 	<plugin name="App" value="com.phonegap.App" />
 	<plugin name="Device" value="com.phonegap.Device" />
+	<plugin name="ApplicationPlugin"
+		value="com.app.dlna.dmc.phonegap.plugin.ApplicationPlugin" />
+	<plugin name="DevicesPlugin" value="com.app.dlna.dmc.phonegap.plugin.DevicesPlugin" />
+	<plugin name="LibraryPlugin" value="com.app.dlna.dmc.phonegap.plugin.LibraryPlugin" />
+	<plugin name="YoutubePlugin" value="com.app.dlna.dmc.phonegap.plugin.YoutubePlugin" />
+	<plugin name="PlaylistPlugin" value="com.app.dlna.dmc.phonegap.plugin.PlaylistPlugin" />
 </plugins>

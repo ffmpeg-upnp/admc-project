@@ -44,6 +44,11 @@
 <script type="text/javascript" src="js/globalFooter/globalFooter.js"></script>
 <script type="text/javascript" src="js/globalFooter/dmrManagement.js"></script>
 <script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript" src="plugin/application.js"></script>
+<script type="text/javascript" src="plugin/devices.js"></script>
+<script type="text/javascript" src="plugin/library.js"></script>
+<script type="text/javascript" src="plugin/playlist.js"></script>
+<script type="text/javascript" src="plugin/youtube.js"></script>
 </head>
 
 <body>
@@ -74,7 +79,7 @@
 				<img id="img_btn_settings" src="img/ic_settings_option.png">
 			</div>
 			<div style="border-top: solid 1px #33B5E5;">
-			 	<img id="img_btn_about" src="img/ic_about_option.png">
+				<img id="img_btn_about" src="img/ic_about_option.png">
 			</div>
 		</div>
 
@@ -99,19 +104,16 @@
 			class="content_controler library_tab"
 			ontouchmove="preventTouchMove(event);">
 			<div class="content_controler_list_item">
-				<div class="content_controler_item" >
-					<img id="img_btn_back_homenetwork"
-						src="img/ic_btn_back_normal.png" 
-						class="img_normal"
-						data-enable="true"
+				<div class="content_controler_item">
+					<img id="img_btn_back_homenetwork" src="img/ic_btn_back_normal.png"
+						class="img_normal" data-enable="true"
 						data-highlight-image="img/ic_btn_back_pressed.png"
 						data-normal-image="img/ic_btn_back_normal.png">
 				</div>
 
 				<div class="content_controler_item">
 					<img id="img_btn_selectall"
-						src="img/ic_btn_container_selectall_normal.png" 
-						class="img_normal"
+						src="img/ic_btn_container_selectall_normal.png" class="img_normal"
 						data-enable="true"
 						data-highlight-image="img/ic_btn_container_selectall_pressed.png"
 						data-normal-image="img/ic_btn_container_selectall_normal.png">
@@ -119,9 +121,8 @@
 
 				<div class="content_controler_item">
 					<img id="img_btn_deselectall"
-						src="img/ic_btn_container_deselectall_normal.png" 
-						class="img_normal"
-						data-enable="true"
+						src="img/ic_btn_container_deselectall_normal.png"
+						class="img_normal" data-enable="true"
 						data-highlight-image="img/ic_btn_container_deselectall_pressed.png"
 						data-normal-image="img/ic_btn_container_deselectall_normal.png">
 				</div>
@@ -129,6 +130,8 @@
 		</div>
 
 		<div id="div_content_homenetwork" class="content_library library_tab">
+			<ul id="listview_homenetwork" data-role="listview" data-theme="d">
+			</ul>
 		</div>
 
 		<!-- Playlist tabs -->
@@ -136,29 +139,23 @@
 			class="content_controler library_tab"
 			ontouchmove="preventTouchMove(event);">
 			<div class="content_controler_list_item">
-				<div class="content_controler_item" >
-					<img id="img_btn_back_playlist"
-						src="img/ic_btn_back_normal.png" 
-						class="img_normal"
-						data-enable="true"
+				<div class="content_controler_item">
+					<img id="img_btn_back_playlist" src="img/ic_btn_back_normal.png"
+						class="img_normal" data-enable="true"
 						data-highlight-image="img/ic_btn_back_pressed.png"
 						data-normal-image="img/ic_btn_back_normal.png">
 				</div>
 
 				<div class="content_controler_item">
-					<img id="img_btn_save"
-						src="img/ic_btn_save_normal.png" 
-						class="img_normal"
-						data-enable="true"
+					<img id="img_btn_save" src="img/ic_btn_save_normal.png"
+						class="img_normal" data-enable="true"
 						data-highlight-image="img/ic_btn_save_pressed.png"
 						data-normal-image="img/ic_btn_save_normal.png">
 				</div>
 
 				<div class="content_controler_item">
-					<img id="img_btn_clear"
-						src="img/ic_btn_clear_normal.png" 
-						class="img_normal"
-						data-enable="true"
+					<img id="img_btn_clear" src="img/ic_btn_clear_normal.png"
+						class="img_normal" data-enable="true"
 						data-highlight-image="img/ic_btn_clear_pressed.png"
 						data-normal-image="img/ic_btn_clear_normal.png">
 				</div>
@@ -166,32 +163,7 @@
 		</div>
 
 		<div id="div_content_playlist" class="content_library library_tab">
-			Within the text of most pages there are usually a large number of
-			hypertext links to other pages. This form of non-linear navigation is
-			more "native" to wiki than structured/formalized navigation schemes.
-			That said, users can also create any number of index or
-			table-of-contents pages, with hierarchical categorization or whatever
-			form of organization they like. These may be challenging to maintain
-			by hand, as multiple authors create and delete pages in an ad hoc
-			manner. Wikis generally provide one or more ways to categorize or tag
-			pages to support the maintenance of such index pages. Most wikis have
-			a backlink feature, which displays all pages that link to a given
-			page. It is typical in a wiki to create links to pages that do not
-			yet exist, as a way to invite others to share what they know about a
-			subject new to the wiki. Within the text of most pages there are
-			usually a large number of hypertext links to other pages. This form
-			of non-linear navigation is more "native" to wiki than
-			structured/formalized navigation schemes. That said, users can also
-			create any number of index or table-of-contents pages, with
-			hierarchical categorization or whatever form of organization they
-			like. These may be challenging to maintain by hand, as multiple
-			authors create and delete pages in an ad hoc manner. Wikis generally
-			provide one or more ways to categorize or tag pages to support the
-			maintenance of such index pages. Most wikis have a backlink feature,
-			which displays all pages that link to a given page. It is typical in
-			a wiki to create links to pages that do not yet exist, as a way to
-			invite others to share what they know about a subject new to the
-			wiki.</div>
+		</div>
 
 		<!-- Internet tab -->
 		<div id="div_content_internet_searchbar" class="library_tab"
@@ -200,42 +172,15 @@
 				<input type="text" placeholder="Enter keyword here">
 			</div>
 			<div id="div_content_internet_searchbar_right">
-				<img id="img_btn_search_youtube"
-					src="img/ic_btn_search_normal.png" 
-					class="img_normal"
-					data-enable="true"
+				<img id="img_btn_search_youtube" src="img/ic_btn_search_normal.png"
+					class="img_normal" data-enable="true"
 					data-highlight-image="img/ic_btn_search_pressed.png"
 					data-normal-image="img/ic_btn_search_normal.png">
 			</div>
 		</div>
 
 		<div id="div_content_internet" class="content_library library_tab">
-			Within the text of most pages there are usually a large number of
-			hypertext links to other pages. This form of non-linear navigation is
-			more "native" to wiki than structured/formalized navigation schemes.
-			That said, users can also create any number of index or
-			table-of-contents pages, with hierarchical categorization or whatever
-			form of organization they like. These may be challenging to maintain
-			by hand, as multiple authors create and delete pages in an ad hoc
-			manner. Wikis generally provide one or more ways to categorize or tag
-			pages to support the maintenance of such index pages. Most wikis have
-			a backlink feature, which displays all pages that link to a given
-			page. It is typical in a wiki to create links to pages that do not
-			yet exist, as a way to invite others to share what they know about a
-			subject new to the wiki. Within the text of most pages there are
-			usually a large number of hypertext links to other pages. This form
-			of non-linear navigation is more "native" to wiki than
-			structured/formalized navigation schemes. That said, users can also
-			create any number of index or table-of-contents pages, with
-			hierarchical categorization or whatever form of organization they
-			like. These may be challenging to maintain by hand, as multiple
-			authors create and delete pages in an ad hoc manner. Wikis generally
-			provide one or more ways to categorize or tag pages to support the
-			maintenance of such index pages. Most wikis have a backlink feature,
-			which displays all pages that link to a given page. It is typical in
-			a wiki to create links to pages that do not yet exist, as a way to
-			invite others to share what they know about a subject new to the
-			wiki.</div>
+		</div>
 
 		<!--Now playing tab-->
 		<div id="div_content_nowplaying_tab" class="nowplaying_tab">
@@ -254,17 +199,16 @@
 					<div id="div_nowplaying_media_controlBar">
 						<div class="media_controlBar_item">
 							<img id="img_btn_media_previous"
-								src="img/ic_btn_media_previous_normal.png" 
-								class="img_normal"
+								src="img/ic_btn_media_previous_normal.png" class="img_normal"
 								data-enable="true"
 								data-highlight-image="img/ic_btn_media_previous_pressed.png"
 								data-normal-image="img/ic_btn_media_previous_normal.png">
 						</div>
 
 						<div class="media_controlBar_item">
-							<img id="img_btn_media_pause_play" 
-								src="img/ic_btn_media_pause_normal.png"
-								class="img_double_state" data-my-state="true" data-enable="true"
+							<img id="img_btn_media_pause_play"
+								src="img/ic_btn_media_pause_normal.png" class="img_double_state"
+								data-my-state="true" data-enable="true"
 								data-highlight-a="img/ic_btn_media_pause_pressed.png"
 								data-highlight-b="img/ic_btn_media_play_pressed.png"
 								data-state-a="img/ic_btn_media_pause_normal.png"
@@ -274,8 +218,7 @@
 
 						<div class="media_controlBar_item">
 							<img id="img_btn_media_stop"
-								src="img/ic_btn_media_stop_normal.png" 
-								class="img_normal"
+								src="img/ic_btn_media_stop_normal.png" class="img_normal"
 								data-enable="true"
 								data-highlight-image="img/ic_btn_media_stop_pressed.png"
 								data-normal-image="img/ic_btn_media_stop_normal.png">
@@ -283,8 +226,7 @@
 
 						<div class="media_controlBar_item">
 							<img id="img_btn_media_next"
-								src="img/ic_btn_media_next_normal.png" 
-								class="img_normal"
+								src="img/ic_btn_media_next_normal.png" class="img_normal"
 								data-enable="true"
 								data-highlight-image="img/ic_btn_media_next_pressed.png"
 								data-normal-image="img/ic_btn_media_next_normal.png">
@@ -292,8 +234,7 @@
 
 						<div class="media_controlBar_item">
 							<img id="img_btn_media_changeitem"
-								src="img/ic_btn_media_changeitem_normal.png" 
-								class="img_normal"
+								src="img/ic_btn_media_changeitem_normal.png" class="img_normal"
 								data-enable="true"
 								data-highlight-image="img/ic_btn_media_changeitem_pressed.png"
 								data-normal-image="img/ic_btn_media_changeitem_normal.png">
@@ -301,34 +242,26 @@
 
 						<div class="media_controlBar_item">
 							<img id="img_btn_media_changeplaylist"
-								src="img/ic_btn_media_changeplaylist_normal.png" 
-								class="img_normal"
-								data-enable="true"
+								src="img/ic_btn_media_changeplaylist_normal.png"
+								class="img_normal" data-enable="true"
 								data-highlight-image="img/ic_btn_media_changeplaylist_pressed.png"
 								data-normal-image="img/ic_btn_media_changeplaylist_normal.png">
 						</div>
 
 					</div>
 					<div id="div_nowplaying_media_seekBar">
-						<input id="slider_seek_bar"
-							data-seeking="false"
-							type="range" 
-							value="50" min="0" max="300" 
-							style="display: none;"
-							data-highlight="true" 
-							data-theme="a"/>
+						<input id="slider_seek_bar" data-seeking="false" type="range"
+							value="50" min="0" max="300" style="display: none;"
+							data-highlight="true" data-theme="a" />
 					</div>
 					<div id="div_nowplaying_media_infoBar">
 						<div id="div_nowplaying_media_durationTime">
 							00:00:00/00:00:00</div>
 
 						<div id="div_nowplaying_media_volumeBar">
-							<input id="slider_volume_bar" 
-								type="range" 
-								value="20" min="0" max="50" 
-								style="display: none;"
-								data-highlight="true" 
-								data-theme="a"/>
+							<input id="slider_volume_bar" type="range" value="20" min="0"
+								max="50" style="display: none;" data-highlight="true"
+								data-theme="a" />
 						</div>
 
 						<div id="div_nowplaying_media_volumeImage">

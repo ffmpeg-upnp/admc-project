@@ -20,6 +20,8 @@ import org.teleal.cling.model.meta.LocalService;
 import org.teleal.cling.model.meta.ManufacturerDetails;
 import org.teleal.cling.model.meta.ModelDetails;
 import org.teleal.cling.model.types.DeviceType;
+import org.teleal.cling.model.types.ServiceType;
+import org.teleal.cling.model.types.UDAServiceType;
 import org.teleal.cling.model.types.UDN;
 import org.teleal.cling.protocol.ProtocolFactory;
 import org.teleal.cling.registry.Registry;
@@ -163,7 +165,13 @@ public class CoreUpnpService extends Service {
 	}
 
 	protected AndroidUpnpServiceConfiguration createConfiguration(WifiManager wifiManager) {
-		return new AndroidUpnpServiceConfiguration(wifiManager, m_connectivityManager);
+		return new AndroidUpnpServiceConfiguration(wifiManager, m_connectivityManager) {
+			@Override
+			public ServiceType[] getExclusiveServiceTypes() {
+				return new ServiceType[] { new UDAServiceType("AVTransport"), new UDAServiceType("ContentDirectory"),
+						new UDAServiceType("RenderingControl") };
+			}
+		};
 	}
 
 	protected AndroidWifiSwitchableRouter createRouter(UpnpServiceConfiguration configuration,

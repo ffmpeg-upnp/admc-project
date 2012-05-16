@@ -27,11 +27,13 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
 import com.app.dlna.dmc.R;
+import com.app.dlna.dmc.phonegap.plugin.DevicesPlugin;
 import com.app.dlna.dmc.processor.impl.UpnpProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
 import com.app.dlna.dmc.processor.nfc.NFCUtils;
@@ -136,14 +138,26 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 	@Override
 	public void onStartComplete() {
 		super.onStartComplete();
+		UPNP_PROCESSOR.addDevicesListener(new DevicesPlugin(MainActivity.this));
 	}
 
 	@Override
 	public void onStartFailed() {
 		super.onStartFailed();
-		new AlertDialog.Builder(MainActivity.this).setTitle("Start Fail")
-				.setMessage("Cannot found a connection for UpnpService. Start service fail")
-				.setPositiveButton("OK", new OnClickListener() {
+		new AlertDialog.Builder(MainActivity.this)
+				.setTitle("Network Info")
+				.setMessage(
+						"Cannot find a wifi connection for UpnpService. Please connect to a wifi network or run wifi hotspot to use the app.")
+				.setPositiveButton("Wifi settings", new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+						MainActivity.this.finish();
+						((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
+								.cancel(CoreUpnpService.NOTIFICATION);
+					}
+				}).setNegativeButton("Exit", new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -339,5 +353,4 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 					.setMessage("Please enable NFC on you device first").setPositiveButton("OK", null).create().show();
 		}
 	}
-
 }

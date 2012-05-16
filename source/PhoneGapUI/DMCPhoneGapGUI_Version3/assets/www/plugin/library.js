@@ -41,15 +41,15 @@ PhoneGap.addConstructor(function() {
 var active_span = '<span class="ui-icon ui-icon-added-to-playlist ui-icon-shadow"></span>';
 
 function loadBrowseResult(e) {
+	if (homenetwork_browsestate != 1)
+		return;
 	var result = eval(e);
 	for ( var i = 0; i < result.length; i++) {
 		var obj = result[i];
 		addItemToListView(obj);
 	}
 	listview_homenetwork.listview('refresh');
-	// myScroll_library.scrollTo(0, 0, 0);
-	// hideLoadingIcon();
-	// myScroll_library.refresh();
+	showContentController_HomeNetworkSubtab();
 }
 
 function clearLibraryList() {
@@ -73,13 +73,9 @@ function addItemToListView(item) {
 		html += "onclick='onContainerClick(\"" + item.id + "\");'>";
 	} else
 		html += "onclick='onItemClick(\"" + item.id + "\");'>";
-	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='"
-			+ item.icon
-			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>"
-			+ item.name
-			+ "</h3><p>"
-			+ (item.childCount != null ? (item.childCount.toString() + " childs")
-					: " ") + "</p></a></li>";
+	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='" + item.icon
+			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>" + item.name + "</h3><p>"
+			+ (item.childCount != null ? (item.childCount.toString() + " childs") : " ") + "</p></a></li>";
 	listview_homenetwork.append(html);
 }
 
@@ -103,28 +99,26 @@ function notifyBrowseComplete() {
 }
 
 function addItemToPlaylist(url) {
-	$('#div_wrapper_libs li').each(
-			function(index) {
-				if ($(this).attr('url') != null
-						&& $(this).attr('url').toString() == url) {
-					if ($(this).find('span:first').length <= 0)
-						$(this).find('div:first').append(active_span);
-				}
-			});
+	$('#div_wrapper_libs li').each(function(index) {
+		if ($(this).attr('url') != null && $(this).attr('url').toString() == url) {
+			if ($(this).find('span:first').length <= 0)
+				$(this).find('div:first').append(active_span);
+		}
+	});
 	listview_homenetwork.listview('refresh');
 }
 
 function removeItemFromPlaylist(url) {
-	$('#div_wrapper_libs li').each(
-			function(index) {
-				if ($(this).attr('url') != null
-						&& $(this).attr('url').toString() == url) {
-					$(this).find('span:first').remove();
-				}
-			});
+	$('#div_wrapper_libs li').each(function(index) {
+		if ($(this).attr('url') != null && $(this).attr('url').toString() == url) {
+			$(this).find('span:first').remove();
+		}
+	});
 	listview_homenetwork.listview('refresh');
 }
 
 function upToDMSList() {
+	hideContentController_HomeNetworkSubtab();
+	homenetwork_browsestate = 0;
 	window.plugins.DevicesPlugin.refresh();
 }

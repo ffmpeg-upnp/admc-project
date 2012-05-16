@@ -275,12 +275,7 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void setCurrentDMS(UDN uDN) {
-		Device currentDMS = m_upnpService.getCurrentDMS();
-		Device newDMS = m_upnpService.getRegistry().getDevice(uDN, true);
-
-		if (currentDMS == null || !newDMS.getIdentity().equals(currentDMS.getIdentity())) {
-			m_upnpService.setCurrentDMS(uDN);
-		}
+		m_upnpService.setCurrentDMS(uDN);
 		fireOnDMSChangedEvent();
 	}
 

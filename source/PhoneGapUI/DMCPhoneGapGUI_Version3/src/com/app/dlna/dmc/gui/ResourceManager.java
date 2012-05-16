@@ -1,6 +1,6 @@
 package com.app.dlna.dmc.gui;
 
-import com.app.dlna.dmc.R;
+import com.app.dlna.dmc.phonegap.R;
 
 public class ResourceManager {
 

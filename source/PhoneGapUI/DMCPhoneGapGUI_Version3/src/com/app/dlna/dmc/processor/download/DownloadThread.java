@@ -15,7 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-import com.app.dlna.dmc.R;
+import com.app.dlna.dmc.phonegap.R;
 
 public class DownloadThread extends Thread {
 	protected File m_parent;

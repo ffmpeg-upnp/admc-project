@@ -52,6 +52,5 @@ function clearYoutubeList() {
 
 function yt_onYoutubeItemClick(idx) {
 	console.log(idx.toString());
-	// TODO: fix constant here
 	window.plugins.YoutubePlugin.addToPlaylist(idx);
 }

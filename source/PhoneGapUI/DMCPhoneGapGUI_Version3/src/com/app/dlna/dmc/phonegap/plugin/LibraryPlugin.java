@@ -103,8 +103,8 @@ public class LibraryPlugin extends Plugin {
 				return new PluginResult(Status.JSON_EXCEPTION);
 			}
 		} else if (ACTION_SELECT_ALL.equals(action)) {
-			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(
-					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(), new DMSAddRemoveContainerListener() {
+			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(),
+					new DMSAddRemoveContainerListener() {
 						ProgressDialog pd;
 
 						@Override
@@ -306,24 +306,6 @@ public class LibraryPlugin extends Plugin {
 			}
 
 			sendJavascript("loadBrowseResult('" + response.toString().replace("'", "\\'") + "');");
-
-			if (objectID.equals("0")) {
-				sendJavascript("disableBackButton();");
-			} else {
-				sendJavascript("enableBackButton();");
-			}
-
-			if (haveNext) {
-				sendJavascript("enableNextPageButton();");
-			} else {
-				sendJavascript("disableNextPageButton();");
-			}
-
-			if (havePrev) {
-				sendJavascript("enablePrevPageButton();");
-			} else {
-				sendJavascript("disablePrevPageButton();");
-			}
 
 			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
 

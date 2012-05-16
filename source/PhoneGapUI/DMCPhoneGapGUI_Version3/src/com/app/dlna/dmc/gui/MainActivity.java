@@ -34,7 +34,7 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
-import com.app.dlna.dmc.R;
+import com.app.dlna.dmc.phonegap.R;
 import com.app.dlna.dmc.phonegap.plugin.DevicesPlugin;
 import com.app.dlna.dmc.processor.impl.UpnpProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;

@@ -23,14 +23,20 @@ var add_device = function(element, type) {
 		return;
 	}
 	var device = eval(element);
-	var html = "<li data-icon='false' type='" + device.type + "' udn='" + device.udn
+	var html = "<li data-icon='false' type='"
+			+ device.type
+			+ "' udn='"
+			+ device.udn
 			+ "'  onclick='onDeviceClick(this);'><a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='"
-			+ device.icon + "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>" + device.name + "</h3><p>"
-			+ device.address + "</p></a></li>";
+			+ device.icon
+			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>"
+			+ device.name + "</h3><p>" + device.address + "</p></a></li>";
 	if (type == 'dms') {
 		listview_homenetwork.append(html);
 		listview_homenetwork.listview('refresh');
 		// myScroll_devices_dmS.refresh();
+	} else if (type == 'dmr') {
+		addNewDMRitem(device.icon, device.udn, device.name);
 	}
 	// } else {
 	// dmr_listview.append(html);
@@ -39,9 +45,15 @@ var add_device = function(element, type) {
 	// }
 };
 
-var clearDevicesList = function() {
+var clearDMSList = function() {
 	listview_homenetwork.html('');
 	listview_homenetwork.listview('refresh');
+	window.plugins.ApplicationPlugin.showLoadComplete();
+};
+
+var clearDMRList = function() {
+	dmr_slider.html('');
+	window.plugins.ApplicationPlugin.showLoadComplete();
 };
 
 var remove_device = function(udn) {
@@ -87,14 +99,20 @@ function setCurrentDMR(udn) {
 }
 
 function setSelectedDevice() {
-	$('#content_devices li').each(
-			function(index) {
-				if ((currentDMS_udn != null && $(this).attr('udn') != null && $(this).attr('udn').toString() == currentDMS_udn.toString())
-						|| (currentDMR_udn != null && $(this).attr('udn') && $(this).attr('udn').toString() == currentDMR_udn.toString())) {
-					$(this).addClass("ui-btn-active");
-				} else {
-					$(this).removeClass("ui-btn-active");
-				}
-			});
+	$('#content_devices li')
+			.each(
+					function(index) {
+						if ((currentDMS_udn != null
+								&& $(this).attr('udn') != null && $(this).attr(
+								'udn').toString() == currentDMS_udn.toString())
+								|| (currentDMR_udn != null
+										&& $(this).attr('udn') && $(this).attr(
+										'udn').toString() == currentDMR_udn
+										.toString())) {
+							$(this).addClass("ui-btn-active");
+						} else {
+							$(this).removeClass("ui-btn-active");
+						}
+					});
 	dmr_listview.listview('refresh');
 }

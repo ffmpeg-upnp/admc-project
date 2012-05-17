@@ -36,7 +36,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 	private List<String> m_traceID;
 	private int m_currentPageIndex;
 	private String m_currentObjectId;
-	public static int ITEM_PER_PAGE = 50;
+	public static int ITEM_PER_PAGE = 100;
 	private List<DIDLObject> m_DIDLObjectList;
 
 	@SuppressWarnings("rawtypes")

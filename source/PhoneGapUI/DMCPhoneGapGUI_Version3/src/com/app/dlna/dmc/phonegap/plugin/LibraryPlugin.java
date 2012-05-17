@@ -22,6 +22,7 @@ import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSAddRemoveContainerListener;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSProcessorListner;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
+import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.phonegap.api.PhonegapActivity;
 import com.phonegap.api.Plugin;
 import com.phonegap.api.PluginResult;
@@ -31,36 +32,18 @@ public class LibraryPlugin extends Plugin {
 	private static final String TAG = LibraryPlugin.class.getName();
 	public static final String ACTION_BROWSE = "browse";
 	public static final String ACTION_BACK = "back";
-	public static final String ACTION_FILTER = "filter";
-	public static final String ACTION_NEXTPAGE = "nextPage";
-	public static final String ACTION_PREVIOUSPAGE = "previousPage";
+	public static final String ACTION_LOADMORE = "loadMore";
 	public static final String ACTION_ADDTOPLAYLIST = "addToPlaylist";
 	public static final String ACTION_SELECT_ALL = "selectAll";
 	public static final String ACTION_DESELECT_ALL = "deselectAll";
-	public ProgressDialog m_progress;
+	private static boolean LOADMORE = false;
+	private static boolean HAVENEXT = false;
 
 	public LibraryPlugin() {
-		initProgressDialog();
 	}
 
 	public LibraryPlugin(PhonegapActivity ctx) {
 		super.setContext(ctx);
-		initProgressDialog();
-	}
-
-	private void initProgressDialog() {
-		MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				m_progress = new ProgressDialog(MainActivity.INSTANCE);
-				synchronized (m_progress) {
-					m_progress.requestWindowFeature(Window.FEATURE_NO_TITLE);
-					m_progress.setMessage("Loading...");
-					m_progress.setCancelable(true);
-				}
-			}
-		});
 	}
 
 	@Override
@@ -71,6 +54,7 @@ public class LibraryPlugin extends Plugin {
 			} else {
 				try {
 					DMSProcessor dmsProcessor = MainActivity.UPNP_PROCESSOR.getDMSProcessor();
+					LOADMORE = false;
 					String objectID = data.getString(0);
 					Log.i(TAG, "Object id = " + objectID);
 					showProgress();
@@ -79,32 +63,32 @@ public class LibraryPlugin extends Plugin {
 					return new PluginResult(Status.JSON_EXCEPTION);
 				}
 			}
-		} else if (ACTION_FILTER.equals(action)) {
-
 		} else if (ACTION_BACK.equals(action)) {
 			if (MainActivity.UPNP_PROCESSOR == null) {
 				return new PluginResult(Status.ERROR, "Cannot get UPNP Processor");
 			} else {
+				LOADMORE = false;
 				showProgress();
 				MainActivity.UPNP_PROCESSOR.getDMSProcessor().back(m_lisListner);
 			}
-		} else if (ACTION_PREVIOUSPAGE.equals(action)) {
-			Log.i(TAG, "Previous page");
-			MainActivity.UPNP_PROCESSOR.getDMSProcessor().previousPage(m_lisListner);
-		} else if (ACTION_NEXTPAGE.equals(action)) {
-			Log.i(TAG, "Next page");
+		} else if (ACTION_LOADMORE.equals(action)) {
+			if (!HAVENEXT)
+				return null;
+			LOADMORE = true;
+			showProgress();
 			MainActivity.UPNP_PROCESSOR.getDMSProcessor().nextPage(m_lisListner);
 		} else if (ACTION_ADDTOPLAYLIST.equals(action)) {
 			String objectID = "";
 			try {
 				objectID = data.getString(0);
+				Log.e(TAG, "add to playlist object id = " + objectID);
 				addToPlaylist(MainActivity.UPNP_PROCESSOR.getDMSProcessor().getDIDLObject(objectID));
 			} catch (JSONException e) {
 				return new PluginResult(Status.JSON_EXCEPTION);
 			}
 		} else if (ACTION_SELECT_ALL.equals(action)) {
-			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(),
-					new DMSAddRemoveContainerListener() {
+			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(
+					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(), new DMSAddRemoveContainerListener() {
 						ProgressDialog pd;
 
 						@Override
@@ -200,15 +184,7 @@ public class LibraryPlugin extends Plugin {
 	}
 
 	private void showProgress() {
-		MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				Log.e(TAG, "Show progress dialog");
-				if (m_progress != null)
-					m_progress.show();
-			}
-		});
+		MainActivity.INSTANCE.showLoadingDialog();
 	}
 
 	protected void addToPlaylist(DIDLObject object) {
@@ -217,9 +193,13 @@ public class LibraryPlugin extends Plugin {
 			Toast.makeText(MainActivity.INSTANCE, "Cannot get playlist processor", Toast.LENGTH_SHORT).show();
 			return;
 		}
-
-		if (playlistProcessor.addDIDLObject(object) != null) {
+		PlaylistItem item = null;
+		if ((item = playlistProcessor.addDIDLObject(object)) != null) {
 			sendJavascript("addItemToPlaylist('" + object.getResources().get(0).getValue() + "');");
+			if (item != null) {
+				Log.e(TAG, "set URI and Play");
+				MainActivity.UPNP_PROCESSOR.getDMRProcessor().setURIandPlay(item);
+			}
 		} else {
 			if (playlistProcessor.isFull()) {
 				Toast.makeText(MainActivity.INSTANCE, "Current playlist is full", Toast.LENGTH_SHORT).show();
@@ -264,19 +244,14 @@ public class LibraryPlugin extends Plugin {
 				sendJavascript("upToDMSList();");
 
 			}
-			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					if (m_progress != null)
-						m_progress.dismiss();
-				}
-			});
+			MainActivity.INSTANCE.showLoadingDialog();
 		}
 
 		public void onBrowseComplete(String objectID, boolean haveNext, boolean havePrev,
 				Map<String, List<? extends DIDLObject>> result) {
-			sendJavascript("clearLibraryList();");
+			HAVENEXT = haveNext;
+			if (!LOADMORE)
+				sendJavascript("clearLibraryList();");
 			JSONArray response = new JSONArray();
 			for (DIDLObject container : result.get("Containers")) {
 				JSONObject object = createJsonFromDIDLObject(container);
@@ -306,15 +281,6 @@ public class LibraryPlugin extends Plugin {
 			}
 
 			sendJavascript("loadBrowseResult('" + response.toString().replace("'", "\\'") + "');");
-
-			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					if (m_progress != null)
-						m_progress.dismiss();
-				}
-			});
 		}
 	};
 

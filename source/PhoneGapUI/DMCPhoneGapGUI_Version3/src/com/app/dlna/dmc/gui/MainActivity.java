@@ -48,6 +48,7 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 	public static UpnpProcessor UPNP_PROCESSOR = null;
 	private ProgressDialog m_routerProgressDialog;
 	private ProgressDialog m_nfcProgressDialog;
+	private ProgressDialog m_loadingDialog;
 	public static MainActivity INSTANCE;
 	// SD Card
 	private BroadcastReceiver m_mountedReceiver = new SDCardReceiver();
@@ -113,7 +114,10 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 		});
 
 		super.loadUrl("file:///android_asset/www/index.html");
-
+		m_loadingDialog = new ProgressDialog(MainActivity.this);
+		m_loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		m_loadingDialog.setMessage("Loading...");
+		m_loadingDialog.setCancelable(false);
 	}
 
 	protected void onResume() {
@@ -365,5 +369,29 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
 					.setMessage("Please enable NFC on you device first").setPositiveButton("OK", null).create().show();
 		}
+	}
+
+	public void showLoadingDialog() {
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				m_loadingDialog.show();
+			}
+		});
+	}
+
+	public void hideLoadingDialog() {
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				m_loadingDialog.dismiss();
+			}
+		});
+	}
+
+	public boolean isLoading() {
+		return m_loadingDialog.isShowing();
 	}
 }

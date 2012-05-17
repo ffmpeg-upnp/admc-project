@@ -55,7 +55,7 @@ function initHomenetworkSubtab() {
 							if (documentHeight > $(window).height()) {
 								var currentWindowPosition = currentScrollPosition
 										+ $(window).height() + 15;// 15px is a
-																	// tolerance-value
+								// tolerance-value
 
 								if (currentWindowPosition >= documentHeight) {
 									onScrollToEndOfPage_HomenetworkContent();
@@ -134,11 +134,11 @@ function onTap_Back_Homenetwork(sender) {
 }
 
 function onTap_SelectAll(sender) {
-
+	window.plugins.LibraryPlugin.selectAll();
 }
 
 function onTap_DeselectAll(sender) {
-
+	window.plugins.LibraryPlugin.deselectAll();
 }
 
 function onScrollToEndOfPage_HomenetworkContent() {

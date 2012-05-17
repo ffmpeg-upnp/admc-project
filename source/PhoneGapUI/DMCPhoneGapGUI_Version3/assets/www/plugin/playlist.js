@@ -19,34 +19,6 @@ PlaylistPlugin.prototype.itemClick = function(idx) {
 	PhoneGap.exec(null, null, 'PlaylistPlugin', 'itemClick', [ idx ]);
 };
 
-PlaylistPlugin.prototype.play = function() {
-	PhoneGap.exec(null, null, 'PlaylistPlugin', 'play', [ "" ]);
-};
-
-PlaylistPlugin.prototype.pause = function() {
-	PhoneGap.exec(null, null, 'PlaylistPlugin', 'pause', [ "" ]);
-};
-
-PlaylistPlugin.prototype.next = function() {
-	PhoneGap.exec(null, null, 'PlaylistPlugin', 'next', [ "" ]);
-};
-
-PlaylistPlugin.prototype.prev = function() {
-	PhoneGap.exec(null, null, 'PlaylistPlugin', 'prev', [ "" ]);
-};
-
-PlaylistPlugin.prototype.stop = function() {
-	PhoneGap.exec(null, null, 'PlaylistPlugin', 'stop', [ "" ]);
-};
-
-PlaylistPlugin.prototype.setVolume = function() {
-	PhoneGap.exec(null, null, 'PlaylistPlugin', 'setVolume', [ "" ]);
-};
-
-PlaylistPlugin.prototype.seek = function(seekTo) {
-	PhoneGap.exec(null, null, 'PlaylistPlugin', 'seek', [ seekTo ]);
-};
-
 PhoneGap.addConstructor(function() {
 	PhoneGap.addPlugin("PlaylistPlugin", new PlaylistPlugin());
 });
@@ -57,10 +29,10 @@ function loadPlaylistItems(e) {
 		var obj = result[i];
 		addPlaylistItem(obj);
 	}
-	//myScroll_playlist.scrollTo(0, 0, 0);
+	// myScroll_playlist.scrollTo(0, 0, 0);
 	hideLoadingIcon();
 	playlist_listview.listview('refresh');
-	//myScroll_playlist.refresh();
+	// myScroll_playlist.refresh();
 }
 
 function addPlaylistItem(item) {
@@ -113,55 +85,4 @@ function playlist_onPause() {
 		playlist_updateMediaButton();
 	}
 
-}
-
-function playlist_onEndtrack() {
-
-	window.plugins.PlaylistPlugin.next();
-}
-
-function changePlayButtonState() {
-	var playButton = $('#img_media_control_play');
-	var stateAImgPath = playButton.attr('data-state-a');
-	var stateBImgPath = playButton.attr('data-state-b');
-	if (playlist_currentState == "PLAY") {
-		$(sender).attr('data-current-path', stateBImgPath);
-	} else {
-		$(sender).attr('data-current-path', stateAImgPath);
-	}
-	changeImagePathWithTimeOut(playButton,
-			playButton.attr('data-current-path'), time_to_swap_image);
-	if (playlist_currentState == "PLAY") {
-		playButton.attr("data-my-state", "true");
-	} else {
-		playButton.attr("data-my-state", "false");
-	}
-}
-
-function playlist_updateMediaButton() {
-	var playButton = $('#img_media_control_play');
-
-	var stateAImgPath = $(playButton).attr('data-state-a');
-	var stateBImgPath = $(playButton).attr('data-state-b');
-	if (playlist_currentState == "PLAY") {
-		$(playButton).attr('data-current-path', stateBImgPath);
-		$(playButton).attr('data-my-state', 'true');
-	} else {
-		$(playButton).attr('data-current-path', stateAImgPath);
-		$(playButton).attr('data-my-state', 'false');
-	}
-	changeImagePathWithTimeOut(playButton, $(playButton).attr(
-			'data-current-path'), time_to_swap_image);
-}
-
-function playlist_updateDurationSeekbar(current, max) {
-	setValueForSeekBar($('#div_field_seekbar input'), current, max);
-}
-
-function playlist_updateDMRName(name) {
-	$('#div_play_dmr_info').html(name);
-}
-
-function playlist_updateDurationString(timeString) {
-	$('#div_play_duration_time').html(timeString);
 }

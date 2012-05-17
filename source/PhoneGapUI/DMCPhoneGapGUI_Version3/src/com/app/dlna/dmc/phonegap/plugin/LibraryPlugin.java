@@ -89,89 +89,44 @@ public class LibraryPlugin extends Plugin {
 		} else if (ACTION_SELECT_ALL.equals(action)) {
 			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(
 					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(), new DMSAddRemoveContainerListener() {
-						ProgressDialog pd;
 
 						@Override
 						public void onActionStart() {
-							pd = new ProgressDialog(MainActivity.INSTANCE);
-							pd.requestWindowFeature(Window.FEATURE_NO_TITLE);
-							pd.setMessage("Loading");
-							pd.setCancelable(false);
-							MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
-									pd.show();
-								}
-							});
+							MainActivity.INSTANCE.showLoadingDialog();
 						}
 
 						@Override
 						public void onActionFail(Exception ex) {
-							MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
-									pd.dismiss();
-								}
-							});
+							MainActivity.INSTANCE.hideLoadingDialog();
 						}
 
 						@Override
 						public void onActionComplete() {
-							MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
-									pd.dismiss();
-								}
-							});
+							MainActivity.INSTANCE.hideLoadingDialog();
 						}
 					});
-			for (DIDLObject object : MainActivity.UPNP_PROCESSOR.getDMSProcessor().getAllObjects()) {
-				sendJavascript("addItemToPlaylist('" + object.getResources().get(0).getValue() + "');");
-			}
-			sendJavascript("hideLoadingIcon();");
+			// for (DIDLObject object :
+			// MainActivity.UPNP_PROCESSOR.getDMSProcessor().getAllObjects()) {
+			// sendJavascript("addItemToPlaylist('" +
+			// object.getResources().get(0).getValue() + "');");
+			// }
+			// sendJavascript("hideLoadingIcon();");
 		} else if (ACTION_DESELECT_ALL.equals(action)) {
 			MainActivity.UPNP_PROCESSOR.getDMSProcessor().removeAllFromPlaylist(
 					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(), new DMSAddRemoveContainerListener() {
-						ProgressDialog pd;
-
 						@Override
 						public void onActionStart() {
-							pd = new ProgressDialog(MainActivity.INSTANCE);
-							pd.requestWindowFeature(Window.FEATURE_NO_TITLE);
-							pd.setMessage("Loading");
-							pd.setCancelable(false);
-							MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
-									pd.show();
-								}
-							});
+							MainActivity.INSTANCE.showLoadingDialog();
 						}
 
 						@Override
 						public void onActionFail(Exception ex) {
-							MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
-									pd.dismiss();
-								}
-							});
+							MainActivity.INSTANCE.hideLoadingDialog();
 						}
 
 						@Override
 						public void onActionComplete() {
-							MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-								@Override
-								public void run() {
-									pd.dismiss();
-								}
-							});
+							MainActivity.INSTANCE.hideLoadingDialog();
 						}
 					});
 			for (DIDLObject object : MainActivity.UPNP_PROCESSOR.getDMSProcessor().getAllObjects()) {

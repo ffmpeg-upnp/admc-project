@@ -34,25 +34,26 @@ function initHomenetworkSubtab() {
 	});
 	
 	preScrollPosition_homenetwork = 0;
-	homeNetworkSubTab.bind('scrollstop', function (){
-		
-		var currentScrollPosition = $(document).scrollTop();
-		if (currentScrollPosition <= preScrollPosition_homenetwork){
-			preScrollPosition_homenetwork = currentScrollPosition;
-			return;
-		}
-		
-		preScrollPosition_homenetwork = currentScrollPosition;
-		var documentHeight = homeNetworkSubTab.height() + 
-			currentPadding_homenetwork + 
-			$(window).height() * 0.18;
-		
-		if (documentHeight > $(window).height()){
-			var currentWindowPosition = currentScrollPosition + 
-				$(window).height() + 15;// 15px is a tolerance-value
+	$(window).bind('scroll', function (){
+		if (currentTab_TabsControl == "library" && currentSubTab == "homenetwork"){
+			var currentScrollPosition = $(document).scrollTop();
+			if (currentScrollPosition <= preScrollPosition_homenetwork){
+				preScrollPosition_homenetwork = currentScrollPosition;
+				return;
+			}
 			
-			if (currentWindowPosition >= documentHeight){
-				onScrollToEndOfPage_HomenetworkContent ();
+			preScrollPosition_homenetwork = currentScrollPosition;
+			var documentHeight = homeNetworkSubTab.height() + 
+				currentPadding_homenetwork + 
+				$(window).height() * 0.18;
+			
+			if (documentHeight > $(window).height()){
+				var currentWindowPosition = currentScrollPosition + 
+					$(window).height() + 15;// 15px is a tolerance-value
+				
+				if (currentWindowPosition >= documentHeight){
+					onScrollToEndOfPage_HomenetworkContent ();
+				}
 			}
 		}
 	});

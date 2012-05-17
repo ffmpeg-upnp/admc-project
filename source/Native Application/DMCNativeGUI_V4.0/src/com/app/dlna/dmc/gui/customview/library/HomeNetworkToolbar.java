@@ -12,6 +12,7 @@ import app.dlna.controller.v4.R;
 
 import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.gui.customview.adapter.CustomArrayAdapter;
+import com.app.dlna.dmc.gui.subactivity.LibraryActivity;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSAddRemoveContainerListener;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
@@ -26,8 +27,8 @@ public class HomeNetworkToolbar extends LinearLayout {
 
 	public HomeNetworkToolbar(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_toolbar_homenetwork,
-				this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+				R.layout.cv_toolbar_homenetwork, this);
 		m_btn_back = ((ImageView) findViewById(R.id.btn_back));
 		m_btn_back.setOnClickListener(onBackClick);
 		m_btn_back.setOnLongClickListener(onBackLongclick);
@@ -78,7 +79,8 @@ public class HomeNetworkToolbar extends LinearLayout {
 	}
 
 	private void modifyPlaylist(String type) {
-		final PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+		LibraryActivity activity = (LibraryActivity) getContext();
+		final PlaylistProcessor playlistProcessor = activity.getPlaylistView().getCurrentPlaylistProcessor();
 		if (playlistProcessor == null) {
 			Toast.makeText(MainActivity.INSTANCE, "Cannot process playlist", Toast.LENGTH_SHORT).show();
 			return;
@@ -106,7 +108,8 @@ public class HomeNetworkToolbar extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_progreProgressDialog = ProgressDialog.show(getContext(), "Processing", "Waiting to add all items");
+					m_progreProgressDialog = ProgressDialog
+							.show(getContext(), "Processing", "Waiting to add all items");
 					m_progreProgressDialog.setCancelable(false);
 				}
 			});

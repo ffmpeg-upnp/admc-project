@@ -43,7 +43,8 @@ function init_contentManagement (){
 	});
 	
 	content_renderer = $("#div_content_info_nowplaying > div");
-	var fontHeight_contentManagement = $(window).height() * 0.052;
+	var fontHeight_contentManagement = $(window).height() * 0.055;
+	fontHeight_contentManagement = Math.round(fontHeight_contentManagement);
 	content_renderer.css("fontSize", fontHeight_contentManagement + "px");
 }
 

@@ -5,6 +5,7 @@ var btn_search_youtube;
 function init_InternetSubtab (){
 	internetSubTab = $('#div_content_internet');
 	internetSubTab.hide();
+	$('#div_content_internet_searchbar').hide();
 	
 	btn_search_youtube = $('#img_btn_search_youtube');
 	btn_search_youtube.bind('tap', function(){

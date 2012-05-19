@@ -184,6 +184,7 @@
 		</div>
 
 		<!--Now playing tab-->
+		<!--
 		<div id="div_content_nowplaying_tab" class="nowplaying_tab">
 			<div id="div_content_info_nowplaying">
 				<div>Nothing to show ---</div>
@@ -271,8 +272,96 @@
 					</div>
 				</div>
 			</div>
+			
 		</div>
+		-->
+		<div id="div_content_info_nowplaying" class="nowplaying_tab">
+			<div>Nothing to show ---</div>
+		</div>
+		
+		<div id="div_content_perform_nowplaying" class="nowplaying_tab">
+			<div id="div_content_perform_handler">
+				<div id="div_content_perform_container"></div>
+			</div>
+		</div>
+		
+		<div id="div_content_controler_nowplaying" class="nowplaying_tab">
+			<div>
+				<div id="div_nowplaying_media_controlBar">
+					<div class="media_controlBar_item">
+						<img id="img_btn_media_previous"
+							src="img/ic_btn_media_previous_normal.png" class="img_normal"
+							data-enable="true"
+							data-highlight-image="img/ic_btn_media_previous_pressed.png"
+							data-normal-image="img/ic_btn_media_previous_normal.png">
+					</div>
 
+					<div class="media_controlBar_item">
+						<img id="img_btn_media_pause_play"
+							src="img/ic_btn_media_pause_normal.png" class="img_double_state"
+							data-my-state="true" data-enable="true"
+							data-highlight-a="img/ic_btn_media_pause_pressed.png"
+							data-highlight-b="img/ic_btn_media_play_pressed.png"
+							data-state-a="img/ic_btn_media_pause_normal.png"
+							data-state-b="img/ic_btn_media_play_normal.png"
+							data-current-path="img/ic_btn_media_pause_normal.png">
+					</div>
+
+					<div class="media_controlBar_item">
+						<img id="img_btn_media_stop"
+							src="img/ic_btn_media_stop_normal.png" class="img_normal"
+							data-enable="true"
+							data-highlight-image="img/ic_btn_media_stop_pressed.png"
+							data-normal-image="img/ic_btn_media_stop_normal.png">
+					</div>
+
+					<div class="media_controlBar_item">
+						<img id="img_btn_media_next"
+							src="img/ic_btn_media_next_normal.png" class="img_normal"
+							data-enable="true"
+							data-highlight-image="img/ic_btn_media_next_pressed.png"
+							data-normal-image="img/ic_btn_media_next_normal.png">
+					</div>
+
+					<div class="media_controlBar_item">
+						<img id="img_btn_media_changeitem"
+							src="img/ic_btn_media_changeitem_normal.png" class="img_normal"
+							data-enable="true"
+							data-highlight-image="img/ic_btn_media_changeitem_pressed.png"
+							data-normal-image="img/ic_btn_media_changeitem_normal.png">
+					</div>
+
+					<div class="media_controlBar_item">
+						<img id="img_btn_media_changeplaylist"
+							src="img/ic_btn_media_changeplaylist_normal.png"
+							class="img_normal" data-enable="true"
+							data-highlight-image="img/ic_btn_media_changeplaylist_pressed.png"
+							data-normal-image="img/ic_btn_media_changeplaylist_normal.png">
+					</div>
+
+					</div>
+					<div id="div_nowplaying_media_seekBar">
+						<input id="slider_seek_bar" data-seeking="false" type="range"
+							value="50" min="0" max="300" style="display: none;"
+							data-highlight="true" data-theme="a" />
+					</div>
+					<div id="div_nowplaying_media_infoBar">
+						<div id="div_nowplaying_media_durationTime">
+							00:00:00/00:00:00</div>
+
+						<div id="div_nowplaying_media_volumeBar">
+							<input id="slider_volume_bar" type="range" value="20" min="0"
+								max="50" style="display: none;" data-highlight="true"
+								data-theme="a" />
+						</div>
+
+						<div id="div_nowplaying_media_volumeImage">
+							<img src="img/ic_volume.png">
+						</div>
+					</div>
+				</div>
+			</div>
+		
 		<!--Footer-->
 		<div id="div_remote_footer_controler"
 			ontouchmove="preventTouchMove(event);">

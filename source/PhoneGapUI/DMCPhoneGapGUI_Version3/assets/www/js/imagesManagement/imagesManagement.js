@@ -72,3 +72,15 @@ function changeStateImage(sender) {
 		$(sender).attr('data-my-state', 'true');
 	}
 }
+
+function disableButton(sender) {
+	sender.attr("data-enable", "false");
+	var disableImagePath = sender.attr("data-disable-image");
+	sender.removeAttr("src").attr("src", disableImagePath);
+}
+
+function enableButton(sender) {
+	sender.attr("data-enable", "true");
+	var enableImagePath = sender.attr("data-normal-image");
+	sender.removeAttr("src").attr("src", enableImagePath);
+}

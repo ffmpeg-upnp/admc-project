@@ -1,75 +1,60 @@
 var dmr_handler;
 var dmr_slider;
-var dmr_mouseDown;
-var dmr_mouseX;
 var dmr_lenght;
-var dmr_currentIndex;
-var dmr_xOffset;
-var dmr_handlerWidth;
-var dmr_tolerance;
-var dmr_delayTime;
-var dmr_infotextHeight;
+var dmr_currentLeft;
+var dmr_itemWidth;
+var dmr_numberToPresent;
 
 var dmr_selectedItem;
-var btn_dmrPlayController;
-
 var dmr_taphold;
+
+var btn_dmrPlayController;
+var btn_dmrGoNext;
+var btn_dmrGoPrevious;
 
 function init_DMRManagement() {
 	dmr_taphold = false;
-	dmr_mouseDown = false;
-	dmr_mouseX = 0;
-	dmr_lenght = 1;
-	dmr_currentIndex = 0;
-	dmr_xOffset = 0;
-	dmr_handlerWidth = 0;
-	dmr_tolerance = 0.25;
-	dmr_delayTime = 300;
-
-	dmr_slider = $('#div_dmr_list_container');
+	dmr_lenght = 0;
+	dmr_currentLeft = 0;
+	dmr_numberToPresent = 3;
+	dmr_selectedItem = null;
+	dmr_slider =  $('#div_dmr_list_container');
 	dmr_handler = $('#div_dmr_handler');
-	dmr_handlerWidth = dmr_handler.width();
-	dmr_infotextHeight = dmr_handler.height() * 0.15;
-
-	resetCSS_dmrItems();
-	console.log(dmr_handlerWidth + 'px');
-
-	selectDMRitem($('#div_dmr_list_container div.div_dmr_item:eq(0)'));
-
-	dmr_handler.bind('vmousedown', function(event) {
-		onMouseDown_dmrHandler(event);
+	dmr_itemWidth = dmr_handler.width() / dmr_numberToPresent;
+	
+	btn_dmrGoNext = $('#div_dmr_move_right > img');
+	btn_dmrGoNext.hide();
+	btn_dmrGoPrevious = $('#div_dmr_move_left > img');
+	btn_dmrGoPrevious.hide();
+	
+	btn_dmrGoPrevious.bind ('tap', function (){
+		if ($(this).attr('data-enable') == "true"){
+			onTap_moveLeftButton ($(this));
+		}
 	});
-
-	dmr_handler.bind('vmousemove', function(event) {
-		onMouseMove_dmrHandler(event);
+	
+	btn_dmrGoNext.bind ('tap', function (){
+		if ($(this).attr('data-enable') == "true"){
+			onTap_moveRightButton ($(this));
+		}
 	});
-
-	dmr_handler.bind('vmouseup', function(event) {
-		onMouseUp_dmrHandler(event);
-	});
-
+	
 	$('.img_dmr_item').live('tap', function() {
 		if (!dmr_taphold)
 			onTap_dmrItem($(this));
 		else
 			dmr_taphold = false;
 	});
-
+	
 	$('.img_dmr_item').live('taphold', function() {
 		dmr_taphold = true;
-		onTapHold_dmrItem($(this));
-	});
-
-	btn_dmrPlayController = $('#div_dmr_play img');
-	btn_dmrPlayController.bind('tap', function() {
-		onTap_playButton($(this));
+		onTapHold_dmrItem ($(this));
 	});
 }
 
 function resetCSS_dmrItems() {
 	var listOfDMRitem = $('.div_dmr_item');
-	listOfDMRitem.css("width", dmr_handlerWidth + 'px');
-	$('.div_dmr_info').css('fontSize', dmr_infotextHeight + 'px');
+	listOfDMRitem.css("width", dmr_itemWidth + 'px');
 }
 
 function selectDMRitem(item) {
@@ -77,107 +62,142 @@ function selectDMRitem(item) {
 		dmr_selectedItem.attr("data-selected", "false");
 		dmr_selectedItem.find("img").css("-webkit-border-radius", "0px");
 		dmr_selectedItem.find("img").css("border", "0px");
-		/* dmr_selectedItem.find("img").css("background", "none"); */
 	}
 	dmr_selectedItem = item;
 	dmr_selectedItem.attr("data-selected", "true");
 	dmr_selectedItem.find("img").css("-webkit-border-radius", "5px");
 	dmr_selectedItem.find("img").css("border", "solid 2px #33B5E5");
-	/*
-	 * dmr_selectedItem.find("img").css("background", "rgba(51, 181, 229,
-	 * 0.5)");
-	 */
 }
 
-function onMouseDown_dmrHandler(event) {
-	if (!dmr_mouseDown) {
-		dmr_mouseDown = true;
-		dmr_mouseX = event.pageX;
-	}
-}
-
-function onMouseMove_dmrHandler(event) {
-	if (dmr_mouseDown) {
-		dmr_xOffset = event.pageX - dmr_mouseX;
-		if (dmr_xOffset < 0) {
-			/* if (dmr_currentIndex < dmr_lenght - 1) */
-			dmr_slider.css('left', -dmr_currentIndex * dmr_handlerWidth
-					+ dmr_xOffset);
-		} else {
-			/* if (dmr_currentIndex > 0) */
-			dmr_slider.css('left', -dmr_currentIndex * dmr_handlerWidth
-					+ dmr_xOffset);
-		}
-	}
-}
-
-function onMouseUp_dmrHandler(event) {
-	dmr_mouseDown = false;
-	if (dmr_xOffset == 0) {
-		return false;
-	}
-
-	var fullWidth = dmr_handlerWidth;
-	var haflWidth = fullWidth / 2;
-
-	if (-dmr_xOffset > haflWidth - fullWidth * dmr_tolerance) {
-		dmr_currentIndex++;
-		if (dmr_currentIndex >= dmr_lenght)
-			dmr_currentIndex = dmr_lenght - 1;
-		dmr_slider.animate({
-			left : -dmr_currentIndex * dmr_handlerWidth
-		}, dmr_delayTime);
-	} else if (dmr_xOffset > haflWidth - fullWidth * dmr_tolerance) {
-		dmr_currentIndex--;
-		if (dmr_currentIndex < 0)
-			dmr_currentIndex = 0;
-		dmr_slider.animate({
-			left : -dmr_currentIndex * dmr_handlerWidth
-		}, dmr_delayTime);
-	} else {
-		dmr_slider.animate({
-			left : -dmr_currentIndex * dmr_handlerWidth
-		}, dmr_delayTime);
-	}
-	dmr_xOffset = 0;
-	return true;
-}
 // -----------------------------PUBLIC FUNCTION--------------
-function addNewDMRitem(imageUrl, deviceUrl, deviceName) {
+function addNewDMRitem(imageUrl, deviceUdn, deviceName) {
 	if (imageUrl == null) {
 		imageUrl = "img/ic_device_unknow_player.png";
 	}
 	var containerWidth = dmr_slider.width();
-	containerWidth += dmr_handlerWidth;
+	containerWidth += dmr_itemWidth;
 	dmr_slider.css('width', containerWidth + 'px');
 	dmr_slider
 			.append('<div class="div_dmr_item" data-selected="false" align="center" data-url="'
-					+ deviceUrl
+					+ deviceUdn
 					+ '">'
 					+ '<img class ="img_dmr_item" src="'
 					+ imageUrl
 					+ '">'
-					+ '<div class="div_dmr_info">'
-					+ deviceName + '</div>' + '</div>');
+					/*+ '<div class="div_dmr_info">'
+					+ deviceName + '</div>' */
+					+ '</div>');
 	resetCSS_dmrItems();
 	dmr_lenght++;
+	if (dmr_lenght - 1 >= dmr_currentLeft + dmr_numberToPresent ){
+		btn_dmrGoNext.show();
+	}
 }
 
-function removeDMRitem(deviceUrl) {
+function removeDMRitem(deviceUdn) {
+	var removedItem = $("#div_dmr_list_container div.div_dmr_item[data-url='" + deviceUdn + "']");
+	if (removedItem.html() == null)
+		return;
+	
+	if (removedItem.attr('data-selected') == "true"){
+		dmr_selectedItem = null;
+		alert('set null');
+	}
+	
+	var index = removedItem.index();
+	removedItem.remove();
+	
 	dmr_lenght--;
+	var containerWidth = dmr_lenght * dmr_itemWidth;
+	dmr_slider.css('width', containerWidth + 'px');
+		
+	if (index < dmr_currentLeft){
+		dmr_currentLeft--;
+		var offSet = dmr_currentLeft * dmr_itemWidth * -1;
+		dmr_slider.animate({left: offSet}, "slow", function(){
+			if (dmr_currentLeft == 0){
+				btn_dmrGoPrevious.hide();
+			}
+		});
+	}else if (index == dmr_currentLeft){
+		if (dmr_currentLeft == 0){
+			if (dmr_lenght <= dmr_numberToPresent){
+				btn_dmrGoNext.hide();
+			}
+		}else if (dmr_currentLeft > 0){
+			dmr_currentLeft--;
+			var offSet = dmr_currentLeft * dmr_itemWidth * -1;
+			dmr_slider.animate({left: offSet}, "slow", function(){
+				if (dmr_currentLeft == 0){
+					btn_dmrGoPrevious.hide();
+				}
+			});
+		}
+	}else{
+		if (dmr_currentLeft == 0){
+			if (dmr_currentLeft + dmr_numberToPresent >= dmr_lenght)
+				btn_dmrGoNext.hide();
+		}else if (dmr_currentLeft > 0){
+			dmr_currentLeft--;
+			var offSet = dmr_currentLeft * dmr_itemWidth * -1;
+			dmr_slider.animate({left: offSet}, "slow", function(){
+				if (dmr_currentLeft == 0){
+					btn_dmrGoPrevious.hide();
+				}
+			});
+		}
+	}
+	
 }
 
 // ------------------------------EVENT FUNCTION---------------------------
 function onTap_dmrItem(sender) {
-	console.log('DMR: tap');
-	selectDMRitem($('#div_dmr_list_container div.div_dmr_item:eq('
-			+ dmr_currentIndex + ')'));
+	//alert(sender.parent().attr("data-url"));
+	selectDMRitem(sender.parent());
 }
 
 function onTapHold_dmrItem(sender) {
-	console.log('DMR: tap hold');
+
 }
 
 function onTap_playButton(sender) {
 
 }
+
+function onTap_moveLeftButton (sender){
+	if (dmr_currentLeft > 0){
+		dmr_currentLeft--;
+		var offSet = dmr_currentLeft * dmr_itemWidth * -1;
+		offSet += 'px';
+		dmr_slider.animate({left: offSet}, "slow", function(){
+			if (dmr_currentLeft == 0){
+				btn_dmrGoPrevious.hide();
+			}
+		});
+		if (dmr_lenght - 1 >= dmr_currentLeft + dmr_numberToPresent){
+			btn_dmrGoNext.show();
+		}
+	}
+}
+
+function onTap_moveRightButton (sender){
+	if (dmr_lenght - 1 >= dmr_currentLeft + dmr_numberToPresent ){
+		dmr_currentLeft++;
+		var offSet = dmr_currentLeft * dmr_itemWidth * -1;
+		offSet += 'px';
+		dmr_slider.animate({left: offSet}, "slow", function(){
+			if (dmr_currentLeft + dmr_numberToPresent == dmr_lenght){
+				btn_dmrGoNext.hide();
+			}
+		});
+		
+		if (dmr_currentLeft == 1){
+			btn_dmrGoPrevious.show();
+		}
+	}
+}
+
+
+
+
+

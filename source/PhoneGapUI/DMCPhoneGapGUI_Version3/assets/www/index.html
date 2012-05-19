@@ -287,8 +287,30 @@
 
 		<div id="div_dmr_controler" ontouchmove="preventTouchMove(event);">
 			<div id="div_dmr_list">
-				<div id="div_dmr_handler" class="div_dmr_container">
-					<div id="div_dmr_list_container"></div>
+				<div class="div_dmr_container">
+					<div id="div_dmr_move_left" class="dmr_movement_controller">
+						<img src="img/ic_btn_dmrcontroller_previous_normal.png"
+							class="img_normal"
+							data-enable="true"
+							data-highlight-image="img/ic_btn_dmrcontroller_previous_pressed.png"
+							data-normal-image="img/ic_btn_dmrcontroller_previous_normal.png">
+					</div>
+					
+					<div id="div_dmr_handler">
+						<div id="div_dmr_list_container">
+							<!-- <div class="div_dmr_item" data-selected="true" align="center" data-url="LocalPlayer">
+								<img class ="img_dmr_item" src="img/ic_device_unknow_player.png">
+							</div> -->
+						</div>
+					</div>
+					
+					<div id="div_dmr_move_right" class="dmr_movement_controller">
+						<img src="img/ic_btn_dmrcontroller_next_normal.png"
+							class="img_normal"
+							data-enable="true"
+							data-highlight-image="img/ic_btn_dmrcontroller_next_pressed.png"
+							data-normal-image="img/ic_btn_dmrcontroller_next_normal.png">
+					</div>
 				</div>
 			</div>
 

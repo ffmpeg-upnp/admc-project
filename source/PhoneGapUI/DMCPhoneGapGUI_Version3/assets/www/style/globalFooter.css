@@ -58,7 +58,6 @@
 	height: 96%;
 	border: solid 1px #787878;
 	-webkit-border-radius: 5px;
-	/* background: rgba(51, 181, 229, 0.15); */
 	background-color: black;
 }
 
@@ -72,12 +71,43 @@
 	left: 10%;
 }
 
-#div_dmr_list_container{
+#div_dmr_handler{
 	position: relative;
 	pading: 0px;
 	margin: 0px;
 	height: 100%;
-	width: 100%; /* just init */
+	width: 80%; /* just init */
+	/* background-color: red; */
+	float: left;
+	overflow: hidden;
+}
+
+#div_dmr_list_container{
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	height: 94%;
+	top: 3%;
+	width: 0px; /* just init */
+	background-color: gray; 
+}
+
+.dmr_movement_controller{
+	position: relative;
+	pading: 0px;
+	margin: 0px;
+	height: 100%;
+	width: 10%; /* just init */
+	float: left;
+}
+
+.dmr_movement_controller img{
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	width: 100%;
+	top: 30%;
+	height: 40%;
 }
 
 .div_dmr_item{
@@ -86,19 +116,21 @@
 	margin: 0px;
 	height: 100%;
 	float: left;
+	/* background-color: red; */
+	overflow: hidden;
 }
 
 .img_dmr_item{
 	position: relative;
 	padding: 0px;
 	margin: 0px;
-	height: 70%;
-	top: 5%;
+	height: 90%;
+	top: 6%;
 	width: auto;
 }
 
-.div_dmr_info{
-	position: absolute;
+/* .div_dmr_info{
+	position: relative;
 	padding: 0px;
 	margin: 0px;
 	height: 15%;
@@ -107,4 +139,4 @@
 	color: #EBEBEB;
 	text-align: center;
 	font-weight: bold;
-}
+} */

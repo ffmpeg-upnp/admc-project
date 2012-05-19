@@ -2,7 +2,7 @@ var currentTab_TabsControl;
 
 function initTabs (){
 	currentTab_TabsControl = "library";
-	
+
 	init_LibraryTab();
 	init_NowplayingTab();
 	init_SettingField();

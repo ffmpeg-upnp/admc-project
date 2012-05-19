@@ -39,6 +39,7 @@ function close_GlobalFooter (){
 	dmrRemoteControler.animate({bottom: '-1%'}, "fast");
 	animateDown_HomeNetworkSubtab();
 	animateDown_PlaylistSubtab();
+	
 	$('#div_content_nowplaying_tab').animate({height: '85%'}, "fast");
 	$('#div_content_perform_nowplaying').animate(
 			{height: nowplaying_content_perform_maxheight}, "fast");
@@ -54,8 +55,8 @@ function open_GlobalFooter (){
 	$('#div_content_nowplaying_tab').animate({height: '70%'}, "fast");
 	$('#div_content_perform_nowplaying').animate(
 			{height: nowplaying_content_perform_minheight}, "fast");
+	
 	dmrRemoteControler.animate({bottom: '14%'}, "fast", function(){
-		
 		repadding_HomeNetworkSubtab();
 		repadding_PlaylistSubtab();
 		repadding_InternetSubtab();

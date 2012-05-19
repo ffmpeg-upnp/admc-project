@@ -12,9 +12,8 @@ $(document).ready(function() {
 	initGlobalFooter();
 	initTabs();
 	initImagesManagement();
-
 	listview_homenetwork = $('#listview_homenetwork');
-
+	//alert('safe');
 });
 
 function initPage() {
@@ -29,4 +28,5 @@ function ontap_settingButton(sender) {
 	//addNewDMRitem("img/ic_device_unknow_player.png", "a", "Vice car lone device");
 	//addNewContentItem("video", "hahaha", null, "");
 	toggle_settingTable_settingField();
+	//removeDMRitem("LocalPlayer");
 }

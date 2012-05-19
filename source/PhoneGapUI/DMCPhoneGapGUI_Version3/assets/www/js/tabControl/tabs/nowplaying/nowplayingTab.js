@@ -2,11 +2,13 @@ var nowplaying_content_perform_minheight;
 var nowplaying_content_perform_maxheight;
 
 function init_NowplayingTab() {
-	console.log('init Nowplaying tab');
+	//console.log('init Nowplaying tab');
 	$('#div_content_internet_searchbar').hide(); // hide global search bar in internet-tab
 	$('#div_content_nowplaying_tab').hide();// hide all nowplaying tab
-	console.log("div_content_nowplaying_tab height = "
+	
+	/*console.log("div_content_nowplaying_tab height = "
 			+ $('#div_content_nowplaying_tab').height());
+	
 	var nowplaying_content_min_height = $('#div_content_nowplaying_tab')
 			.height();
 	var nowplaying_content_max_height = nowplaying_content_min_height / 70 * 85;
@@ -29,7 +31,6 @@ function init_NowplayingTab() {
 	nowplaying_content_perform_maxheight += 'px';
 
 	init_contentManagement();
-
 	$('#div_content_info_nowplaying').css('height',
 			(nowplaying_content_info_height - 1) + 'px');
 	$('#div_content_perform_nowplaying').css('top',
@@ -77,6 +78,7 @@ function init_NowplayingTab() {
 	$('#slider_volume_bar').siblings('.ui-slider').bind ('vmouseup', function (){
 		onChange_VolumeBar($('#slider_volume_bar'));
 	});
+	*/
 }
 
 function show_NowplayingTab() {

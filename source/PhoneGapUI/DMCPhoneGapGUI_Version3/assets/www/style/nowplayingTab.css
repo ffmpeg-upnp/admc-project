@@ -33,11 +33,11 @@
 	width: 100%;
 	height: 32%;
 	top: 20%;
-	background-color: red;
+	background-color: black;
 	z-index: 9;
 }
 
-#div_content_perform_handler {
+#div_content_perform_wrapper {
 	position: absolute;
 	padding: 0px;
 	margin: 0px;
@@ -48,11 +48,42 @@
 	background-color: green;
 }
 
+.div_content_perform_controller{
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	float: left;
+	height: 100%;
+	width: 10%;
+	background-color: black;
+}
+
+.div_content_perform_controller img{
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	width: 100%;
+	height: auto;
+	top: 50%;	
+}
+
+#div_content_perform_handler{
+	position: relative;
+	padding: 0px;
+	margin: 0px;
+	float: left;
+	height: 100%;
+	width: 80%;
+	background-color: black;
+	overflow: hidden;
+}
+
 #div_content_perform_container {
 	position: relative;
 	padding: 0px;
 	margin: 0px;
-	width: 0%; just init
+	width: 0px; /*just init*/
+	background-color: black;
 	height: 100%;
 }
 
@@ -63,13 +94,16 @@
 	height: 100%;
 	text-align: center;
 	float: left;
+	background-color: black;
+	overflow: hidden;
 }
 
 .img_content_item {
 	position: relative;
 	padding: 0px;
 	margin: 0px;
-	height: 100%;
+	height: 90%;
+	top: 6%;
 	width: auto;
 }
 

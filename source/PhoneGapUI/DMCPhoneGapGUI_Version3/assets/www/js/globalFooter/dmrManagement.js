@@ -29,13 +29,13 @@ function init_DMRManagement() {
 	
 	btn_dmrGoPrevious.bind ('tap', function (){
 		if ($(this).attr('data-enable') == "true"){
-			onTap_moveLeftButton ($(this));
+			onTap_DMRmoveLeftButton ($(this));
 		}
 	});
 	
 	btn_dmrGoNext.bind ('tap', function (){
 		if ($(this).attr('data-enable') == "true"){
-			onTap_moveRightButton ($(this));
+			onTap_DMRmoveRightButton ($(this));
 		}
 	});
 	
@@ -84,8 +84,6 @@ function addNewDMRitem(imageUrl, deviceUdn, deviceName) {
 					+ '<img class ="img_dmr_item" src="'
 					+ imageUrl
 					+ '">'
-					/*+ '<div class="div_dmr_info">'
-					+ deviceName + '</div>' */
 					+ '</div>');
 	resetCSS_dmrItems();
 	dmr_lenght++;
@@ -152,7 +150,6 @@ function removeDMRitem(deviceUdn) {
 
 // ------------------------------EVENT FUNCTION---------------------------
 function onTap_dmrItem(sender) {
-	//alert(sender.parent().attr("data-url"));
 	selectDMRitem(sender.parent());
 }
 
@@ -164,7 +161,7 @@ function onTap_playButton(sender) {
 
 }
 
-function onTap_moveLeftButton (sender){
+function onTap_DMRmoveLeftButton (sender){
 	if (dmr_currentLeft > 0){
 		dmr_currentLeft--;
 		var offSet = dmr_currentLeft * dmr_itemWidth * -1;
@@ -180,7 +177,7 @@ function onTap_moveLeftButton (sender){
 	}
 }
 
-function onTap_moveRightButton (sender){
+function onTap_DMRmoveRightButton (sender){
 	if (dmr_lenght - 1 >= dmr_currentLeft + dmr_numberToPresent ){
 		dmr_currentLeft++;
 		var offSet = dmr_currentLeft * dmr_itemWidth * -1;

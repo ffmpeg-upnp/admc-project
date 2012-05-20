@@ -29,4 +29,5 @@ function ontap_settingButton(sender) {
 	//addNewContentItem("video", "hahaha", null, "");
 	toggle_settingTable_settingField();
 	//removeDMRitem("LocalPlayer");
+	//addNewContentItem("video", "My Video.mp4", null, "abcd");
 }

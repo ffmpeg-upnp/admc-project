@@ -54,11 +54,13 @@ function hide_NowplayingTab() {
 function animateDown_NowplayingTab(){
 	$('#div_content_perform_nowplaying').animate({height: '47%'}, "fast");
 	$('#div_content_controler_nowplaying').animate({top: '67%'}, "fast");
+	animateDown_contentManagement();
 }
 
 function animateUp_NowplayingTab(){
 	$('#div_content_perform_nowplaying').animate({height: '32%'}, "fast");
 	$('#div_content_controler_nowplaying').animate({top: '52%'}, "fast");
+	animateUp_contentManagement();
 }
 
 //----------------------------EVENT FUNCTION-----------------------------

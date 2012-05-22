@@ -16,6 +16,7 @@ import org.teleal.cling.support.model.item.Item;
 import org.teleal.cling.support.model.item.MusicTrack;
 import org.teleal.cling.support.model.item.VideoItem;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -244,7 +245,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 					URL url = new URL(urlString);
 					final Bitmap icon = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 					m_cacheDMSIcon.put(udn, icon);
-					MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+					((Activity) getContext()).runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {
@@ -253,7 +254,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 					});
 
 				} catch (Exception ex) {
-					MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+					((Activity) getContext()).runOnUiThread(new Runnable() {
 
 						@Override
 						public void run() {

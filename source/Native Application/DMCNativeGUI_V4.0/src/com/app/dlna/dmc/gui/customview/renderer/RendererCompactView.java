@@ -40,7 +40,8 @@ public class RendererCompactView extends LinearLayout {
 
 	public RendererCompactView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_renderer_compact, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+				R.layout.cv_renderer_compact, this);
 		m_ll_renderers = (LinearLayout) ((HorizontalScrollView) findViewById(R.id.gridView_renderer)).getChildAt(0);
 		m_inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		m_btn_quickPlayPause = (ImageView) findViewById(R.id.btn_quickPlayPause);
@@ -52,7 +53,7 @@ public class RendererCompactView extends LinearLayout {
 	public void initComponent() {
 		for (Device device : MainActivity.UPNP_PROCESSOR.getDMRList()) {
 			m_ll_renderers.addView(getView(device));
-			if (device instanceof LocalDevice) {
+			if (device instanceof LocalDevice && MainActivity.UPNP_PROCESSOR.getCurrentDMR() == null) {
 				MainActivity.UPNP_PROCESSOR.setCurrentDMR(device.getIdentity().getUdn());
 			}
 		}
@@ -72,7 +73,8 @@ public class RendererCompactView extends LinearLayout {
 		ret.setTag(device);
 		final ImageView icon = (ImageView) ret.findViewById(R.id.icon);
 		final Icon[] icons = device.getIcons();
-		if (device instanceof RemoteDevice && icons != null && icons.length > 0 && icons[0] != null && icons[0].getUri() != null) {
+		if (device instanceof RemoteDevice && icons != null && icons.length > 0 && icons[0] != null
+				&& icons[0].getUri() != null) {
 			loadRendererIcon(device, icon, icons);
 		} else {
 			icon.setImageResource(R.drawable.ic_device_unknow_player);
@@ -92,7 +94,8 @@ public class RendererCompactView extends LinearLayout {
 					final RemoteDevice remoteDevice = (RemoteDevice) device;
 
 					String urlString = remoteDevice.getIdentity().getDescriptorURL().getProtocol() + "://"
-							+ remoteDevice.getIdentity().getDescriptorURL().getAuthority() + icons[0].getUri().toString();
+							+ remoteDevice.getIdentity().getDescriptorURL().getAuthority()
+							+ icons[0].getUri().toString();
 					URL url = new URL(urlString);
 					final Bitmap bm = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 					MainActivity.INSTANCE.runOnUiThread(new Runnable() {
@@ -195,7 +198,8 @@ public class RendererCompactView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_quickPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_media_quickplay));
+					m_btn_quickPlayPause
+							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_media_quickplay));
 					m_btn_quickPlayPause.setTag(R.string.play);
 					m_btn_quickPlayPause.invalidate();
 				}
@@ -208,7 +212,8 @@ public class RendererCompactView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_quickPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_media_quickpause));
+					m_btn_quickPlayPause.setImageDrawable(getResources()
+							.getDrawable(R.drawable.ic_btn_media_quickpause));
 					m_btn_quickPlayPause.setTag(R.string.pause);
 					m_btn_quickPlayPause.invalidate();
 				}
@@ -221,7 +226,8 @@ public class RendererCompactView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_quickPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_media_quickplay));
+					m_btn_quickPlayPause
+							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_media_quickplay));
 					m_btn_quickPlayPause.setTag(R.string.play);
 					m_btn_quickPlayPause.invalidate();
 				}

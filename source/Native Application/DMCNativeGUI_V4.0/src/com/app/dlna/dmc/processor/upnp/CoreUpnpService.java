@@ -237,7 +237,7 @@ public class CoreUpnpService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.e(TAG, "Service on Bind");
+		Log.e(TAG, "Service on Bind, intent = " + intent);
 		return binder;
 	}
 
@@ -283,6 +283,7 @@ public class CoreUpnpService extends Service {
 		}
 
 		public void setCurrentDMR(UDN uDN) {
+			Log.e(TAG, "Set current DMR = " + uDN);
 			if (m_dmrProcessor != null)
 				m_dmrProcessor.dispose();
 			m_dmrProcessor = null;

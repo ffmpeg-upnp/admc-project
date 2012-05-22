@@ -188,8 +188,10 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 								Type itemType = m_currentItem.getType();
 								if (itemType != Type.IMAGE_LOCAL && itemType != Type.IMAGE_REMOTE)
 									try {
-										m_player.setDataSource(m_currentItem.getUrl());
-										m_player.prepareAsync();
+										if (m_player != null) {
+											m_player.setDataSource(m_currentItem.getUrl());
+											m_player.prepareAsync();
+										}
 
 									} catch (IllegalArgumentException e) {
 										e.printStackTrace();

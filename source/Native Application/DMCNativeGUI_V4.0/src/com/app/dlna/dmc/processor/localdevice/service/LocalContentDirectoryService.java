@@ -193,7 +193,6 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	@Override
 	public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult,
 			long maxResults, SortCriterion[] orderby) throws ContentDirectoryException {
-		Log.d(TAG, "Browse " + objectID);
 		BrowseResult br = null;
 		int count = 0;
 		try {
@@ -237,5 +236,27 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			count = sourceList.size();
 		}
 		return count;
+	}
+
+	public static DIDLObject getDIDLObjectFromPath(String path) {
+		Log.i(TAG, "uri to play = " + path);
+		String uriToPlay = Utility.createLink(path);
+		for (MusicTrack music : m_listMusic) {
+			if (music.getResources().get(0).getValue().equals(uriToPlay)) {
+				return music;
+			}
+		}
+		for (ImageItem image : m_listPhoto) {
+			if (image.getResources().get(0).getValue().equals(uriToPlay)) {
+				return image;
+			}
+		}
+		for (VideoItem video : m_listVideo) {
+			if (video.getResources().get(0).getValue().equals(uriToPlay)) {
+				return video;
+			}
+		}
+
+		return null;
 	}
 }

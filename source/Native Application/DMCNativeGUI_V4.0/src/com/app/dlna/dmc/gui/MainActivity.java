@@ -14,6 +14,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -46,20 +47,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
 
-import com.app.dlna.dmc.gui.abstractactivity.UpnpListenerTabActivity;
 import com.app.dlna.dmc.gui.customview.renderer.RendererCompactView;
 import com.app.dlna.dmc.gui.customview.renderer.RendererCompactView.OnDMRChangeListener;
 import com.app.dlna.dmc.gui.subactivity.LibraryActivity;
 import com.app.dlna.dmc.gui.subactivity.NowPlayingActivity;
 import com.app.dlna.dmc.processor.impl.UpnpProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
+import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.SystemListener;
 import com.app.dlna.dmc.processor.localdevice.service.LocalContentDirectoryService;
 import com.app.dlna.dmc.processor.nfc.NFCUtils;
+import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 import com.app.dlna.dmc.processor.receiver.SDCardReceiver;
 import com.app.dlna.dmc.processor.systemservice.RestartService;
 import com.app.dlna.dmc.processor.upnp.CoreUpnpService;
 
-public class MainActivity extends UpnpListenerTabActivity {
+public class MainActivity extends TabActivity implements SystemListener {
 	private static final int NOWPLAYING = 1;
 	private static final int LIBRARY = 0;
 	private static final String TAG = MainActivity.class.getName();
@@ -80,6 +82,7 @@ public class MainActivity extends UpnpListenerTabActivity {
 	private ImageView btn_toggleRendererView;
 
 	private static final int SIZE = 2;
+	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
 	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
 			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
 
@@ -136,7 +139,7 @@ public class MainActivity extends UpnpListenerTabActivity {
 				m_waitToWriteTAG = false;
 			}
 		});
-
+		PlaylistManager.RESOLVER = getContentResolver();
 	}
 
 	private OnTabChangeListener changeListener = new OnTabChangeListener() {
@@ -170,7 +173,6 @@ public class MainActivity extends UpnpListenerTabActivity {
 
 	@Override
 	public void onStartComplete() {
-		super.onStartComplete();
 		createTabs();
 		m_rendererCompactView = (RendererCompactView) findViewById(R.id.cv_compact_dmr);
 		m_rendererCompactView.initComponent();
@@ -245,7 +247,6 @@ public class MainActivity extends UpnpListenerTabActivity {
 
 	@Override
 	public void onStartFailed() {
-		super.onStartFailed();
 		new AlertDialog.Builder(MainActivity.this)
 				.setTitle("Network Info")
 				.setMessage(
@@ -282,7 +283,6 @@ public class MainActivity extends UpnpListenerTabActivity {
 
 	@Override
 	public void onNetworkChanged() {
-		super.onNetworkChanged();
 		runOnUiThread(new Runnable() {
 
 			@Override
@@ -303,7 +303,6 @@ public class MainActivity extends UpnpListenerTabActivity {
 
 	@Override
 	public void onRouterError(final String cause) {
-		super.onRouterError(cause);
 		runOnUiThread(new Runnable() {
 
 			@Override
@@ -325,7 +324,6 @@ public class MainActivity extends UpnpListenerTabActivity {
 
 	@Override
 	public void onRouterDisabledEvent() {
-		super.onRouterDisabledEvent();
 		runOnUiThread(new Runnable() {
 
 			@Override
@@ -341,7 +339,6 @@ public class MainActivity extends UpnpListenerTabActivity {
 
 	@Override
 	public void onRouterEnabledEvent() {
-		super.onRouterEnabledEvent();
 		runOnUiThread(new Runnable() {
 
 			@Override
@@ -477,6 +474,7 @@ public class MainActivity extends UpnpListenerTabActivity {
 
 	@SuppressWarnings("rawtypes")
 	protected void onNewIntent(Intent intent) {
+		Log.i(TAG, "new intent = " + intent);
 		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
 			if (m_waitToWriteTAG && m_messageToWrite != null) {
 				// write message to TAG
@@ -532,6 +530,9 @@ public class MainActivity extends UpnpListenerTabActivity {
 				Log.e(TAG, "New Empty TAG detected, trying to write data");
 				writeDataToTAG(intent);
 			}
+		} else if (MainActivity.ACTION_PLAYTO.equals(intent.getAction())) {
+			Log.e(TAG,"Action playto");
+			m_tabHost.setCurrentTab(NOWPLAYING);
 		}
 	}
 

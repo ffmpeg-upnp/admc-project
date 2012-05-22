@@ -66,6 +66,15 @@ public class Utility {
 		}
 	}
 
+	public static String createLink(String path) {
+		try {
+			return new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT, path, null, null).toString();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static String getTimeString(long seconds) {
 		StringBuilder sb = new StringBuilder();
 

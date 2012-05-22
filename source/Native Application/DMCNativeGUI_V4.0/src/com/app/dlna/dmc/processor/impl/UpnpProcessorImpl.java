@@ -22,7 +22,6 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.app.dlna.dmc.gui.abstractactivity.UpnpListenerTabActivity;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.DownloadProcessor;
@@ -47,12 +46,12 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 
 	private DownloadProcessor m_downloadProcessor;
 
-	public UpnpProcessorImpl(UpnpListenerTabActivity activity) {
-		m_activity = activity;
+	public UpnpProcessorImpl(SystemListener activity) {
+		m_activity = (Activity) activity;
 		m_systemListeners = new ArrayList<SystemListener>();
 		m_systemListeners.add(activity);
 		m_devicesListeners = new ArrayList<DevicesListener>();
-		m_downloadProcessor = new DownloadProcessorImpl(activity);
+		m_downloadProcessor = new DownloadProcessorImpl(m_activity);
 	}
 
 	public void bindUpnpService() {
@@ -79,7 +78,7 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 		};
 
 		Intent intent = new Intent(m_activity, CoreUpnpService.class);
-		m_activity.getApplicationContext().bindService(intent, m_serviceConnection, Context.BIND_AUTO_CREATE);
+		m_activity.bindService(intent, m_serviceConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	public void unbindUpnpService() {
@@ -87,7 +86,7 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 			Log.i(TAG, "Unbind to service");
 			if (m_serviceConnection != null) {
 				try {
-					m_activity.getApplicationContext().unbindService(m_serviceConnection);
+					m_activity.unbindService(m_serviceConnection);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

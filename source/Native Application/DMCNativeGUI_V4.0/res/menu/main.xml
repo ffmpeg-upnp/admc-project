@@ -17,14 +17,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_refresh"
+        android:id="@+id/menu_refresh_devices"
         android:icon="@drawable/ic_action_refresh"
+        android:orderInCategory="0"
+        android:title="@string/menu_refresh_devices"/>
+    <item
+        android:id="@+id/menu_rescan_sdcard"
+        android:icon="@drawable/ic_scanning_sdcard"
         android:orderInCategory="1"
-        android:title="@string/menu_refresh"/>
+        android:title="@string/menu_rescan_sdcard"/>
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/ic_action_settings"
-        android:orderInCategory="0"
+        android:orderInCategory="2"
         android:title="@string/menu_settings"/>
+    <item
+        android:id="@+id/menu_about"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:orderInCategory="3"
+        android:title="@string/menu_about"/>
 
 </menu>

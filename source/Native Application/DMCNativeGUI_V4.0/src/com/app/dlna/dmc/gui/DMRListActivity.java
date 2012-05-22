@@ -9,8 +9,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -106,16 +108,34 @@ public class DMRListActivity extends Activity implements SystemListener {
 		m_adapter = new CustomArrayAdapter(DMRListActivity.this, 0);
 		m_listView.setAdapter(m_adapter);
 		m_listView.setOnItemClickListener(m_dmrClickListener);
-		// playToURI = getIntent().getData().getPath();
 		Intent intent = getIntent();
-		if (intent != null)
-			m_playToURI = ((Uri) intent.getExtras().get(Intent.EXTRA_STREAM)).getPath();
+		if (intent != null) {
+			Log.e(TAG, "intent = " + intent);
+			Log.e(TAG, "extra = " + intent.getExtras().get(Intent.EXTRA_STREAM));
+			Uri uri = ((Uri) intent.getExtras().get(Intent.EXTRA_STREAM));
+			if (uri.toString().startsWith("content://")) {
+				// Link from content provider
+				String[] proj = { MediaStore.Images.Media.DATA };
+				Cursor cursor = managedQuery(uri, proj, null, null, null);
+				int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+				cursor.moveToFirst();
+				m_playToURI = cursor.getString(column_index);
+			} else {
+				// Absolute path
+				m_playToURI = ((Uri) intent.getExtras().get(Intent.EXTRA_STREAM)).getPath();
+			}
+		}
 		Log.e(TAG, "Remote playtoURI = " + m_playToURI);
 		PlaylistManager.RESOLVER = getContentResolver();
 	}
 
 	public void onCloseClick(View view) {
 		this.finish();
+	}
+
+	public void onRefreshClick(View view) {
+		if (m_upnpProcessor != null)
+			m_upnpProcessor.refreshDevicesList();
 	}
 
 	@SuppressWarnings("rawtypes")

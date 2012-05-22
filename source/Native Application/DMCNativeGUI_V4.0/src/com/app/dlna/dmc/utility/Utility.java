@@ -57,6 +57,7 @@ public class Utility {
 	}
 
 	public static String createLink(File file) {
+		Log.e(TAG,"create link, file = " + file);
 		try {
 			return new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT, file.getAbsolutePath(), null, null)
 					.toString();

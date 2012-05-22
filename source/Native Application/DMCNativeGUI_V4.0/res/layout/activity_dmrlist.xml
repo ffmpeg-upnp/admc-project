@@ -8,18 +8,33 @@
         android:id="@+id/listView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_close"
+        android:layout_above="@+id/ll_button_container"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" >
     </ListView>
 
-    <Button
-        android:id="@+id/btn_close"
+    <LinearLayout
+        android:id="@+id/ll_button_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="onCloseClick"
-        android:text="@string/close" />
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onRefreshClick"
+            android:text="@string/refresh" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onCloseClick"
+            android:text="@string/close" />
+    </LinearLayout>
 
 </RelativeLayout>

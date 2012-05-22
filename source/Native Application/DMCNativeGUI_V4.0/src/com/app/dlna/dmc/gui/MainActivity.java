@@ -32,6 +32,7 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -39,7 +40,6 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -71,20 +71,22 @@ public class MainActivity extends TabActivity implements SystemListener {
 	private ProgressDialog m_routerProgressDialog;
 	private ProgressDialog m_nfcProgressDialog;
 	public static MainActivity INSTANCE;
-	private LinearLayout m_ll_menu;
 	private BroadcastReceiver m_mountedReceiver = new SDCardReceiver();
+	// NFC
 	private NfcAdapter m_nfcAdapter;
 	private PendingIntent m_pendingIntent;
 	private IntentFilter[] m_filters;
 	private String[][] m_techLists;
 	private boolean m_waitToWriteTAG = false;
+	private String m_messageToWrite;
+	// Renderer compactview
 	private RendererCompactView m_rendererCompactView;
 	private ImageView btn_toggleRendererView;
 
 	private static final int SIZE = 2;
 	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
-	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
-			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
+	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+			new RejectedExecutionHandler() {
 
 				@Override
 				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -110,7 +112,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 		registerReceiver(m_mountedReceiver, filter);
 		INSTANCE = this;
 
-		m_ll_menu = (LinearLayout) findViewById(R.id.ll_floatMenu);
+		// m_ll_menu = (LinearLayout) findViewById(R.id.ll_floatMenu);
 
 		m_nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		m_pendingIntent = PendingIntent.getActivity(this, 0,
@@ -195,8 +197,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				libraryActivity.getHomeNetworkView().updateListView();
 				libraryActivity.getPlaylistView().updateListView();
 			}
-			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setPlaylistProcessor(
-					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor()
+					.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 		}
 
 		@Override
@@ -309,8 +311,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void run() {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
-				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause)
-						.setCancelable(false).setPositiveButton("OK", new OnClickListener() {
+				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause).setCancelable(false)
+						.setPositiveButton("OK", new OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -354,71 +356,30 @@ public class MainActivity extends TabActivity implements SystemListener {
 		MainActivity.this.finish();
 	}
 
-	private android.view.View.OnClickListener customMenuItemClick = new android.view.View.OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			m_ll_menu.setVisibility(View.GONE);
-			switch (((Integer) v.getTag()).intValue()) {
-			case 0:
-				refreshDevicesList();
-				break;
-			case 1:
-				String[] items = new String[1];
-				items[0] = "Rescan external storage";
-				new AlertDialog.Builder(MainActivity.this).setTitle("Settings").setItems(items, new OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch (which) {
-						case 0:
-							if (!LocalContentDirectoryService.isScanning())
-								LocalContentDirectoryService.scanMedia(MainActivity.this);
-							break;
-						default:
-							break;
-						}
-					}
-				}).create().show();
-				break;
-			case 2:
-				Toast.makeText(MainActivity.this, "Show about dialog", Toast.LENGTH_SHORT).show();
-				break;
-			}
-		}
-	};
-	private String m_messageToWrite;
-
-	private void refreshDevicesList() {
-		UPNP_PROCESSOR.refreshDevicesList();
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case android.R.id.title:
+		case R.id.menu_about:
 			Toast.makeText(MainActivity.this, "Show about dialog", Toast.LENGTH_SHORT).show();
 			break;
-		case R.id.menu_refresh:
+		case R.id.menu_rescan_sdcard:
+			Toast.makeText(MainActivity.this, "Rescan sdcard", Toast.LENGTH_SHORT).show();
+			if (!LocalContentDirectoryService.isScanning())
+				LocalContentDirectoryService.scanMedia(MainActivity.this);
+			UPNP_PROCESSOR.refreshDevicesList();
+			break;
+		case R.id.menu_refresh_devices:
 			Toast.makeText(MainActivity.this, "Refresh", Toast.LENGTH_SHORT).show();
+			UPNP_PROCESSOR.refreshDevicesList();
 			break;
 		case R.id.menu_settings:
-			String[] items = new String[1];
-			items[0] = "Rescan external storage";
-			new AlertDialog.Builder(MainActivity.this).setTitle("Settings").setItems(items, new OnClickListener() {
-
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					switch (which) {
-					case 0:
-						if (!LocalContentDirectoryService.isScanning())
-							LocalContentDirectoryService.scanMedia(MainActivity.this);
-						break;
-					default:
-						break;
-					}
-				}
-			}).create().show();
+			Toast.makeText(MainActivity.this, "Show settings", Toast.LENGTH_SHORT).show();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -426,12 +387,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 	@Override
 	public void onBackPressed() {
-		if (m_ll_menu.getVisibility() == View.VISIBLE) {
-			m_ll_menu.setVisibility(View.GONE);
-		} else {
-			confirmExit();
-		}
-
+		confirmExit();
 	}
 
 	private void confirmExit() {
@@ -449,27 +405,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 						finish();
 					}
 				}).create().show();
-	}
-
-	public void onMenuClick(View view) {
-		if (m_ll_menu.getVisibility() == View.VISIBLE) {
-			m_ll_menu.setVisibility(View.GONE);
-		} else {
-			m_ll_menu.setVisibility(View.VISIBLE);
-			if (m_ll_menu.getChildCount() == 0) {
-				String[] menuItems = getResources().getStringArray(R.array.menu_items);
-				for (int i = 0; i < menuItems.length; ++i) {
-					TextView tv = new TextView(this);
-					tv.setText(menuItems[i]);
-					tv.setTag(i);
-					tv.setOnClickListener(customMenuItemClick);
-					tv.setTextSize(20);
-					tv.setBackgroundDrawable(MainActivity.this.getResources().getDrawable(
-							R.drawable.bg_view_with_bottom_line));
-					m_ll_menu.addView(tv);
-				}
-			}
-		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -490,8 +425,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 						String textEncoding = (buffer[0] & 0200) == 0 ? "UTF-8" : "UTF-16";
 						int languageCodeLength = buffer[0] & 0077;
 						try {
-							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength
-									- 1, textEncoding);
+							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength - 1,
+									textEncoding);
 							String deviceUDN = "";
 							if (text.startsWith("uuid:"))
 								deviceUDN = text.substring(5);
@@ -531,7 +466,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 				writeDataToTAG(intent);
 			}
 		} else if (MainActivity.ACTION_PLAYTO.equals(intent.getAction())) {
-			Log.e(TAG,"Action playto");
+			Log.e(TAG, "Action playto");
 			m_tabHost.setCurrentTab(NOWPLAYING);
 		}
 	}
@@ -558,8 +493,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_waitToWriteTAG = true;
 			m_nfcProgressDialog.show();
 		} else {
-			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
-					.setMessage("Please enable NFC on you device first").setPositiveButton("OK", null).create().show();
+			new AlertDialog.Builder(MainActivity.this).setTitle("NFC").setMessage("Please enable NFC on you device first")
+					.setPositiveButton("OK", null).create().show();
 		}
 	}
 
@@ -580,8 +515,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (btn_toggleRendererView != null)
-					btn_toggleRendererView
-							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
+					btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);

@@ -3,6 +3,7 @@ package com.app.dlna.dmc.processor.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.teleal.cling.model.meta.Device;
 import org.teleal.cling.model.meta.LocalDevice;
 import org.teleal.cling.support.model.DIDLObject;
 import org.teleal.cling.support.model.item.AudioItem;
@@ -119,7 +120,7 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		synchronized (m_playlistItems) {
 			if (m_playlistItems.contains(item)) {
 				m_currentItemIdx = m_playlistItems.indexOf(item);
-				return m_currentItemIdx; 
+				return m_currentItemIdx;
 			}
 			return -1;
 		}
@@ -185,10 +186,12 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		return removeItem(createPlaylistItem(object));
 	}
 
+	@SuppressWarnings("rawtypes")
 	private PlaylistItem createPlaylistItem(DIDLObject object) {
 		PlaylistItem item = new PlaylistItem();
 		item.setTitle(object.getTitle());
-		boolean isLocal = MainActivity.UPNP_PROCESSOR.getCurrentDMS() instanceof LocalDevice;
+		Device currentDMS = MainActivity.UPNP_PROCESSOR.getCurrentDMS();
+		boolean isLocal = currentDMS != null ? currentDMS instanceof LocalDevice : true;
 		item.setUrl(object.getResources().get(0).getValue());
 		Log.i(TAG, "PlaylistItem url = " + object.getResources().get(0).getValue());
 		if (object instanceof AudioItem) {

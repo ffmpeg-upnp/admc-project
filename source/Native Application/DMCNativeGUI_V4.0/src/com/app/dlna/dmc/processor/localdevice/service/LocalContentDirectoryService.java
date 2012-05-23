@@ -150,43 +150,47 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 				if (subFile.isDirectory()) {
 					scanFile(subFile.getAbsolutePath());
 				} else if (subFile.length() >= 51200) {
-					String fileName = subFile.getName();
-					int dotPos = subFile.getName().lastIndexOf(".");
-					String fileExtension = dotPos != -1 ? fileName.substring(dotPos) : null;
-					if (fileExtension != null) {
-						fileExtension = fileExtension.toLowerCase().replace(".", "");
-					}
-					String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
-					if (mimeType == null) {
-						mimeType = m_mineMap.get(fileExtension);
-					}
-
-					if (mimeType != null) {
-						Res res = new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
-								subFile.length(), Utility.createLink(subFile));
-						if (fileExtension != null) {
-							if (m_musicMap.contains(fileExtension)) {
-								MusicTrack musicTrack = new MusicTrack("0/1/" + subFile.getName(), "0/1",
-										subFile.getName(), "local dms", "", "", res);
-								m_listMusic.add(musicTrack);
-							}
-
-							if (m_videoMap.contains(fileExtension)) {
-								VideoItem videoItem = new VideoItem("0/2/" + subFile.getName(), "0/2",
-										subFile.getName(), "local dms", res);
-								m_listVideo.add(new VideoItem(videoItem));
-							}
-							if (m_photoMap.contains(fileExtension)) {
-								ImageItem imageItem = new ImageItem("0/3/" + subFile.getName(), "0/3",
-										subFile.getName(), "local dms", res);
-								m_listPhoto.add(new ImageItem(imageItem));
-							}
-						}
-					}
+					insertFileToLibrary(subFile);
 				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	private static void insertFileToLibrary(File subFile) {
+		String fileName = subFile.getName();
+		int dotPos = subFile.getName().lastIndexOf(".");
+		String fileExtension = dotPos != -1 ? fileName.substring(dotPos) : null;
+		if (fileExtension != null) {
+			fileExtension = fileExtension.toLowerCase().replace(".", "");
+		}
+		String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+		if (mimeType == null) {
+			mimeType = m_mineMap.get(fileExtension);
+		}
+
+		if (mimeType != null) {
+			Res res = new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
+					subFile.length(), Utility.createLink(subFile));
+			if (fileExtension != null) {
+				if (m_musicMap.contains(fileExtension)) {
+					MusicTrack musicTrack = new MusicTrack("0/1/" + subFile.getName(), "0/1",
+							subFile.getName(), "local dms", "", "", res);
+					m_listMusic.add(musicTrack);
+				}
+
+				if (m_videoMap.contains(fileExtension)) {
+					VideoItem videoItem = new VideoItem("0/2/" + subFile.getName(), "0/2",
+							subFile.getName(), "local dms", res);
+					m_listVideo.add(new VideoItem(videoItem));
+				}
+				if (m_photoMap.contains(fileExtension)) {
+					ImageItem imageItem = new ImageItem("0/3/" + subFile.getName(), "0/3",
+							subFile.getName(), "local dms", res);
+					m_listPhoto.add(new ImageItem(imageItem));
+				}
+			}
 		}
 	}
 
@@ -238,26 +242,32 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	}
 
 	public static DIDLObject getDIDLObjectFromPath(String path) {
+		DIDLObject result = null;
 		if (path.startsWith("/sdcard"))
 			path = "/mnt/sdcard" + path.substring(7);
 		Log.e(TAG, "uri to play = " + path);
 		String uriToPlay = Utility.createLink(path);
 		for (MusicTrack music : m_listMusic) {
 			if (music.getResources().get(0).getValue().equals(uriToPlay)) {
-				return music;
+				result = music;
 			}
 		}
-		for (ImageItem image : m_listPhoto) {
-			if (image.getResources().get(0).getValue().equals(uriToPlay)) {
-				return image;
+		if (null == result)
+			for (ImageItem image : m_listPhoto) {
+				if (image.getResources().get(0).getValue().equals(uriToPlay)) {
+					result = image;
+				}
 			}
-		}
-		for (VideoItem video : m_listVideo) {
-			if (video.getResources().get(0).getValue().equals(uriToPlay)) {
-				return video;
+		if (null == result)
+			for (VideoItem video : m_listVideo) {
+				if (video.getResources().get(0).getValue().equals(uriToPlay)) {
+					result = video;
+				}
 			}
+		if (null == result) {
+			// TODO: check return
+			insertFileToLibrary(new File(path));
 		}
-
 		return null;
 	}
 }

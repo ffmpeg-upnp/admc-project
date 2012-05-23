@@ -97,6 +97,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.i(TAG, "MainActivity onCreate");
+		Log.e(TAG, "intent = " + getIntent());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		m_tabHost = getTabHost();

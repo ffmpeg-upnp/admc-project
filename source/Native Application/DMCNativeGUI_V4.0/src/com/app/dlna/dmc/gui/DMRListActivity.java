@@ -1,5 +1,7 @@
 package com.app.dlna.dmc.gui;
 
+import java.net.URLDecoder;
+
 import org.teleal.cling.model.meta.Device;
 import org.teleal.cling.model.meta.RemoteDevice;
 import org.teleal.cling.support.model.DIDLObject;
@@ -30,10 +32,12 @@ import com.app.dlna.dmc.processor.localdevice.service.LocalContentDirectoryServi
 import com.app.dlna.dmc.processor.playlist.Playlist;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.app.dlna.dmc.processor.playlist.PlaylistManager;
+import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 
 public class DMRListActivity extends Activity implements SystemListener {
 	private static final String TAG = DMRListActivity.class.getName();
 	private UpnpProcessorImpl m_upnpProcessor;
+	boolean m_isYoutubeItem = false;
 	@SuppressWarnings("rawtypes")
 	private DevicesListener m_devicesListener = new DevicesListener() {
 
@@ -80,22 +84,47 @@ public class DMRListActivity extends Activity implements SystemListener {
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			Device remoteDMR = (Device) m_adapter.getItem(position).getData();
 			m_upnpProcessor.setCurrentDMR(remoteDMR.getIdentity().getUdn());
-			DIDLObject object = LocalContentDirectoryService.getDIDLObjectFromPath(m_playToURI);
 			PlaylistProcessor processor = m_upnpProcessor.getPlaylistProcessor();
 			if (null == processor) {
 				Playlist unsaved = new Playlist();
 				unsaved.setId(1);
 				m_upnpProcessor.setPlaylistProcessor(PlaylistManager.getPlaylistProcessor(unsaved));
 			}
-			PlaylistItem item = m_upnpProcessor.getPlaylistProcessor().addDIDLObject(object);
-			m_upnpProcessor.getPlaylistProcessor().setCurrentItem(item);
-			m_upnpProcessor.getDMRProcessor().setURIandPlay(item);
-			Intent intent = new Intent(DMRListActivity.this, MainActivity.class);
-			intent.setAction(MainActivity.ACTION_PLAYTO);
-			DMRListActivity.this.startActivity(intent);
-			DMRListActivity.this.finish();
+			if (m_isYoutubeItem) {
+				YoutubeItem youtubeItem = new YoutubeItem();
+				youtubeItem.setId(m_playToURI);
+				youtubeItem.setTitle(m_playToURI);
+				PlaylistItem item = m_upnpProcessor.getPlaylistProcessor().addYoutubeItem(youtubeItem);
+				playItemAndClose(item);
+			} else {
+				DIDLObject object = LocalContentDirectoryService.getDIDLObjectFromPath(m_playToURI);
+				if (object == null) {
+					new AlertDialog.Builder(DMRListActivity.this).setMessage("Sorry. This item cannot be played.")
+							.setTitle("Cannot play item").setPositiveButton("Ok", new OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									DMRListActivity.this.finish();
+								}
+							}).create().show();
+				} else {
+
+					PlaylistItem item = m_upnpProcessor.getPlaylistProcessor().addDIDLObject(object);
+					playItemAndClose(item);
+				}
+			}
 		}
+
 	};
+
+	private void playItemAndClose(PlaylistItem item) {
+		m_upnpProcessor.getPlaylistProcessor().setCurrentItem(item);
+		m_upnpProcessor.getDMRProcessor().setURIandPlay(item);
+		Intent intent = new Intent(DMRListActivity.this, MainActivity.class);
+		intent.setAction(MainActivity.ACTION_PLAYTO);
+		DMRListActivity.this.startActivity(intent);
+		DMRListActivity.this.finish();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,25 +137,51 @@ public class DMRListActivity extends Activity implements SystemListener {
 		m_adapter = new CustomArrayAdapter(DMRListActivity.this, 0);
 		m_listView.setAdapter(m_adapter);
 		m_listView.setOnItemClickListener(m_dmrClickListener);
-		Intent intent = getIntent();
-		if (intent != null) {
-			Log.e(TAG, "intent = " + intent);
-			Log.e(TAG, "extra = " + intent.getExtras().get(Intent.EXTRA_STREAM));
-			Uri uri = ((Uri) intent.getExtras().get(Intent.EXTRA_STREAM));
-			if (uri.toString().startsWith("content://")) {
-				// Link from content provider
-				String[] proj = { MediaStore.Images.Media.DATA };
-				Cursor cursor = managedQuery(uri, proj, null, null, null);
-				int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-				cursor.moveToFirst();
-				m_playToURI = cursor.getString(column_index);
-			} else {
-				// Absolute path
-				m_playToURI = ((Uri) intent.getExtras().get(Intent.EXTRA_STREAM)).getPath();
+		try {
+			Intent intent = getIntent();
+			if (intent != null) {
+				Log.e(TAG, "intent = " + intent);
+				Log.e(TAG, "extra = " + intent.getExtras().get(Intent.EXTRA_TEXT));
+				Log.e(TAG, "data = " + intent.getData());
+				Log.e(TAG, "scheme = " + intent.getScheme());
+				if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+					m_playToURI = URLDecoder.decode(intent.getDataString().substring(7), "ASCII");
+				} else if (Intent.ACTION_SEND.equals(intent.getAction())) {
+					if (intent.getType().equals("text/plain")) {
+						// Link from Youtube App or Browser
+						m_isYoutubeItem = true;
+						m_playToURI = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString())
+								.getQueryParameter("v");
+					} else {
+						Uri uri = ((Uri) intent.getExtras().get(Intent.EXTRA_STREAM));
+						if (uri.toString().startsWith("content://")) {
+							// Link from content provider
+							String[] proj = { MediaStore.Images.Media.DATA };
+							Cursor cursor = managedQuery(uri, proj, null, null, null);
+							int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+							cursor.moveToFirst();
+							m_playToURI = cursor.getString(column_index);
+						} else {
+							// Absolute path
+							m_playToURI = ((Uri) intent.getExtras().get(Intent.EXTRA_STREAM)).getPath();
+						}
+					}
+				}
+
 			}
+			Log.e(TAG, "Remote playtoURI = " + m_playToURI);
+			PlaylistManager.RESOLVER = getContentResolver();
+		} catch (Exception e) {
+			e.printStackTrace();
+			new AlertDialog.Builder(DMRListActivity.this).setMessage("Sorry. This item cannot be played.")
+					.setTitle("Cannot play item").setPositiveButton("Ok", new OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							DMRListActivity.this.finish();
+						}
+					}).create().show();
 		}
-		Log.e(TAG, "Remote playtoURI = " + m_playToURI);
-		PlaylistManager.RESOLVER = getContentResolver();
 	}
 
 	public void onCloseClick(View view) {

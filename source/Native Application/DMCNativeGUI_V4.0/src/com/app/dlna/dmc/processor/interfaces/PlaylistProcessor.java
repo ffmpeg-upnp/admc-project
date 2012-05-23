@@ -23,6 +23,8 @@ public interface PlaylistProcessor {
 
 	PlaylistItem addDIDLObject(DIDLObject object);
 
+	PlaylistItem addYoutubeItem(YoutubeItem result);
+
 	PlaylistItem removeItem(PlaylistItem item);
 
 	PlaylistItem removeDIDLObject(DIDLObject object);
@@ -55,8 +57,6 @@ public interface PlaylistProcessor {
 	void saveState();
 
 	int getCurrentItemIndex();
-
-	PlaylistItem addYoutubeItem(YoutubeItem result);
 
 	void updateItemList();
 

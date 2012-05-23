@@ -3,15 +3,15 @@ package com.app.dlna.dmc.processor.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.teleal.cling.model.meta.Device;
-import org.teleal.cling.model.meta.LocalDevice;
 import org.teleal.cling.support.model.DIDLObject;
 import org.teleal.cling.support.model.item.AudioItem;
 import org.teleal.cling.support.model.item.VideoItem;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.playlist.Playlist;
@@ -129,10 +129,14 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 	@Override
 	public PlaylistItem addItem(PlaylistItem item) {
 		synchronized (m_playlistItems) {
-			if (m_playlistItems.size() >= m_maxSize)
-				return null;
 			if (m_playlistItems.contains(item))
 				return item;
+			if (m_playlistItems.size() >= m_maxSize) {
+				// remove last item
+				PlaylistItem lastItem = m_playlistItems.get(m_playlistItems.size() - 1);
+				PlaylistManager.deletePlaylistItem(lastItem.getId());
+				m_playlistItems.remove(lastItem);
+			}
 			PlaylistManager.createPlaylistItem(item, m_data.getId());
 			m_playlistItems.add(item);
 			if (m_playlistItems.size() == 1) {
@@ -186,12 +190,11 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		return removeItem(createPlaylistItem(object));
 	}
 
-	@SuppressWarnings("rawtypes")
 	private PlaylistItem createPlaylistItem(DIDLObject object) {
 		PlaylistItem item = new PlaylistItem();
 		item.setTitle(object.getTitle());
-		Device currentDMS = MainActivity.UPNP_PROCESSOR.getCurrentDMS();
-		boolean isLocal = currentDMS != null ? currentDMS instanceof LocalDevice : true;
+		Uri uri = Uri.parse(object.getResources().get(0).getValue());
+		boolean isLocal = uri.getHost().equals(HTTPServerData.HOST) && uri.getPort() == HTTPServerData.PORT;
 		item.setUrl(object.getResources().get(0).getValue());
 		Log.i(TAG, "PlaylistItem url = " + object.getResources().get(0).getValue());
 		if (object instanceof AudioItem) {

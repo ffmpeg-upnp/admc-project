@@ -278,6 +278,7 @@ public final class R {
         public static final int pause=0x7f070026;
         public static final int photo=0x7f070009;
         public static final int play=0x7f070025;
+        public static final int play_to=0x7f070031;
         public static final int play_to_httpserver_port=0x7f07000c;
         public static final int proxy_enable_text=0x7f070010;
         public static final int refresh=0x7f070002;

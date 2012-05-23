@@ -91,22 +91,19 @@ public class DMRListActivity extends Activity implements SystemListener {
 				m_upnpProcessor.setPlaylistProcessor(PlaylistManager.getPlaylistProcessor(unsaved));
 			}
 			if (m_isYoutubeItem) {
-				YoutubeItem youtubeItem = new YoutubeItem();
-				youtubeItem.setId(m_playToURI);
-				youtubeItem.setTitle(m_playToURI);
-				PlaylistItem item = m_upnpProcessor.getPlaylistProcessor().addYoutubeItem(youtubeItem);
-				playItemAndClose(item);
+				if (m_playToURI == null || m_playToURI.isEmpty())
+					closeActivity();
+				else {
+					YoutubeItem youtubeItem = new YoutubeItem();
+					youtubeItem.setId(m_playToURI);
+					youtubeItem.setTitle(m_playToURI);
+					PlaylistItem item = m_upnpProcessor.getPlaylistProcessor().addYoutubeItem(youtubeItem);
+					playItemAndClose(item);
+				}
 			} else {
 				DIDLObject object = LocalContentDirectoryService.getDIDLObjectFromPath(m_playToURI);
 				if (object == null) {
-					new AlertDialog.Builder(DMRListActivity.this).setMessage("Sorry. This item cannot be played.")
-							.setTitle("Cannot play item").setPositiveButton("Ok", new OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									DMRListActivity.this.finish();
-								}
-							}).create().show();
+					closeActivity();
 				} else {
 
 					PlaylistItem item = m_upnpProcessor.getPlaylistProcessor().addDIDLObject(object);
@@ -116,6 +113,17 @@ public class DMRListActivity extends Activity implements SystemListener {
 		}
 
 	};
+
+	private void closeActivity() {
+		new AlertDialog.Builder(DMRListActivity.this).setMessage("Sorry. This item cannot be played.")
+				.setTitle("Cannot play item").setPositiveButton("Ok", new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						DMRListActivity.this.finish();
+					}
+				}).create().show();
+	}
 
 	private void playItemAndClose(PlaylistItem item) {
 		m_upnpProcessor.getPlaylistProcessor().setCurrentItem(item);
@@ -150,8 +158,18 @@ public class DMRListActivity extends Activity implements SystemListener {
 					if (intent.getType().equals("text/plain")) {
 						// Link from Youtube App or Browser
 						m_isYoutubeItem = true;
-						m_playToURI = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString())
-								.getQueryParameter("v");
+						m_playToURI = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString()).getQueryParameter("v");
+						if (null == m_playToURI || m_playToURI.isEmpty()) {
+							String fragment = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString())
+									.getEncodedFragment();
+							int vPost = fragment.indexOf("v=") + 2;
+							if (vPost >= 0)
+								m_playToURI = fragment.substring(vPost, vPost + 11);
+						}
+						if (null == m_playToURI || m_playToURI.isEmpty()) {
+							closeActivity();
+						}
+
 					} else {
 						Uri uri = ((Uri) intent.getExtras().get(Intent.EXTRA_STREAM));
 						if (uri.toString().startsWith("content://")) {

@@ -58,7 +58,8 @@ import org.teleal.cling.transport.spi.StreamClient;
 import org.teleal.common.util.Exceptions;
 
 /**
- * Implementation based on <a href="http://hc.apache.org/">Apache HTTP Components</a>.
+ * Implementation based on <a href="http://hc.apache.org/">Apache HTTP
+ * Components</a>.
  * <p>
  * This implementation works on Android.
  * </p>
@@ -83,31 +84,46 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
 		HttpProtocolParams.setContentCharset(globalParams, getConfiguration().getContentCharset());
 		if (getConfiguration().getSocketBufferSize() != -1) {
 
-			// Android configuration will set this to 8192 as its httpclient is based
-			// on a random pre 4.0.1 snapshot whose BasicHttpParams do not set a default value for socket buffer size.
-			// This will also avoid OOM on the HTC Thunderbolt where default size is 2Mb (!):
+			// Android configuration will set this to 8192 as its httpclient is
+			// based
+			// on a random pre 4.0.1 snapshot whose BasicHttpParams do not set a
+			// default value for socket buffer size.
+			// This will also avoid OOM on the HTC Thunderbolt where default
+			// size is 2Mb (!):
 			// http://stackoverflow.com/questions/5358014/android-httpclient-oom-on-4g-lte-htc-thunderbolt
 
 			HttpConnectionParams.setSocketBufferSize(globalParams, getConfiguration().getSocketBufferSize());
 		}
 		HttpConnectionParams.setStaleCheckingEnabled(globalParams, getConfiguration().getStaleCheckingEnabled());
 
-		// This is a pretty stupid API... https://issues.apache.org/jira/browse/HTTPCLIENT-805
+		// This is a pretty stupid API...
+		// https://issues.apache.org/jira/browse/HTTPCLIENT-805
 		SchemeRegistry registry = new SchemeRegistry();
-		registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80)); // The 80 here is... useless
+		registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80)); // The
+																							// 80
+																							// here
+																							// is...
+																							// useless
 		clientConnectionManager = new ThreadSafeClientConnManager(globalParams, registry);
 		httpClient = new DefaultHttpClient(clientConnectionManager, globalParams);
 		if (getConfiguration().getRequestRetryCount() != -1) {
-			httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(getConfiguration().getRequestRetryCount(), false));
+			httpClient.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(getConfiguration().getRequestRetryCount(),
+					false));
 		}
 
 		/*
-		 * // TODO: Ugh! And it turns out that by default it doesn't even use persistent connections properly!
+		 * // TODO: Ugh! And it turns out that by default it doesn't even use
+		 * persistent connections properly!
 		 * 
-		 * @Override protected ConnectionReuseStrategy createConnectionReuseStrategy() { return new NoConnectionReuseStrategy(); }
+		 * @Override protected ConnectionReuseStrategy
+		 * createConnectionReuseStrategy() { return new
+		 * NoConnectionReuseStrategy(); }
 		 * 
-		 * @Override protected ConnectionKeepAliveStrategy createConnectionKeepAliveStrategy() { return new ConnectionKeepAliveStrategy() { public long
-		 * getKeepAliveDuration(HttpResponse httpResponse, HttpContext httpContext) { return 0; } }; }
+		 * @Override protected ConnectionKeepAliveStrategy
+		 * createConnectionKeepAliveStrategy() { return new
+		 * ConnectionKeepAliveStrategy() { public long
+		 * getKeepAliveDuration(HttpResponse httpResponse, HttpContext
+		 * httpContext) { return 0; } }; }
 		 * httpClient.removeRequestInterceptorByClass(RequestConnControl.class);
 		 */
 	}
@@ -146,7 +162,9 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
 			log.warning("Cause: " + Exceptions.unwrap(ex));
 			return null;
 		} catch (IOException ex) {
-			log.fine("Client connection was aborted: " + ex.getMessage()); // Don't log stacktrace
+			log.fine("Client connection was aborted: " + ex.getMessage()); // Don't
+																			// log
+																			// stacktrace
 			return null;
 		}
 	}
@@ -157,7 +175,8 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
 		clientConnectionManager.shutdown();
 	}
 
-	protected HttpUriRequest createHttpRequest(UpnpMessage upnpMessage, UpnpRequest upnpRequestOperation) throws MethodNotSupportedException {
+	protected HttpUriRequest createHttpRequest(UpnpMessage upnpMessage, UpnpRequest upnpRequestOperation)
+			throws MethodNotSupportedException {
 
 		switch (upnpRequestOperation.getMethod()) {
 		case GET:
@@ -249,10 +268,11 @@ public class StreamClientImpl implements StreamClient<StreamClientConfigurationI
 	protected HttpParams getRequestParams(StreamRequestMessage requestMessage) {
 		HttpParams localParams = new BasicHttpParams();
 
-		localParams.setParameter(CoreProtocolPNames.PROTOCOL_VERSION, requestMessage.getOperation().getHttpMinorVersion() == 0 ? HttpVersion.HTTP_1_0
-				: HttpVersion.HTTP_1_1);
+		localParams.setParameter(CoreProtocolPNames.PROTOCOL_VERSION,
+				requestMessage.getOperation().getHttpMinorVersion() == 0 ? HttpVersion.HTTP_1_0 : HttpVersion.HTTP_1_1);
 
-		// DefaultHttpClient adds HOST header automatically in its default processor
+		// DefaultHttpClient adds HOST header automatically in its default
+		// processor
 
 		// Let's add the user-agent header on every request
 		HttpProtocolParams.setUserAgent(localParams,

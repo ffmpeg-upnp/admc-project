@@ -181,6 +181,10 @@ public class MainActivity extends TabActivity implements SystemListener {
 		m_rendererCompactView.initComponent();
 		m_rendererCompactView.setOnDMRChangeListener(m_onDMRChanged);
 		btn_toggleRendererView = (ImageView) findViewById(R.id.btn_toggleShowHide);
+		Intent intent = getIntent();
+		if (intent != null && intent.getAction().equals(ACTION_PLAYTO)){
+			switchToNowPlaying();
+		}
 	}
 
 	private OnDMRChangeListener m_onDMRChanged = new OnDMRChangeListener() {

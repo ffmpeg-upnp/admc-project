@@ -57,7 +57,6 @@ public class Utility {
 	}
 
 	public static String createLink(File file) {
-		Log.e(TAG,"create link, file = " + file);
 		try {
 			return new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT, file.getAbsolutePath(), null, null)
 					.toString();
@@ -82,8 +81,7 @@ public class Utility {
 		long hour = seconds / 3600;
 		long minute = (seconds - hour * 3600) / 60;
 		long second = seconds - hour * 3600 - minute * 60;
-		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":"
-				+ String.format("%02d", second));
+		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second));
 
 		return sb.toString();
 	}
@@ -96,8 +94,8 @@ public class Utility {
 		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
-	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl,
-			final Map<String, Bitmap> cache, final int size) {
+	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl, final Map<String, Bitmap> cache,
+			final int size) {
 		MainActivity.INSTANCE.EXEC.execute(new Runnable() {
 
 			@Override

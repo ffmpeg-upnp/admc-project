@@ -22,6 +22,7 @@ import org.teleal.cling.support.model.item.Item;
 
 import android.util.Log;
 
+import com.app.dlna.dmc.gui.AppPreference;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 
@@ -36,8 +37,8 @@ public class DMSProcessorImpl implements DMSProcessor {
 	private List<String> m_traceID;
 	private int m_currentPageIndex;
 	private String m_currentObjectId;
-	public static int ITEM_PER_PAGE = 50;
 	private List<DIDLObject> m_DIDLObjectList;
+	private int m_startIndex;
 
 	@SuppressWarnings("rawtypes")
 	public DMSProcessorImpl(Device device, ControlPoint controlPoint) {
@@ -57,6 +58,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 	public void browse(String objectID, int pageIndex, final DMSProcessorListner listener) {
 		m_traceID.add(objectID);
 		m_currentPageIndex = 0;
+		m_startIndex = 0;
 		executeBrowse(objectID, pageIndex, listener);
 	}
 
@@ -66,14 +68,14 @@ public class DMSProcessorImpl implements DMSProcessor {
 		Service cds = m_server.findService(new ServiceType("schemas-upnp-org", "ContentDirectory"));
 		if (cds != null) {
 			m_currentPageIndex = pageIndex;
-			int startIndex = pageIndex * ITEM_PER_PAGE;
 			Action action = cds.getAction("Browse");
 			ActionInvocation actionInvocation = new ActionInvocation(action);
 			actionInvocation.setInput("ObjectID", objectID);
 			actionInvocation.setInput("BrowseFlag", "BrowseDirectChildren");
 			actionInvocation.setInput("Filter", "*");
-			actionInvocation.setInput("StartingIndex", new UnsignedIntegerFourBytes(startIndex));
-			actionInvocation.setInput("RequestedCount", new UnsignedIntegerFourBytes(ITEM_PER_PAGE + 1));
+			actionInvocation.setInput("StartingIndex", new UnsignedIntegerFourBytes(m_startIndex));
+			actionInvocation.setInput("RequestedCount", new UnsignedIntegerFourBytes(
+					AppPreference.getMaxItemPerLoad() + 1));
 			actionInvocation.setInput("SortCriteria", null);
 			ActionCallback actionCallback = new ActionCallback(actionInvocation) {
 
@@ -88,12 +90,15 @@ public class DMSProcessorImpl implements DMSProcessor {
 						List<Container> containers = content.getContainers();
 						List<Item> items = content.getItems();
 						boolean haveNext = false;
-						if (containers.size() > ITEM_PER_PAGE) {
+						if (containers.size() > AppPreference.getMaxItemPerLoad()) {
 							haveNext = true;
 							containers.remove(containers.size() - 1);
-						} else if (items.size() > ITEM_PER_PAGE || items.size() + containers.size() > ITEM_PER_PAGE) {
+							m_startIndex += AppPreference.getMaxItemPerLoad();
+						} else if (items.size() > AppPreference.getMaxItemPerLoad()
+								|| items.size() + containers.size() > AppPreference.getMaxItemPerLoad()) {
 							haveNext = true;
 							items.remove(items.size() - 1);
+							m_startIndex += AppPreference.getMaxItemPerLoad();
 						}
 						m_DIDLObjectList.clear();
 						m_DIDLObjectList.addAll(containers);

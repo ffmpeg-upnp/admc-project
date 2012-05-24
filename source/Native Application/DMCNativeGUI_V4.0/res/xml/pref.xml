@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:summary="Media Server"
+        android:title="Media Server" >
+        <ListPreference
+            android:defaultValue="50"
+            android:entries="@array/itemPerLoad"
+            android:entryValues="@array/itemPerLoadValues"
+            android:key="max_item_count"
+            android:summary="Define how many items will be load when browse on Media Server"
+            android:title="Number of item per load" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="Internet"
+        android:title="Internet Video" >
+        <CheckBoxPreference
+            android:key="video_quality"
+            android:summary="Will cost more data."
+            android:title="Highest Video Quality" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="Open Source Liscence"
+        android:title="Open Source Liscence" >
+        <PreferenceScreen
+            android:summary="Java/Android UPnP library and tools."
+            android:title="Cling" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://4thline.org/projects/cling/" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="Provide more than 340000 free icons."
+            android:title="IconArchive" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.iconarchive.com/" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

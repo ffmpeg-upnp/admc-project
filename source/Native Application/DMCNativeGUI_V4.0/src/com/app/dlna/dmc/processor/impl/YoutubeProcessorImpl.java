@@ -17,6 +17,7 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
+import com.app.dlna.dmc.gui.AppPreference;
 import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor;
 import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 import com.app.dlna.dmc.utility.Utility;
@@ -31,7 +32,6 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.202 Safari/535.1";
 	private static final int VQ_NORMAL = 0; // Video Quality Normal 480
 	private static final int VQ_HD = 1;// Video Quality HD 720
-	private static final int VIDEO_QUALITY = 0;
 	private static final String TAG = YoutubeProcessorImpl.class.getName();
 
 	@Override
@@ -90,8 +90,7 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 						hd720 = Utility.decodeYoutubeUrl(hd720);
 						medium = Utility.decodeYoutubeUrl(medium);
 						other = Utility.decodeYoutubeUrl(other);
-
-						switch (VIDEO_QUALITY) {
+						switch (AppPreference.getVideoQuality() ? VQ_HD : VQ_NORMAL) {
 						case VQ_NORMAL:
 							directLink = medium;
 							if (directLink.isEmpty())
@@ -262,7 +261,7 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 				medium = Utility.decodeYoutubeUrl(medium);
 				other = Utility.decodeYoutubeUrl(other);
 
-				switch (VIDEO_QUALITY) {
+				switch (AppPreference.getVideoQuality() ? VQ_HD : VQ_NORMAL) {
 				case VQ_NORMAL:
 					directLink = medium;
 					if (directLink.isEmpty())

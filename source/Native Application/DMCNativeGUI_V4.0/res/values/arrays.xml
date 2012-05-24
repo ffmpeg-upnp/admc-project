@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="itemPerLoad">
+        <item name="25">25 items</item>
+        <item name="50">50 items</item>
+        <item name="75">75 items</item>
+        <item name="100">100 items</item>
+    </string-array>
+    <string-array name="itemPerLoadValues">
+        <item name="25">25</item>
+        <item name="50">50</item>
+        <item name="75">75</item>
+        <item name="100">100</item>
+    </string-array>
+
+</resources>

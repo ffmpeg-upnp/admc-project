@@ -29,6 +29,7 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,8 +86,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 	private static final int SIZE = 2;
 	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
-	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
-			new RejectedExecutionHandler() {
+	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
+			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
 
 				@Override
 				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -143,6 +144,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 			}
 		});
 		PlaylistManager.RESOLVER = getContentResolver();
+		AppPreference.PREF = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 	}
 
 	private OnTabChangeListener changeListener = new OnTabChangeListener() {
@@ -182,7 +184,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 		m_rendererCompactView.setOnDMRChangeListener(m_onDMRChanged);
 		btn_toggleRendererView = (ImageView) findViewById(R.id.btn_toggleShowHide);
 		Intent intent = getIntent();
-		if (intent != null && intent.getAction().equals(ACTION_PLAYTO)){
+		if (intent != null && intent.getAction().equals(ACTION_PLAYTO)) {
 			switchToNowPlaying();
 		}
 	}
@@ -202,8 +204,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				libraryActivity.getHomeNetworkView().updateListView();
 				libraryActivity.getPlaylistView().updateListView();
 			}
-			MainActivity.UPNP_PROCESSOR.getDMRProcessor()
-					.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setPlaylistProcessor(
+					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 		}
 
 		@Override
@@ -316,8 +318,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void run() {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
-				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause).setCancelable(false)
-						.setPositiveButton("OK", new OnClickListener() {
+				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause)
+						.setCancelable(false).setPositiveButton("OK", new OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -384,7 +386,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			UPNP_PROCESSOR.refreshDevicesList();
 			break;
 		case R.id.menu_settings:
-			Toast.makeText(MainActivity.this, "Show settings", Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+			MainActivity.this.startActivity(intent);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -430,8 +433,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 						String textEncoding = (buffer[0] & 0200) == 0 ? "UTF-8" : "UTF-16";
 						int languageCodeLength = buffer[0] & 0077;
 						try {
-							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength - 1,
-									textEncoding);
+							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength
+									- 1, textEncoding);
 							String deviceUDN = "";
 							if (text.startsWith("uuid:"))
 								deviceUDN = text.substring(5);
@@ -498,8 +501,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_waitToWriteTAG = true;
 			m_nfcProgressDialog.show();
 		} else {
-			new AlertDialog.Builder(MainActivity.this).setTitle("NFC").setMessage("Please enable NFC on you device first")
-					.setPositiveButton("OK", null).create().show();
+			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
+					.setMessage("Please enable NFC on you device first").setPositiveButton("OK", null).create().show();
 		}
 	}
 
@@ -520,7 +523,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (btn_toggleRendererView != null)
-					btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
+					btn_toggleRendererView
+							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);

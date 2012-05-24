@@ -45,7 +45,7 @@ import android.util.Log;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
 
-import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.cache.Cache;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.http.MainHttpProcessor;
@@ -229,7 +229,7 @@ public class CoreUpnpService extends Service {
 				protected void onPostExecute(Void result) {
 					if (m_notificationManager != null)
 						m_notificationManager.cancel(NOTIFICATION);
-					android.os.Process.killProcess(android.os.Process.myPid());
+					// android.os.Process.killProcess(android.os.Process.myPid());
 				};
 			}.execute(new Void[] {});
 		}

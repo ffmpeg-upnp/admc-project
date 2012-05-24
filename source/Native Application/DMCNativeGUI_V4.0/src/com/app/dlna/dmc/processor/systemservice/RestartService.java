@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.gui.activity.MainActivity;
 
 public class RestartService extends Service {
 

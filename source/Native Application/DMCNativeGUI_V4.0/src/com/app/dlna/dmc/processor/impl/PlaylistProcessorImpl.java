@@ -10,7 +10,7 @@ import org.teleal.cling.support.model.item.VideoItem;
 import android.net.Uri;
 import android.util.Log;
 
-import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;

@@ -326,6 +326,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 			if (!m_listeners.contains(listener)) {
 				m_listeners.add(listener);
 			}
+			setRunning(true);
 		}
 	}
 

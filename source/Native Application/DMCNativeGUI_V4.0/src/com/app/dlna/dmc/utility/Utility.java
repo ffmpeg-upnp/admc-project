@@ -24,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import app.dlna.controller.v4.R;
 
-import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 

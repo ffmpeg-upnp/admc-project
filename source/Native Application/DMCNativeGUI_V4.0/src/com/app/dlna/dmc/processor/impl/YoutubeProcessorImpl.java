@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.app.dlna.dmc.gui.AppPreference;
+import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor;
 import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 import com.app.dlna.dmc.utility.Utility;

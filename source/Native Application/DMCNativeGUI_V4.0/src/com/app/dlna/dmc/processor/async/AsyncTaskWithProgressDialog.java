@@ -4,7 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.view.Window;
 
-import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.gui.activity.MainActivity;
 
 public abstract class AsyncTaskWithProgressDialog<T, U, V> extends AsyncTask<T, U, V> {
 

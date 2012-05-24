@@ -4,7 +4,7 @@ function init_LibraryTab (){
 	currentSubTab = "homenetwork";
 	
 	initHomenetworkSubtab();
-	initPlaylistSubtab();
+	//initPlaylistSubtab();
 	init_InternetSubtab();
 	setPaddingBottomCSS(getFooterHeight(true) + 'px');
 	
@@ -20,16 +20,15 @@ function setPaddingBottomCSS (value){
 
 function switchingSubTabInLibraryTab (sender){
 	var dataHref = sender.attr('data-href');
-	
 	if (currentSubTab != dataHref){
 		switch (dataHref) {
 		case "homenetwork":
 			showHomeNetworkSubtab(sender);
 			break;
 			
-		case "playlist":
+		/*case "playlist":
 			showPlaylistSubtab(sender);
-			break;
+			break;*/
 			
 		case "internet":
 			showInternetSubtab(sender);
@@ -40,25 +39,24 @@ function switchingSubTabInLibraryTab (sender){
 }
 
 function showHomeNetworkSubtab (sender){
-	playlistSubTab.hide();
+	//playlistSubTab.hide();
 	internetSubTab.hide();
 	$('#div_content_internet_searchbar').hide();
-	if (playlistContentControler_visible){
+	/*if (playlistContentControler_visible){
 		playlistContentControler.hide();
-	}
+	}*/
 	homeNetworkSubTab.fadeIn("fast", function(){
-		//window.scrollTo(0, 0);
 		if (homenetworkContentControler_visible){
 			showContentController_HomeNetworkSubtab();
 		}
 	});
 	
 	sender.attr('src', 'img/ic_homenetwork_hl.png');
-	$(".library_tab_info img[data-href='playlist']").attr('src', 'img/ic_playlist.png');
+	//$(".library_tab_info img[data-href='playlist']").attr('src', 'img/ic_playlist.png');
 	$(".library_tab_info img[data-href='internet']").attr('src', 'img/ic_internet.png');
 }
 
-function showPlaylistSubtab (sender){
+/*function showPlaylistSubtab (sender){
 	homeNetworkSubTab.hide();
 	internetSubTab.hide();
 	$('#div_content_internet_searchbar').hide();
@@ -66,7 +64,6 @@ function showPlaylistSubtab (sender){
 		homenetworkContentControler.hide();
 	}
 	playlistSubTab.fadeIn("fast", function(){
-		//window.scrollTo(0, 0);
 		if (playlistContentControler_visible){
 			showContentController_PlaylistSubtab();
 		}
@@ -75,25 +72,24 @@ function showPlaylistSubtab (sender){
 	sender.attr('src', 'img/ic_playlist_hl.png');
 	$(".library_tab_info img[data-href='homenetwork']").attr('src', 'img/ic_homenetwork.png');
 	$(".library_tab_info img[data-href='internet']").attr('src', 'img/ic_internet.png');
-}
+}*/
 
 function showInternetSubtab (sender){
 	homeNetworkSubTab.hide();
-	playlistSubTab.hide();
+	//playlistSubTab.hide();
 	if (homenetworkContentControler_visible){
 		homenetworkContentControler.hide();
 	}
-	if (playlistContentControler_visible){
+	/*if (playlistContentControler_visible){
 		playlistContentControler.hide();
-	}
+	}*/
 	$('#div_content_internet_searchbar').show();
 	internetSubTab.fadeIn("fast", function(){
-		//window.scrollTo(0, 0);
 	});
 	
 	sender.attr('src', 'img/ic_internet_hl.png');
 	$(".library_tab_info img[data-href='homenetwork']").attr('src', 'img/ic_homenetwork.png');
-	$(".library_tab_info img[data-href='playlist']").attr('src', 'img/ic_playlist.png');
+	//$(".library_tab_info img[data-href='playlist']").attr('src', 'img/ic_playlist.png');
 }
 
 //---------------------------------PUBLIC FUNCTION--------------------------
@@ -105,9 +101,9 @@ function show_LibraryTab (){
 		showHomeNetworkSubtab($(".library_tab_info img[data-href='homenetwork']"));
 		break;
 		
-	case "playlist":
+	/*case "playlist":
 		showPlaylistSubtab($(".library_tab_info img[data-href='playlist']"));
-		break;
+		break;*/
 		
 	case "internet":
 		showInternetSubtab($(".library_tab_info img[data-href='internet']"));

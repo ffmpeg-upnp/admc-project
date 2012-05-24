@@ -184,7 +184,6 @@ function init_contentManagement() {
 	content_slider =  $('#div_content_perform_container');
 	content_handler = $('#div_content_perform_handler');
 	content_itemWidth = ($(window).width() * 0.8) / content_numberToPresent;
-	//content_itemWidth = content_handler.width() / content_numberToPresent;
 	
 	var marginValue = $(window).width() * 0.05 * -1;
 	marginValue = Math.round(marginValue);

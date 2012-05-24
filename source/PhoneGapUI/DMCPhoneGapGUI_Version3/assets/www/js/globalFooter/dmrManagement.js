@@ -20,10 +20,12 @@ function init_DMRManagement() {
 	dmr_selectedItem = null;
 	dmr_slider =  $('#div_dmr_list_container');
 	dmr_handler = $('#div_dmr_handler');
+	
 	dmr_itemWidth = dmr_handler.width() / dmr_numberToPresent;
 	
 	btn_dmrGoNext = $('#div_dmr_move_right > img');
 	btn_dmrGoNext.hide();
+	
 	btn_dmrGoPrevious = $('#div_dmr_move_left > img');
 	btn_dmrGoPrevious.hide();
 	
@@ -73,6 +75,7 @@ function selectDMRitem(item) {
 function addNewDMRitem(imageUrl, deviceUdn, deviceName) {
 	if (imageUrl == null) {
 		imageUrl = "img/ic_device_unknow_player.png";
+		alert('null ne');
 	}
 	var containerWidth = dmr_slider.width();
 	containerWidth += dmr_itemWidth;

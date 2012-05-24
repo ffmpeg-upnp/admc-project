@@ -73,7 +73,8 @@
 	margin: 0px;
 	padding: 0px;
 	height: 100%;
-	width: 33.33%;
+	/* width: 33.33%; */
+	width: 50%;
 	float: left;
 }
 

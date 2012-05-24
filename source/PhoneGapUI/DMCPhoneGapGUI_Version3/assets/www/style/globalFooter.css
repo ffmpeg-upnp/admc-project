@@ -77,7 +77,7 @@
 	margin: 0px;
 	height: 100%;
 	width: 80%; /* just init */
-	/* background-color: red; */
+	/* background-color: red;  */
 	float: left;
 	overflow: hidden;
 }
@@ -89,7 +89,7 @@
 	height: 94%;
 	top: 3%;
 	width: 0px; /* just init */
-	background-color: gray; 
+	/* background-color: gray;  */
 }
 
 .dmr_movement_controller{

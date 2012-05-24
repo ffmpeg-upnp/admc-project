@@ -30,7 +30,7 @@ function close_GlobalFooter (){
 	dmrControllerVisible_GlobalFooter = false;
 	
 	repadding_HomeNetworkSubtab ();
-	repadding_PlaylistSubtab ();
+	//repadding_PlaylistSubtab ();
 	repadding_InternetSubtab();
 	
 	dmrController.animate({height: '0%'}, "fast", function (){
@@ -38,7 +38,7 @@ function close_GlobalFooter (){
 	});
 	dmrRemoteControler.animate({bottom: '-1%'}, "fast");
 	animateDown_HomeNetworkSubtab();
-	animateDown_PlaylistSubtab();
+	//animateDown_PlaylistSubtab();
 	animateDown_NowplayingTab();
 }
 
@@ -48,11 +48,11 @@ function open_GlobalFooter (){
 	dmrController.show();
 	dmrController.animate({height: '15%'}, "fast");
 	animateUp_HomeNetworkSubtab();
-	animateUp_PlaylistSubtab();
+	//animateUp_PlaylistSubtab();
 	animateUp_NowplayingTab();
 	dmrRemoteControler.animate({bottom: '14%'}, "fast", function(){
 		repadding_HomeNetworkSubtab();
-		repadding_PlaylistSubtab();
+		//repadding_PlaylistSubtab();
 		repadding_InternetSubtab();
 		
 	});

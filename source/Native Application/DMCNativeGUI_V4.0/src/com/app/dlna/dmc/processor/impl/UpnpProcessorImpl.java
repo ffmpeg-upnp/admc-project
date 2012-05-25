@@ -329,6 +329,8 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 		// }
 		Device currentDMR = m_upnpService.getCurrentDMR();
 		Device newDMR = m_upnpService.getRegistry().getDevice(uDN, true);
+		if (newDMR == null)
+			return;
 
 		if (currentDMR == null || !newDMR.getIdentity().equals(currentDMR.getIdentity())) {
 			m_upnpService.setCurrentDMR(uDN);

@@ -1,4 +1,4 @@
-package com.app.dlna.dmc.gui;
+package com.app.dlna.dmc.gui.activity;
 
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -23,6 +23,7 @@ import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
+import android.content.res.Configuration;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -35,6 +36,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -50,8 +52,6 @@ import app.dlna.controller.v4.R;
 
 import com.app.dlna.dmc.gui.customview.renderer.RendererCompactView;
 import com.app.dlna.dmc.gui.customview.renderer.RendererCompactView.OnDMRChangeListener;
-import com.app.dlna.dmc.gui.subactivity.LibraryActivity;
-import com.app.dlna.dmc.gui.subactivity.NowPlayingActivity;
 import com.app.dlna.dmc.processor.impl.UpnpProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.SystemListener;
@@ -62,6 +62,7 @@ import com.app.dlna.dmc.processor.receiver.SDCardReceiver;
 import com.app.dlna.dmc.processor.systemservice.RestartService;
 import com.app.dlna.dmc.processor.upnp.CoreUpnpService;
 
+@SuppressWarnings("deprecation")
 public class MainActivity extends TabActivity implements SystemListener {
 	private static final int NOWPLAYING = 1;
 	private static final int LIBRARY = 0;
@@ -83,6 +84,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 	// Renderer compactview
 	private RendererCompactView m_rendererCompactView;
 	private ImageView btn_toggleRendererView;
+	private ImageView btn_toggleRendererView_Land;
+	private ImageView current_toogleRendererView;
 
 	private static final int SIZE = 2;
 	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
@@ -145,6 +148,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 		});
 		PlaylistManager.RESOLVER = getContentResolver();
 		AppPreference.PREF = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+
 	}
 
 	private OnTabChangeListener changeListener = new OnTabChangeListener() {
@@ -161,6 +165,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 		super.onResume();
 		if (m_nfcAdapter != null)
 			m_nfcAdapter.enableForegroundDispatch(this, m_pendingIntent, m_filters, m_techLists);
+		updateToggleButtonForOrientation();
 	};
 
 	@Override
@@ -183,9 +188,31 @@ public class MainActivity extends TabActivity implements SystemListener {
 		m_rendererCompactView.initComponent();
 		m_rendererCompactView.setOnDMRChangeListener(m_onDMRChanged);
 		btn_toggleRendererView = (ImageView) findViewById(R.id.btn_toggleShowHide);
+		btn_toggleRendererView_Land = (ImageView) findViewById(R.id.btn_toggleShowHide_Land);
 		Intent intent = getIntent();
-		if (intent != null && intent.getAction().equals(ACTION_PLAYTO)) {
+		if (intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_PLAYTO)) {
 			switchToNowPlaying();
+		}
+		updateToggleButtonForOrientation();
+	}
+
+	private void updateToggleButtonForOrientation() {
+		if (btn_toggleRendererView == null || btn_toggleRendererView_Land == null)
+			return;
+		int rotation = getWindowManager().getDefaultDisplay().getRotation();
+		switch (rotation) {
+		case Surface.ROTATION_0:
+		case Surface.ROTATION_180:
+			btn_toggleRendererView_Land.setVisibility(View.GONE);
+			btn_toggleRendererView.setVisibility(View.VISIBLE);
+			current_toogleRendererView = btn_toggleRendererView;
+			break;
+		case Surface.ROTATION_90:
+		case Surface.ROTATION_270:
+			btn_toggleRendererView_Land.setVisibility(View.VISIBLE);
+			btn_toggleRendererView.setVisibility(View.GONE);
+			current_toogleRendererView = btn_toggleRendererView_Land;
+			break;
 		}
 	}
 
@@ -507,6 +534,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 	}
 
 	public void showRendererCompactView() {
+		if (m_rendererCompactView == null)
+			return;
 		Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.compactrenderer_slidein);
 		animation.setAnimationListener(new AnimationListener() {
 
@@ -522,9 +551,9 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				if (btn_toggleRendererView != null)
-					btn_toggleRendererView
-							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
+				if (current_toogleRendererView != null)
+					current_toogleRendererView.setImageDrawable(getResources().getDrawable(
+							R.drawable.ic_btn_navigate_down));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -532,6 +561,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 	}
 
 	public void hideRendererCompactView() {
+		if (m_rendererCompactView == null)
+			return;
 		Animation animation = AnimationUtils.loadAnimation(MainActivity.this, R.anim.compactrenderer_slideout);
 		animation.setAnimationListener(new AnimationListener() {
 
@@ -547,8 +578,9 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				m_rendererCompactView.setVisibility(View.GONE);
-				if (btn_toggleRendererView != null)
-					btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
+				if (current_toogleRendererView != null)
+					current_toogleRendererView.setImageDrawable(getResources().getDrawable(
+							R.drawable.ic_btn_navigate_up));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -571,5 +603,21 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 	public void switchToNowPlaying() {
 		m_tabHost.setCurrentTab(NOWPLAYING);
+	}
+
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		Activity activity = getLocalActivityManager().getActivity(m_tabHost.getCurrentTabTag());
+		if (activity instanceof NowPlayingActivity) {
+			NowPlayingActivity nowPlaying = (NowPlayingActivity) activity;
+			if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+				nowPlaying.switchToPortrait();
+			} else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+				nowPlaying.switchToLandscape();
+			}
+		}
+		hideRendererCompactView();
+		updateToggleButtonForOrientation();
 	}
 }

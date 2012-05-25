@@ -1,4 +1,4 @@
-package com.app.dlna.dmc.gui;
+package com.app.dlna.dmc.gui.activity;
 
 import java.net.URLDecoder;
 

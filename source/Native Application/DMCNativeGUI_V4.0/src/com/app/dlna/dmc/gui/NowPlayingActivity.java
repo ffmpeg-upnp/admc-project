@@ -1,4 +1,4 @@
-package com.app.dlna.dmc.gui.subactivity;
+package com.app.dlna.dmc.gui.activity;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -8,10 +8,12 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -21,7 +23,6 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 import app.dlna.controller.v4.R;
 
-import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.gui.customview.nowplaying.LocalMediaPlayer;
 import com.app.dlna.dmc.gui.customview.nowplaying.RendererControlView;
 import com.app.dlna.dmc.processor.async.AsyncTaskWithProgressDialog;
@@ -50,21 +51,33 @@ public class NowPlayingActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		initPortrait();
+	}
+
+	private void initPortrait() {
 		setContentView(R.layout.activity_nowplaying);
 		m_rendererControl = (RendererControlView) findViewById(R.id.rendererControlView);
-
+		m_rendererControl.setVisibility(View.VISIBLE);
 		m_progressDialog = new ProgressDialog(NowPlayingActivity.this);
 		m_progressDialog.setTitle("Loading image");
 		m_progressDialog.setCancelable(true);
 
-		m_content = (LinearLayout) findViewById(R.id.content);
-
 		m_swipeDetector = new SwipeDetector(this);
+
+		m_content = (LinearLayout) findViewById(R.id.content);
+		m_content.setOnClickListener(m_contentClickListener);
+		m_content.setOnTouchListener(m_swipeDetector);
 		m_image = (ImageView) findViewById(R.id.image);
+		m_image.setOnClickListener(m_contentClickListener);
 		m_image.setOnTouchListener(m_swipeDetector);
+
 		m_surface = (SurfaceView) findViewById(R.id.surface);
 		m_surface.setOnTouchListener(m_swipeDetector);
+		m_surface.setOnClickListener(m_contentClickListener);
+
 		m_holder = m_surface.getHolder();
+		m_holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		m_holder.addCallback(m_surfaceCallback);
 
 		m_animFlipInNext = AnimationUtils.loadAnimation(this, R.anim.flipinnext);
 		m_animFlipInNext.setAnimationListener(m_animationListner);
@@ -79,7 +92,13 @@ public class NowPlayingActivity extends Activity {
 		m_viewFlipper.setOnTouchListener(m_swipeDetector);
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
+		m_viewFlipper.setOnClickListener(m_contentClickListener);
+	}
 
+	private void initLandscape() {
+		initPortrait();
+		m_viewFlipper.setVisibility(View.GONE);
+		m_rendererControl.setVisibility(View.GONE);
 	}
 
 	private PlaylistListener m_playlistListener = new PlaylistListener() {
@@ -90,9 +109,15 @@ public class NowPlayingActivity extends Activity {
 
 				@Override
 				public void run() {
-					m_viewFlipper.setInAnimation(m_animFlipInPrevious);
-					m_viewFlipper.setOutAnimation(m_animFlipOutPrevious);
-					m_viewFlipper.showPrevious();
+					int displayMode = getWindowManager().getDefaultDisplay().getRotation();
+					if (displayMode == Surface.ROTATION_0 || displayMode == Surface.ROTATION_180) {
+						m_viewFlipper.setInAnimation(m_animFlipInPrevious);
+						m_viewFlipper.setOutAnimation(m_animFlipOutPrevious);
+						m_viewFlipper.showPrevious();
+					} else {
+						updateItemInfo();
+						m_swipeDetector.setEnable(true);
+					}
 				}
 			});
 		}
@@ -103,9 +128,16 @@ public class NowPlayingActivity extends Activity {
 
 				@Override
 				public void run() {
-					m_viewFlipper.setInAnimation(m_animFlipInNext);
-					m_viewFlipper.setOutAnimation(m_animFlipOutNext);
-					m_viewFlipper.showNext();
+					int displayMode = getWindowManager().getDefaultDisplay().getRotation();
+					if (displayMode == Surface.ROTATION_0 || displayMode == Surface.ROTATION_180) {
+						m_viewFlipper.setInAnimation(m_animFlipInNext);
+						m_viewFlipper.setOutAnimation(m_animFlipOutNext);
+						m_viewFlipper.showNext();
+					} else {
+						updateItemInfo();
+						m_swipeDetector.setEnable(true);
+					}
+
 				}
 			});
 
@@ -148,6 +180,7 @@ public class NowPlayingActivity extends Activity {
 	}
 
 	public void updateItemInfo() {
+		updateRotation();
 		m_rendererControl.connectToDMR();
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 		DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
@@ -223,12 +256,20 @@ public class NowPlayingActivity extends Activity {
 		dmrProcessor.setURIandPlay(item);
 	}
 
+	public void updateRotation() {
+		int displayMode = getWindowManager().getDefaultDisplay().getRotation();
+		if (displayMode == Surface.ROTATION_0 || displayMode == Surface.ROTATION_180) {
+			initPortrait();
+		} else {
+			initLandscape();
+		}
+	}
+
 	@Override
 	protected void onResume() {
 		Log.e(TAG, "nowplaying ressume");
 		super.onResume();
 		m_isPausing = false;
-		m_holder.addCallback(m_surfaceCallback);
 		updatePlaylist();
 		updateItemInfo();
 	}
@@ -238,6 +279,7 @@ public class NowPlayingActivity extends Activity {
 		Log.e(TAG, "nowplaying pause");
 		super.onPause();
 		m_isPausing = true;
+		updateRotation();
 		m_holder.removeCallback(m_surfaceCallback);
 		updateSurfaceView();
 		m_rendererControl.disconnectToDMR();
@@ -272,11 +314,11 @@ public class NowPlayingActivity extends Activity {
 					localDMR.setHolder(null, 0, 0);
 				} else {
 					Log.i(TAG, "suface state = " + m_surface.isShown());
-					// if (m_surface.isShown()) {
-					LocalMediaPlayer.surface_width = m_content.getWidth();
-					LocalMediaPlayer.surface_height = m_content.getHeight();
-					localDMR.setHolder(m_holder, m_content.getWidth(), m_content.getHeight());
-					// }
+					if (m_surface.isShown()) {
+						LocalMediaPlayer.surface_width = m_content.getWidth();
+						LocalMediaPlayer.surface_height = m_content.getHeight();
+						localDMR.setHolder(m_holder, m_content.getWidth(), m_content.getHeight());
+					}
 				}
 			}
 		} catch (Exception ex) {
@@ -311,6 +353,33 @@ public class NowPlayingActivity extends Activity {
 			LocalMediaPlayer.surface_height = m_content.getHeight();
 			updateSurfaceView();
 		}
+	};
+	private View.OnClickListener m_contentClickListener = new View.OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			if (m_viewFlipper != null) {
+				if (m_viewFlipper.isShown())
+					m_viewFlipper.setVisibility(View.GONE);
+				else
+					m_viewFlipper.setVisibility(View.VISIBLE);
+			}
+			if (m_rendererControl != null)
+				if (m_rendererControl.isShown())
+					m_rendererControl.setVisibility(View.GONE);
+				else
+					m_rendererControl.setVisibility(View.VISIBLE);
+		}
+	};;
+
+	public void switchToPortrait() {
+		Log.e(TAG, "switch to portrait");
+		updateItemInfo();
+	}
+
+	public void switchToLandscape() {
+		Log.e(TAG, "switch to landscape");
+		updateItemInfo();
 	};
 
 }

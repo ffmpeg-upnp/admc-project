@@ -1,4 +1,4 @@
-package com.app.dlna.dmc.gui.subactivity;
+package com.app.dlna.dmc.gui.activity;
 
 import android.view.MotionEvent;
 import android.view.View;

@@ -1,4 +1,4 @@
-package com.app.dlna.dmc.gui.subactivity;
+package com.app.dlna.dmc.gui.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import app.dlna.controller.v4.R;
 
-import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.gui.customview.library.HomeNetworkView;
 import com.app.dlna.dmc.gui.customview.playlist.PlaylistView;
 import com.app.dlna.dmc.gui.customview.youtube.YoutubeView;

@@ -132,51 +132,63 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 	}
 
 	private void fireOnStartCompleteEvent() {
-		synchronized (m_systemListeners) {
-			for (SystemListener listener : m_systemListeners) {
-				listener.onStartComplete();
+		if (m_systemListeners != null)
+			synchronized (m_systemListeners) {
+				for (SystemListener listener : m_systemListeners) {
+					if (listener != null)
+						listener.onStartComplete();
+				}
 			}
-		}
 	}
 
 	private void fireOnStartFailedEvent() {
-		synchronized (m_systemListeners) {
-			for (SystemListener listener : m_systemListeners) {
-				listener.onStartFailed();
+		if (m_systemListeners != null)
+			synchronized (m_systemListeners) {
+				for (SystemListener listener : m_systemListeners) {
+					if (listener != null)
+						listener.onStartFailed();
+				}
 			}
-		}
 	}
 
 	private void fireOnRouterErrorEvent(String cause) {
-		synchronized (m_systemListeners) {
-			for (SystemListener listener : m_systemListeners) {
-				listener.onRouterError(cause);
+		if (m_systemListeners != null)
+			synchronized (m_systemListeners) {
+				for (SystemListener listener : m_systemListeners) {
+					if (listener != null)
+						listener.onRouterError(cause);
+				}
 			}
-		}
 	}
 
 	private void fireOnNetworkChangedEvent() {
-		synchronized (m_systemListeners) {
-			for (SystemListener listener : m_systemListeners) {
-				listener.onNetworkChanged();
+		if (m_systemListeners != null)
+			synchronized (m_systemListeners) {
+				for (SystemListener listener : m_systemListeners) {
+					if (listener != null)
+						listener.onNetworkChanged();
+				}
 			}
-		}
 	}
 
 	private void fireOnRouterDisabledEvent() {
-		synchronized (m_systemListeners) {
-			for (SystemListener listener : m_systemListeners) {
-				listener.onRouterDisabledEvent();
+		if (m_systemListeners != null)
+			synchronized (m_systemListeners) {
+				for (SystemListener listener : m_systemListeners) {
+					if (listener != null)
+						listener.onRouterDisabledEvent();
+				}
 			}
-		}
 	}
 
 	private void fireOnRouterEnabledEvent() {
-		synchronized (m_systemListeners) {
-			for (SystemListener listener : m_systemListeners) {
-				listener.onRouterEnabledEvent();
+		if (m_systemListeners != null)
+			synchronized (m_systemListeners) {
+				for (SystemListener listener : m_systemListeners) {
+					if (listener != null)
+						listener.onRouterEnabledEvent();
+				}
 			}
-		}
 	}
 
 	@Override
@@ -223,36 +235,44 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 
 	@SuppressWarnings("rawtypes")
 	private void fireDeviceAddedEvent(Device device) {
-		synchronized (m_devicesListeners) {
-			for (DevicesListener listener : m_devicesListeners) {
-				listener.onDeviceAdded(device);
+		if (m_devicesListeners != null)
+			synchronized (m_devicesListeners) {
+				for (DevicesListener listener : m_devicesListeners) {
+					if (listener != null)
+						listener.onDeviceAdded(device);
+				}
 			}
-		}
 	}
 
 	@SuppressWarnings("rawtypes")
 	private void fireDeviceRemovedEvent(Device device) {
-		synchronized (m_devicesListeners) {
-			for (DevicesListener listener : m_devicesListeners) {
-				listener.onDeviceRemoved(device);
+		if (m_devicesListeners != null)
+			synchronized (m_devicesListeners) {
+				for (DevicesListener listener : m_devicesListeners) {
+					if (listener != null)
+						listener.onDeviceRemoved(device);
+				}
 			}
-		}
 	}
 
 	private void fireOnDMSChangedEvent() {
-		synchronized (m_devicesListeners) {
-			for (DevicesListener listener : m_devicesListeners) {
-				listener.onDMSChanged();
+		if (m_devicesListeners != null)
+			synchronized (m_devicesListeners) {
+				for (DevicesListener listener : m_devicesListeners) {
+					if (listener != null)
+						listener.onDMSChanged();
+				}
 			}
-		}
 	}
 
 	private void fireOnDMRChangedEvent() {
-		synchronized (m_devicesListeners) {
-			for (DevicesListener listener : m_devicesListeners) {
-				listener.onDMRChanged();
+		if (m_devicesListeners != null)
+			synchronized (m_devicesListeners) {
+				for (DevicesListener listener : m_devicesListeners) {
+					if (listener != null)
+						listener.onDMRChanged();
+				}
 			}
-		}
 	}
 
 	@SuppressWarnings("rawtypes")

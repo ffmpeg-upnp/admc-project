@@ -1,18 +1,20 @@
 package com.app.dlna.dmc.processor.impl;
 
+import io.vov.vitamio.MediaPlayer;
+import io.vov.vitamio.MediaPlayer.OnCompletionListener;
+import io.vov.vitamio.MediaPlayer.OnErrorListener;
+import io.vov.vitamio.MediaPlayer.OnPreparedListener;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnErrorListener;
-import android.media.MediaPlayer.OnPreparedListener;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.gui.customview.nowplaying.LocalMediaPlayer;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
@@ -56,7 +58,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 				Log.d(TAG, "Update thread still running");
 				try {
 					if (m_player != null && m_player.isPlaying()) {
-						int currentPosition = m_player.getCurrentPosition() / 1000;
+						int currentPosition = (int) (m_player.getCurrentPosition() / 1000);
 						fireUpdatePositionEvent(currentPosition, m_player.getDuration() / 1000);
 						m_currentState = STATE_PLAYING;
 					}
@@ -138,7 +140,11 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 									"Get direct-link complete from id = " + result.getId() + "; link = "
 											+ result.getDirectLink());
 							stop();
-							m_player = new LocalMediaPlayer();
+							try {
+								m_player = new LocalMediaPlayer(MainActivity.INSTANCE);
+							} catch (Exception ex) {
+								ex.printStackTrace();
+							}
 							m_player.setDisplay(m_holder);
 							m_player.setOnPreparedListener(m_preparedListener);
 							m_player.setOnCompletionListener(m_completeListener);
@@ -176,7 +182,11 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 				public void run() {
 					CheckResult result = Utility.checkItemURL(item);
 					stop();
-					m_player = new LocalMediaPlayer();
+					try {
+						m_player = new LocalMediaPlayer(MainActivity.INSTANCE);
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
 					m_player.setDisplay(m_holder);
 					m_player.setOnPreparedListener(m_preparedListener);
 					m_player.setOnCompletionListener(m_completeListener);

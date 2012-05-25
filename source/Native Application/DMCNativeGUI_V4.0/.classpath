@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="libs/commons-io-2.1.jar"/>
 	<classpathentry kind="lib" path="libs/http-20070405.jar"/>
 	<classpathentry kind="lib" path="libs/teleal-common-1.0.13.jar"/>
+	<classpathentry kind="lib" path="libs/vitamio.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

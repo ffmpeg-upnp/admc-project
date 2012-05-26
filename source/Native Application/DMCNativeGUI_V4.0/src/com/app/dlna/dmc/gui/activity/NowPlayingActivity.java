@@ -13,7 +13,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.View.OnAttachStateChangeListener;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -46,15 +47,14 @@ public class NowPlayingActivity extends Activity {
 	private ImageView m_image;
 	private boolean m_isPausing;
 	private LinearLayout m_content;
-	private SurfaceHolder m_holder;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		initPortrait();
+		initializeComponents();
 	}
 
-	private void initPortrait() {
+	public void initializeComponents() {
 		setContentView(R.layout.activity_nowplaying);
 		m_rendererControl = (RendererControlView) findViewById(R.id.rendererControlView);
 		m_rendererControl.setVisibility(View.VISIBLE);
@@ -74,10 +74,7 @@ public class NowPlayingActivity extends Activity {
 		m_surface = (SurfaceView) findViewById(R.id.surface);
 		m_surface.setOnTouchListener(m_swipeDetector);
 		m_surface.setOnClickListener(m_contentClickListener);
-
-		m_holder = m_surface.getHolder();
-		m_holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-		m_holder.addCallback(m_surfaceCallback);
+		m_surface.getHolder().addCallback(m_surfaceCallback);
 
 		m_animFlipInNext = AnimationUtils.loadAnimation(this, R.anim.flipinnext);
 		m_animFlipInNext.setAnimationListener(m_animationListner);
@@ -93,12 +90,22 @@ public class NowPlayingActivity extends Activity {
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_viewFlipper.setOnClickListener(m_contentClickListener);
+		
+	}
+
+	private void initPortrait() {
+		initializeComponents();
+		m_viewFlipper.setVisibility(View.VISIBLE);
+		m_rendererControl.setVisibility(View.VISIBLE);
+		ViewGroup vg = (ViewGroup) findViewById(R.id.rl_nowplaying_root);
+		vg.invalidate();
 	}
 
 	private void initLandscape() {
-		initPortrait();
+		initializeComponents();
 		m_viewFlipper.setVisibility(View.GONE);
 		m_rendererControl.setVisibility(View.GONE);
+
 	}
 
 	private PlaylistListener m_playlistListener = new PlaylistListener() {
@@ -279,8 +286,7 @@ public class NowPlayingActivity extends Activity {
 		Log.e(TAG, "nowplaying pause");
 		super.onPause();
 		m_isPausing = true;
-		updateRotation();
-		m_holder.removeCallback(m_surfaceCallback);
+		m_surface.setVisibility(View.GONE);
 		updateSurfaceView();
 		m_rendererControl.disconnectToDMR();
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
@@ -311,14 +317,14 @@ public class NowPlayingActivity extends Activity {
 			if (dmrProcessor instanceof LocalDMRProcessorImpl) {
 				LocalDMRProcessorImpl localDMR = (LocalDMRProcessorImpl) dmrProcessor;
 				if (m_isPausing) {
-					localDMR.setHolder(null, 0, 0);
+					localDMR.setHolder(null);
 				} else {
 					Log.i(TAG, "suface state = " + m_surface.isShown());
-					if (m_surface.isShown()) {
-						LocalMediaPlayer.surface_width = m_content.getWidth();
-						LocalMediaPlayer.surface_height = m_content.getHeight();
-						localDMR.setHolder(m_holder, m_content.getWidth(), m_content.getHeight());
-					}
+					// if (m_surface.isShown()) {
+					LocalMediaPlayer.surface_width = m_content.getWidth();
+					LocalMediaPlayer.surface_height = m_content.getHeight();
+					localDMR.setHolder(m_surface.getHolder());
+					// }
 				}
 			}
 		} catch (Exception ex) {
@@ -334,23 +340,19 @@ public class NowPlayingActivity extends Activity {
 			DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 			if (dmrProcessor instanceof LocalDMRProcessorImpl) {
 				LocalDMRProcessorImpl localDMR = (LocalDMRProcessorImpl) dmrProcessor;
-				localDMR.setHolder(null, 0, 0);
+				localDMR.setHolder(null);
 			}
 		}
 
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
 			Log.e(TAG, "surface created");
-			LocalMediaPlayer.surface_width = m_content.getWidth();
-			LocalMediaPlayer.surface_height = m_content.getHeight();
 			updateSurfaceView();
 		}
 
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 			Log.e(TAG, "surface changed");
-			LocalMediaPlayer.surface_width = m_content.getWidth();
-			LocalMediaPlayer.surface_height = m_content.getHeight();
 			updateSurfaceView();
 		}
 	};

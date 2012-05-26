@@ -617,7 +617,9 @@ public class MainActivity extends TabActivity implements SystemListener {
 				nowPlaying.switchToLandscape();
 			}
 		}
-		hideRendererCompactView();
+		m_rendererCompactView.setVisibility(View.GONE);
+		if (current_toogleRendererView != null)
+			current_toogleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
 		updateToggleButtonForOrientation();
 	}
 }

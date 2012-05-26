@@ -1,20 +1,18 @@
 package com.app.dlna.dmc.processor.impl;
 
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.MediaPlayer.OnCompletionListener;
-import io.vov.vitamio.MediaPlayer.OnErrorListener;
-import io.vov.vitamio.MediaPlayer.OnPreparedListener;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnErrorListener;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.gui.customview.nowplaying.LocalMediaPlayer;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
@@ -119,7 +117,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		if (m_currentItem.equals(item))
 			return;
 		m_currentItem = item;
-		stop();
 		switch (m_currentItem.getType()) {
 		case YOUTUBE:
 			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()),
@@ -140,11 +137,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 									"Get direct-link complete from id = " + result.getId() + "; link = "
 											+ result.getDirectLink());
 							stop();
-							try {
-								m_player = new LocalMediaPlayer(MainActivity.INSTANCE);
-							} catch (Exception ex) {
-								ex.printStackTrace();
-							}
+							m_player = new LocalMediaPlayer();
 							m_player.setDisplay(m_holder);
 							m_player.setOnPreparedListener(m_preparedListener);
 							m_player.setOnCompletionListener(m_completeListener);
@@ -174,6 +167,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		case IMAGE_LOCAL:
 		case IMAGE_REMOTE:
 		case UNKNOW:
+			stop();
 			break;
 		default:
 			new Thread(new Runnable() {
@@ -182,11 +176,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 				public void run() {
 					CheckResult result = Utility.checkItemURL(item);
 					stop();
-					try {
-						m_player = new LocalMediaPlayer(MainActivity.INSTANCE);
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
+					m_player = new LocalMediaPlayer();
 					m_player.setDisplay(m_holder);
 					m_player.setOnPreparedListener(m_preparedListener);
 					m_player.setOnCompletionListener(m_completeListener);
@@ -288,7 +278,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	public void stop() {
 		if (m_player != null)
 			try {
-				m_player.setDisplay(null);
 				m_player.reset();
 				m_player.release();
 				m_player = null;
@@ -352,11 +341,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	public void dispose() {
 		Log.e(TAG, "dispose");
 		m_listeners.clear();
-		if (m_player != null) {
-			m_player.reset();
-			m_player.release();
-		}
-		m_player = null;
+		stop();
 		// m_isRunning = false;
 		// Thread tmpThread = m_updateThread;
 		// m_updateThread = null;
@@ -443,12 +428,10 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 			m_playlistProcessor.next();
 	}
 
-	public void setHolder(SurfaceHolder holder, int width, int height) {
+	public void setHolder(SurfaceHolder holder) {
 		m_holder = holder;
 		if (m_player != null) {
 			m_player.setDisplay(holder);
-			LocalMediaPlayer.surface_width = width;
-			LocalMediaPlayer.surface_height = height;
 			m_player.scaleContent();
 			// m_player.setSufaceDimension(width, height);
 		}

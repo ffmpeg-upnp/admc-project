@@ -1,17 +1,10 @@
 package com.app.dlna.dmc.gui.customview.nowplaying;
 
-import io.vov.vitamio.MediaPlayer;
-import io.vov.vitamio.VitamioInstaller.VitamioNotCompatibleException;
-import io.vov.vitamio.VitamioInstaller.VitamioNotFoundException;
-import android.content.Context;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class LocalMediaPlayer extends MediaPlayer {
-
-	public LocalMediaPlayer(Context ctx) throws VitamioNotCompatibleException, VitamioNotFoundException {
-		super(ctx);
-	}
 
 	private static final String TAG = LocalMediaPlayer.class.getName();
 	private SurfaceHolder m_surfaceHolder = null;
@@ -36,6 +29,7 @@ public class LocalMediaPlayer extends MediaPlayer {
 	}
 
 	public void scaleContent() {
+
 		int video_width = getVideoWidth();
 		int video_height = getVideoHeight();
 		if (surface_width != 0 && surface_height != 0 && video_width != 0 && video_height != 0
@@ -49,26 +43,4 @@ public class LocalMediaPlayer extends MediaPlayer {
 			m_surfaceHolder.setFixedSize(target_width, target_height);
 		}
 	}
-
-	// SurfaceHolder.Callback m_surfaceCallBack = new Callback() {
-	//
-	// @Override
-	// public void surfaceDestroyed(SurfaceHolder holder) {
-	// m_surfaceHolder = null;
-	// LocalMediaPlayer.this.setDisplay(null);
-	// }
-	//
-	// @Override
-	// public void surfaceCreated(SurfaceHolder holder) {
-	// m_surfaceHolder = holder;
-	// LocalMediaPlayer.this.setDisplay(holder);
-	// }
-	//
-	// @Override
-	// public void surfaceChanged(SurfaceHolder holder, int format, int width,
-	// int height) {
-	// m_surfaceHolder = holder;
-	// LocalMediaPlayer.this.setDisplay(holder);
-	// }
-	// };
 }

@@ -43,6 +43,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
@@ -83,14 +84,13 @@ public class MainActivity extends TabActivity implements SystemListener {
 	private String m_messageToWrite;
 	// Renderer compactview
 	private RendererCompactView m_rendererCompactView;
-	private ImageView btn_toggleRendererView;
-	private ImageView btn_toggleRendererView_Land;
-	private ImageView current_toogleRendererView;
+	private ImageView m_btn_toggleRendererView;
+	private LinearLayout m_ll_tabwidgets;
 
 	private static final int SIZE = 2;
 	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
-	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
-			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
+	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+			new RejectedExecutionHandler() {
 
 				@Override
 				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -184,11 +184,11 @@ public class MainActivity extends TabActivity implements SystemListener {
 	@Override
 	public void onStartComplete() {
 		createTabs();
+		m_ll_tabwidgets = (LinearLayout) findViewById(R.id.ll_tabwidgets);
 		m_rendererCompactView = (RendererCompactView) findViewById(R.id.cv_compact_dmr);
 		m_rendererCompactView.initComponent();
 		m_rendererCompactView.setOnDMRChangeListener(m_onDMRChanged);
-		btn_toggleRendererView = (ImageView) findViewById(R.id.btn_toggleShowHide);
-		btn_toggleRendererView_Land = (ImageView) findViewById(R.id.btn_toggleShowHide_Land);
+		m_btn_toggleRendererView = (ImageView) findViewById(R.id.btn_toggleShowHide);
 		Intent intent = getIntent();
 		if (intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_PLAYTO)) {
 			switchToNowPlaying();
@@ -197,23 +197,24 @@ public class MainActivity extends TabActivity implements SystemListener {
 	}
 
 	private void updateToggleButtonForOrientation() {
-		if (btn_toggleRendererView == null || btn_toggleRendererView_Land == null)
-			return;
-		int rotation = getWindowManager().getDefaultDisplay().getRotation();
-		switch (rotation) {
-		case Surface.ROTATION_0:
-		case Surface.ROTATION_180:
-			btn_toggleRendererView_Land.setVisibility(View.GONE);
-			btn_toggleRendererView.setVisibility(View.VISIBLE);
-			current_toogleRendererView = btn_toggleRendererView;
-			break;
-		case Surface.ROTATION_90:
-		case Surface.ROTATION_270:
-			btn_toggleRendererView_Land.setVisibility(View.VISIBLE);
-			btn_toggleRendererView.setVisibility(View.GONE);
-			current_toogleRendererView = btn_toggleRendererView_Land;
-			break;
-		}
+		// if (btn_toggleRendererView == null || btn_toggleRendererView_Land ==
+		// null)
+		// return;
+		// int rotation = getWindowManager().getDefaultDisplay().getRotation();
+		// switch (rotation) {
+		// case Surface.ROTATION_0:
+		// case Surface.ROTATION_180:
+		// btn_toggleRendererView_Land.setVisibility(View.GONE);
+		// btn_toggleRendererView.setVisibility(View.VISIBLE);
+		// current_toogleRendererView = btn_toggleRendererView;
+		// break;
+		// case Surface.ROTATION_90:
+		// case Surface.ROTATION_270:
+		// btn_toggleRendererView_Land.setVisibility(View.VISIBLE);
+		// btn_toggleRendererView.setVisibility(View.GONE);
+		// current_toogleRendererView = btn_toggleRendererView_Land;
+		// break;
+		// }
 	}
 
 	private OnDMRChangeListener m_onDMRChanged = new OnDMRChangeListener() {
@@ -231,8 +232,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				libraryActivity.getHomeNetworkView().updateListView();
 				libraryActivity.getPlaylistView().updateListView();
 			}
-			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setPlaylistProcessor(
-					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor()
+					.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 		}
 
 		@Override
@@ -278,6 +279,25 @@ public class MainActivity extends TabActivity implements SystemListener {
 			View view = m_tabHost.getTabWidget().getChildAt(i);
 			if (view instanceof TextView)
 				((TextView) view).setTextColor(getResources().getColor(R.color.blue));
+		}
+		if (m_ll_tabwidgets != null) {
+			Activity activity = getLocalActivityManager().getActivity(m_tabHost.getCurrentTabTag());
+			if (activity instanceof LibraryActivity) {
+				m_ll_tabwidgets.setVisibility(View.VISIBLE);
+				if (m_btn_toggleRendererView != null)
+					m_btn_toggleRendererView.setVisibility(View.VISIBLE);
+			} else {
+				m_ll_tabwidgets.setVisibility(View.GONE);
+				int displayMode = getWindowManager().getDefaultDisplay().getRotation();
+				if (displayMode == Surface.ROTATION_0 || displayMode == Surface.ROTATION_180) {
+					if (m_btn_toggleRendererView != null)
+						m_btn_toggleRendererView.setVisibility(View.VISIBLE);
+				} else {
+					if (m_btn_toggleRendererView != null)
+						m_btn_toggleRendererView.setVisibility(View.GONE);
+				}
+
+			}
 		}
 	}
 
@@ -345,8 +365,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void run() {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
-				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause)
-						.setCancelable(false).setPositiveButton("OK", new OnClickListener() {
+				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause).setCancelable(false)
+						.setPositiveButton("OK", new OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -460,8 +480,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 						String textEncoding = (buffer[0] & 0200) == 0 ? "UTF-8" : "UTF-16";
 						int languageCodeLength = buffer[0] & 0077;
 						try {
-							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength
-									- 1, textEncoding);
+							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength - 1,
+									textEncoding);
 							String deviceUDN = "";
 							if (text.startsWith("uuid:"))
 								deviceUDN = text.substring(5);
@@ -528,8 +548,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_waitToWriteTAG = true;
 			m_nfcProgressDialog.show();
 		} else {
-			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
-					.setMessage("Please enable NFC on you device first").setPositiveButton("OK", null).create().show();
+			new AlertDialog.Builder(MainActivity.this).setTitle("NFC").setMessage("Please enable NFC on you device first")
+					.setPositiveButton("OK", null).create().show();
 		}
 	}
 
@@ -551,9 +571,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				if (current_toogleRendererView != null)
-					current_toogleRendererView.setImageDrawable(getResources().getDrawable(
-							R.drawable.ic_btn_navigate_down));
+				if (m_btn_toggleRendererView != null)
+					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -578,9 +597,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				m_rendererCompactView.setVisibility(View.GONE);
-				if (current_toogleRendererView != null)
-					current_toogleRendererView.setImageDrawable(getResources().getDrawable(
-							R.drawable.ic_btn_navigate_up));
+				if (m_btn_toggleRendererView != null)
+					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -609,17 +627,26 @@ public class MainActivity extends TabActivity implements SystemListener {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		Activity activity = getLocalActivityManager().getActivity(m_tabHost.getCurrentTabTag());
-		if (activity instanceof NowPlayingActivity) {
-			NowPlayingActivity nowPlaying = (NowPlayingActivity) activity;
-			if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-				nowPlaying.switchToPortrait();
-			} else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-				nowPlaying.switchToLandscape();
+		if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+			m_ll_tabwidgets.setVisibility(View.VISIBLE);
+			m_btn_toggleRendererView.setVisibility(View.VISIBLE);
+			if (activity instanceof NowPlayingActivity)
+				((NowPlayingActivity) activity).switchToPortrait();
+
+		} else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			if (activity instanceof NowPlayingActivity) {
+				m_ll_tabwidgets.setVisibility(View.GONE);
+				m_btn_toggleRendererView.setVisibility(View.GONE);
+				((NowPlayingActivity) activity).switchToLandscape();
+			} else {
+				m_ll_tabwidgets.setVisibility(View.VISIBLE);
+				m_btn_toggleRendererView.setVisibility(View.VISIBLE);
 			}
 		}
+
 		m_rendererCompactView.setVisibility(View.GONE);
-		if (current_toogleRendererView != null)
-			current_toogleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
+		if (m_btn_toggleRendererView != null)
+			m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
 		updateToggleButtonForOrientation();
 	}
 }

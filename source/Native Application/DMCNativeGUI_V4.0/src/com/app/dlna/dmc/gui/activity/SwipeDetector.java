@@ -1,11 +1,14 @@
 package com.app.dlna.dmc.gui.activity;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class SwipeDetector implements View.OnTouchListener {
 	private NowPlayingActivity m_activity;
 	private static final int MIN_DISTANCE = 100;
+	private static final int DOWN_TIME = 500;
+	private static final String TAG = SwipeDetector.class.getName();
 	private float m_downX, m_upX;
 	private boolean m_enabled = true;
 
@@ -14,13 +17,18 @@ public class SwipeDetector implements View.OnTouchListener {
 	}
 
 	public void onRightToLeftSwipe() {
-		if (m_enabled)
+		if (m_enabled && m_activity != null)
 			m_activity.doNext();
 	}
 
 	public void onLeftToRightSwipe() {
-		if (m_enabled)
+		if (m_enabled && m_activity != null)
 			m_activity.doPrev();
+	}
+
+	public void onTap() {
+		if (m_enabled && m_activity != null)
+			m_activity.toggleItemInfo();
 	}
 
 	public boolean onTouch(View v, MotionEvent event) {
@@ -33,19 +41,16 @@ public class SwipeDetector implements View.OnTouchListener {
 			m_upX = event.getX();
 
 			float deltaX = m_downX - m_upX;
-
-			if (Math.abs(deltaX) > MIN_DISTANCE) {
-				if (deltaX < 0) {
-					this.onLeftToRightSwipe();
-					return true;
+			if (event.getEventTime() - event.getDownTime() < DOWN_TIME)
+				if (Math.abs(deltaX) > MIN_DISTANCE) {
+					if (deltaX < 0) {
+						this.onLeftToRightSwipe();
+					} else if (deltaX > 0) {
+						this.onRightToLeftSwipe();
+					}
+				} else {
+					this.onTap();
 				}
-				if (deltaX > 0) {
-					this.onRightToLeftSwipe();
-					return true;
-				}
-			} else {
-				return false;
-			}
 			return true;
 		}
 		}
@@ -54,5 +59,9 @@ public class SwipeDetector implements View.OnTouchListener {
 
 	public void setEnable(boolean enabled) {
 		m_enabled = enabled;
+	}
+
+	public boolean isEnabled() {
+		return m_enabled;
 	}
 }

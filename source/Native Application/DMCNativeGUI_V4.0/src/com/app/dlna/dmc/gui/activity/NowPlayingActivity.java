@@ -13,8 +13,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.View.OnAttachStateChangeListener;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -65,15 +63,12 @@ public class NowPlayingActivity extends Activity {
 		m_swipeDetector = new SwipeDetector(this);
 
 		m_content = (LinearLayout) findViewById(R.id.content);
-		m_content.setOnClickListener(m_contentClickListener);
 		m_content.setOnTouchListener(m_swipeDetector);
 		m_image = (ImageView) findViewById(R.id.image);
-		m_image.setOnClickListener(m_contentClickListener);
 		m_image.setOnTouchListener(m_swipeDetector);
 
 		m_surface = (SurfaceView) findViewById(R.id.surface);
 		m_surface.setOnTouchListener(m_swipeDetector);
-		m_surface.setOnClickListener(m_contentClickListener);
 		m_surface.getHolder().addCallback(m_surfaceCallback);
 
 		m_animFlipInNext = AnimationUtils.loadAnimation(this, R.anim.flipinnext);
@@ -89,23 +84,17 @@ public class NowPlayingActivity extends Activity {
 		m_viewFlipper.setOnTouchListener(m_swipeDetector);
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
-		m_viewFlipper.setOnClickListener(m_contentClickListener);
-		
+
 	}
 
 	private void initPortrait() {
 		initializeComponents();
-		m_viewFlipper.setVisibility(View.VISIBLE);
-		m_rendererControl.setVisibility(View.VISIBLE);
-		ViewGroup vg = (ViewGroup) findViewById(R.id.rl_nowplaying_root);
-		vg.invalidate();
+		m_rendererControl.initComponents();
 	}
 
 	private void initLandscape() {
 		initializeComponents();
-		m_viewFlipper.setVisibility(View.GONE);
-		m_rendererControl.setVisibility(View.GONE);
-
+		m_rendererControl.initComponents();
 	}
 
 	private PlaylistListener m_playlistListener = new PlaylistListener() {
@@ -356,23 +345,6 @@ public class NowPlayingActivity extends Activity {
 			updateSurfaceView();
 		}
 	};
-	private View.OnClickListener m_contentClickListener = new View.OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			if (m_viewFlipper != null) {
-				if (m_viewFlipper.isShown())
-					m_viewFlipper.setVisibility(View.GONE);
-				else
-					m_viewFlipper.setVisibility(View.VISIBLE);
-			}
-			if (m_rendererControl != null)
-				if (m_rendererControl.isShown())
-					m_rendererControl.setVisibility(View.GONE);
-				else
-					m_rendererControl.setVisibility(View.VISIBLE);
-		}
-	};;
 
 	public void switchToPortrait() {
 		Log.e(TAG, "switch to portrait");
@@ -384,4 +356,18 @@ public class NowPlayingActivity extends Activity {
 		updateItemInfo();
 	};
 
+	public void toggleItemInfo() {
+
+		if (m_viewFlipper != null)
+			if (m_viewFlipper.isShown())
+				m_viewFlipper.setVisibility(View.GONE);
+			else
+				m_viewFlipper.setVisibility(View.VISIBLE);
+
+		if (m_rendererControl != null)
+			if (m_rendererControl.isShown())
+				m_rendererControl.setVisibility(View.GONE);
+			else
+				m_rendererControl.setVisibility(View.VISIBLE);
+	}
 }

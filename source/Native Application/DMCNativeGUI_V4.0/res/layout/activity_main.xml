@@ -44,24 +44,14 @@
                 android:padding="5dp" >
 
                 <LinearLayout
+                    android:id="@+id/ll_tabwidgets"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:weightSum="10" >
+                    android:layout_height="wrap_content" >
 
                     <TabWidget
                         android:id="@android:id/tabs"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/tabwidget_height"
-                        android:layout_weight="9" />
-
-                    <ImageView
-                        android:id="@+id/btn_toggleShowHide_Land"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/tabwidget_height"
-                        android:layout_weight="1"
-                        android:onClick="onShowHideClick"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_btn_navigate_up" />
+                        android:layout_width="fill_parent"
+                        android:layout_height="@dimen/tabwidget_height" />
                 </LinearLayout>
 
                 <FrameLayout

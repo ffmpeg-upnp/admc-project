@@ -107,8 +107,9 @@ public class NowPlayingActivity extends Activity {
 
 				@Override
 				public void run() {
-					int displayMode = getWindowManager().getDefaultDisplay().getRotation();
-					if (displayMode == Surface.ROTATION_0 || displayMode == Surface.ROTATION_180) {
+					if (m_viewFlipper == null)
+						return;
+					if (m_viewFlipper.isShown()) {
 						m_viewFlipper.setInAnimation(m_animFlipInPrevious);
 						m_viewFlipper.setOutAnimation(m_animFlipOutPrevious);
 						m_viewFlipper.showPrevious();
@@ -126,8 +127,9 @@ public class NowPlayingActivity extends Activity {
 
 				@Override
 				public void run() {
-					int displayMode = getWindowManager().getDefaultDisplay().getRotation();
-					if (displayMode == Surface.ROTATION_0 || displayMode == Surface.ROTATION_180) {
+					if (m_viewFlipper == null)
+						return;
+					if (m_viewFlipper.isShown()) {
 						m_viewFlipper.setInAnimation(m_animFlipInNext);
 						m_viewFlipper.setOutAnimation(m_animFlipOutNext);
 						m_viewFlipper.showNext();

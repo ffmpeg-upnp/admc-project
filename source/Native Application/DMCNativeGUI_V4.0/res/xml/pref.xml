@@ -5,12 +5,18 @@
         android:summary="Media Server"
         android:title="Media Server" >
         <ListPreference
-            android:defaultValue="50"
+            android:defaultValue="25"
             android:entries="@array/itemPerLoad"
             android:entryValues="@array/itemPerLoadValues"
             android:key="max_item_count"
             android:summary="Define how many items will be load when browse on Media Server"
             android:title="Number of item per load" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="enable_exported_dms"
+            android:summary="Export content on device"
+            android:title="Export DMS" />
     </PreferenceCategory>
     <PreferenceCategory
         android:summary="Internet"

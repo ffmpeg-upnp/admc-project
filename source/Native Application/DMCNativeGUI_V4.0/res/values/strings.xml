@@ -63,5 +63,6 @@
 	<string name="anim_duration">300</string>
 	<string name="slash">/</string>
 	<string name="play_to">Play to remote renderer</string>
+	<string name="view_mode">View Mode</string>
 
 </resources>

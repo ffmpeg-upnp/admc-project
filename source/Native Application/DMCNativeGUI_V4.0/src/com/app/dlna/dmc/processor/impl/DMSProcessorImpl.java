@@ -236,17 +236,18 @@ public class DMSProcessorImpl implements DMSProcessor {
 									actionListener.onActionComplete("Playlist is full, 0 items inserted.");
 								} else {
 									for (Item item : items) {
-										playlistItems.add(PlaylistItem.createFromDLDIObject(item));
-										if (++count == numberItem)
-											break;
+										PlaylistItem playlistItem = PlaylistItem.createFromDLDIObject(item);
+										if (!playlistProcessor.getAllItems().contains(playlistItem)) {
+											playlistItems.add(playlistItem);
+											if (++count == numberItem)
+												break;
+										}
 									}
 									int insertedCount = PlaylistManager.insertAllItem(playlistItems, playlistProcessor
 											.getData().getId());
 									actionListener.onActionComplete(String.valueOf(insertedCount) + " items inserted");
 								}
 							} else if (actionType.equals(ACTION_REMOVE)) {
-								// modifyItem(playlistProcessor, actionType,
-								// object);
 								int count = 0;
 								for (PlaylistItem playlistItem : playlistProcessor.getAllItems()) {
 									for (Item item : items) {

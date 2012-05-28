@@ -19,6 +19,17 @@
             android:title="Export DMS" />
     </PreferenceCategory>
     <PreferenceCategory
+        android:summary="Media Renderer"
+        android:title="Media Renderer" >
+        <ListPreference
+            android:defaultValue="Medium"
+            android:entries="@array/imageQuality"
+            android:entryValues="@array/imageQualityValues"
+            android:key="image_qualitiy"
+            android:summary="Higher quality can cause loading problem."
+            android:title="Image quality" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:summary="Internet"
         android:title="Internet Video" >
         <CheckBoxPreference

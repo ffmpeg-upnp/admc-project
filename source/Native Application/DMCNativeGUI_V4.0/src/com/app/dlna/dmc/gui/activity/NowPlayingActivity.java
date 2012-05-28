@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
@@ -13,17 +14,25 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 import app.dlna.controller.v4.R;
 
+import com.app.dlna.dmc.gui.customview.adapter.AdapterItem;
+import com.app.dlna.dmc.gui.customview.adapter.CustomArrayAdapter;
 import com.app.dlna.dmc.gui.customview.nowplaying.LocalMediaPlayer;
 import com.app.dlna.dmc.gui.customview.nowplaying.RendererControlView;
+import com.app.dlna.dmc.gui.customview.nowplaying.TouchImageView;
 import com.app.dlna.dmc.processor.async.AsyncTaskWithProgressDialog;
 import com.app.dlna.dmc.processor.impl.LocalDMRProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
@@ -42,10 +51,14 @@ public class NowPlayingActivity extends Activity {
 	private Animation m_animFlipInPrevious;
 	private Animation m_animFlipOutPrevious;
 	private SurfaceView m_surface;
-	private ImageView m_image;
+	private TouchImageView m_image;
 	private boolean m_isPausing;
-	private LinearLayout m_content;
+	private RelativeLayout m_content;
 	private Bitmap m_previousBitmap;
+	private boolean m_lastInfoState = true;
+	private SwipeDetector m_swipeDetector;
+	private ListView m_playlistView;
+	private CustomArrayAdapter m_adapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,11 +76,19 @@ public class NowPlayingActivity extends Activity {
 
 		m_swipeDetector = new SwipeDetector(this);
 
-		m_content = (LinearLayout) findViewById(R.id.content);
+		m_content = (RelativeLayout) findViewById(R.id.content);
 		m_content.setOnTouchListener(m_swipeDetector);
-		m_image = (ImageView) findViewById(R.id.image);
-		m_image.setOnTouchListener(m_swipeDetector);
+		m_image = (TouchImageView) findViewById(R.id.image);
+		// m_image.setOnTouchListener(m_swipeDetector);
 		m_image.setDrawingCacheEnabled(false);
+		m_image.setMaxZoom(4f);
+		m_image.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				NowPlayingActivity.this.toggleItemInfo();
+			}
+		});
 
 		m_surface = (SurfaceView) findViewById(R.id.surface);
 		m_surface.setOnTouchListener(m_swipeDetector);
@@ -87,7 +108,41 @@ public class NowPlayingActivity extends Activity {
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 
+		m_playlistView = (ListView) findViewById(R.id.playlist);
+		m_adapter = new CustomArrayAdapter(NowPlayingActivity.this, 0);
+		m_playlistView.setAdapter(m_adapter);
+		m_playlistView.setOnItemClickListener(m_playlistItemClick);
+		if (MainActivity.UPNP_PROCESSOR.getPlaylistProcessor() != null)
+			for (PlaylistItem item : MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getAllItems())
+				m_adapter.add(new AdapterItem(item));
+
+		if (m_lastInfoState) {
+			m_viewFlipper.setVisibility(View.VISIBLE);
+			m_rendererControl.setVisibility(View.VISIBLE);
+		} else {
+			m_viewFlipper.setVisibility(View.GONE);
+			m_rendererControl.setVisibility(View.GONE);
+		}
 	}
+
+	private OnItemClickListener m_playlistItemClick = new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+			Log.i(TAG, "On ItemClick");
+			final Object object = m_adapter.getItem(position).getData();
+			PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+			if (playlistProcessor == null)
+				return;
+			DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+			if (dmrProcessor == null) {
+				Toast.makeText(NowPlayingActivity.this, "Cannot connect to renderer", Toast.LENGTH_SHORT).show();
+				return;
+			}
+			playlistProcessor.setCurrentItem((PlaylistItem) object);
+			updateItemInfo();
+		}
+	};
 
 	private void initPortrait() {
 		initializeComponents();
@@ -165,7 +220,6 @@ public class NowPlayingActivity extends Activity {
 			m_swipeDetector.setEnable(true);
 		}
 	};
-	private SwipeDetector m_swipeDetector;
 
 	public void doNext() {
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
@@ -193,21 +247,34 @@ public class NowPlayingActivity extends Activity {
 		switch (item.getType()) {
 		case AUDIO_LOCAL:
 		case AUDIO_REMOTE: {
-			m_image.setVisibility(View.VISIBLE);
-			m_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_didlobject_audio_large));
+			// m_image.setVisibility(View.VISIBLE);
+			// m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+			// R.drawable.ic_didlobject_audio_large));
+			// m_image.setMaxZoom(1f);
+			// m_image.setOnTouchListener(m_swipeDetector);
+			m_image.setVisibility(View.GONE);
 			m_surface.setVisibility(View.GONE);
+			m_playlistView.setVisibility(View.VISIBLE);
+			m_lastInfoState = true;
 			break;
 		}
 		case YOUTUBE:
 		case VIDEO_LOCAL:
 		case VIDEO_REMOTE: {
+			m_image.setVisibility(View.GONE);
 			if (dmrProcessor instanceof LocalDMRProcessorImpl) {
 				m_surface.setVisibility(View.VISIBLE);
-				m_image.setVisibility(View.GONE);
+				m_playlistView.setVisibility(View.GONE);
+
 			} else {
-				m_image.setVisibility(View.VISIBLE);
-				m_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_didlobject_video_large));
+				// m_image.setVisibility(View.VISIBLE);
+				// m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+				// R.drawable.ic_didlobject_video_large));
+				// m_image.setMaxZoom(1f);
+				// m_image.setOnTouchListener(m_swipeDetector);
+				m_playlistView.setVisibility(View.VISIBLE);
 				m_surface.setVisibility(View.GONE);
+				m_lastInfoState = true;
 			}
 			break;
 		}
@@ -216,7 +283,12 @@ public class NowPlayingActivity extends Activity {
 			new AsyncTaskWithProgressDialog<String, Void, Bitmap>("Loading image") {
 
 				protected void onPreExecute() {
-					m_image.setVisibility(View.VISIBLE);
+					m_playlistView.setVisibility(View.GONE);
+					if (m_previousBitmap != null)
+						m_previousBitmap.recycle();
+					System.gc();
+					m_image.setVisibility(View.GONE);
+					m_content.findViewById(R.id.loading_icon).setVisibility(View.VISIBLE);
 					m_surface.setVisibility(View.GONE);
 				};
 
@@ -226,6 +298,7 @@ public class NowPlayingActivity extends Activity {
 					String url = params[0];
 					int width = Integer.parseInt(params[1]);
 					int height = Integer.parseInt(params[2]);
+					Log.d(TAG, "imagewidth ::::::::: " + width + ";imageheight ::::::::" + height);
 					try {
 						return Utility.getBitmapFromURL(url, width < height ? width : height);
 					} catch (MalformedURLException e) {
@@ -242,17 +315,26 @@ public class NowPlayingActivity extends Activity {
 
 				@Override
 				protected void onPostExecute(Bitmap result) {
+					m_image.setVisibility(View.VISIBLE);
+					m_content.findViewById(R.id.loading_icon).setVisibility(View.GONE);
 					if (m_previousBitmap != null)
 						m_previousBitmap.recycle();
 					System.gc();
 					m_previousBitmap = result;
 					if (result == null) {
-						m_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_didlobject_image_large));
+						Toast.makeText(NowPlayingActivity.this,
+								"Image loading error. Reduce image quality in Settings maybe fix this problem",
+								Toast.LENGTH_SHORT).show();
+						m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_didlobject_image_large));
+						m_image.setMaxZoom(1f);
+						m_image.setOnTouchListener(m_swipeDetector);
 					} else {
 						m_image.setImageBitmap(result);
+						m_image.setMaxZoom(4f);
 					}
 				}
-			}.execute(new String[] { item.getUrl(), "512", "512" });
+			}.execute(new String[] { item.getUrl(), String.valueOf(AppPreference.getImageDimension()),
+					String.valueOf(AppPreference.getImageDimension()) });
 			break;
 		}
 		default: {
@@ -276,6 +358,7 @@ public class NowPlayingActivity extends Activity {
 	protected void onResume() {
 		Log.e(TAG, "nowplaying ressume");
 		super.onResume();
+		m_lastInfoState = true;
 		m_isPausing = false;
 		updatePlaylist();
 		updateItemInfo();
@@ -368,17 +451,15 @@ public class NowPlayingActivity extends Activity {
 	};
 
 	public void toggleItemInfo() {
-
-		if (m_viewFlipper != null)
-			if (m_viewFlipper.isShown())
+		if (m_viewFlipper != null && m_rendererControl != null)
+			if (m_viewFlipper.isShown()) {
 				m_viewFlipper.setVisibility(View.GONE);
-			else
-				m_viewFlipper.setVisibility(View.VISIBLE);
-
-		if (m_rendererControl != null)
-			if (m_rendererControl.isShown())
 				m_rendererControl.setVisibility(View.GONE);
-			else
+				m_lastInfoState = false;
+			} else {
+				m_viewFlipper.setVisibility(View.VISIBLE);
 				m_rendererControl.setVisibility(View.VISIBLE);
+				m_lastInfoState = true;
+			}
 	}
 }

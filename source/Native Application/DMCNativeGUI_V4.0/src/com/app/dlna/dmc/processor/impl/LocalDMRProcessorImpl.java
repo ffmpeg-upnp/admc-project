@@ -117,6 +117,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		if (m_currentItem.equals(item))
 			return;
 		m_currentItem = item;
+		setRunning(true);
 		switch (m_currentItem.getType()) {
 		case YOUTUBE:
 			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()),

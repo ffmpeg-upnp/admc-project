@@ -17,7 +17,11 @@ public class LocalMediaPlayer extends MediaPlayer {
 			super.setDisplay(sh);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			super.setDisplay(null);
+			try {
+				super.setDisplay(null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		m_surfaceHolder = sh;
 	}
@@ -32,8 +36,7 @@ public class LocalMediaPlayer extends MediaPlayer {
 		try {
 			int video_width = getVideoWidth();
 			int video_height = getVideoHeight();
-			if (surface_width != 0 && surface_height != 0 && video_width != 0 && video_height != 0
-					&& m_surfaceHolder != null) {
+			if (surface_width != 0 && surface_height != 0 && video_width != 0 && video_height != 0 && m_surfaceHolder != null) {
 				float scale_width = (float) video_width / surface_width;
 				float scale_height = (float) video_height / surface_height;
 				float max_scale = scale_width > scale_height ? scale_width : scale_height;

@@ -6,8 +6,8 @@ import android.view.View;
 public class SwipeDetector implements View.OnTouchListener {
 	private NowPlayingActivity m_activity;
 	private static final int MIN_DISTANCE = 100;
-	private static final int DOWN_TIME = 500;
-	private static final String TAG = SwipeDetector.class.getName();
+	private static final int DOWN_TIME = 700;
+	// private static final String TAG = SwipeDetector.class.getName();
 	private float m_downX, m_upX;
 	private boolean m_enabled = true;
 

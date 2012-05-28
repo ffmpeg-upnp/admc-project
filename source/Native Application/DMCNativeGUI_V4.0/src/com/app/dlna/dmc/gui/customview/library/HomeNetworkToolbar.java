@@ -103,13 +103,15 @@ public class HomeNetworkToolbar extends LinearLayout {
 		ProgressDialog m_progreProgressDialog;
 
 		@Override
-		public void onActionStart() {
+		public void onActionStart(final String actionType) {
 			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
 
 				@Override
 				public void run() {
-					m_progreProgressDialog = ProgressDialog
-							.show(getContext(), "Processing", "Waiting to add all items");
+					String message = actionType.equals(DMSProcessor.ACTION_ADD) ? "Waiting for add all items"
+							: "Waiting for remove all items";
+
+					m_progreProgressDialog = ProgressDialog.show(getContext(), "Processing", message);
 					m_progreProgressDialog.setCancelable(false);
 				}
 			});
@@ -131,13 +133,15 @@ public class HomeNetworkToolbar extends LinearLayout {
 		}
 
 		@Override
-		public void onActionComplete() {
+		public void onActionComplete(final String message) {
 			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
 
 				@Override
 				public void run() {
 					m_progreProgressDialog.dismiss();
-					Toast.makeText(getContext(), "Add all items complete", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+					LibraryActivity activity = (LibraryActivity) getContext();
+					activity.getPlaylistView().udpateCurrentPlaylistProcessor();
 					m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getListView());
 				}
 			});

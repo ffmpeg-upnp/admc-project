@@ -81,7 +81,8 @@ public class Utility {
 		long hour = seconds / 3600;
 		long minute = (seconds - hour * 3600) / 60;
 		long second = seconds - hour * 3600 - minute * 60;
-		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second));
+		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":"
+				+ String.format("%02d", second));
 
 		return sb.toString();
 	}
@@ -94,8 +95,8 @@ public class Utility {
 		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
-	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl, final Map<String, Bitmap> cache,
-			final int size) {
+	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl,
+			final Map<String, Bitmap> cache, final int size) {
 		MainActivity.INSTANCE.EXEC.execute(new Runnable() {
 
 			@Override
@@ -140,6 +141,17 @@ public class Utility {
 
 					});
 					e.printStackTrace();
+				} catch (OutOfMemoryError e) {
+					MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							System.gc();
+							image.setImageResource(R.drawable.ic_didlobject_image);
+						}
+
+					});
+					e.printStackTrace();
 				}
 			}
 		});
@@ -160,7 +172,10 @@ public class Utility {
 		BitmapFactory.Options o2 = new BitmapFactory.Options();
 		o2.inSampleSize = scale;
 
-		return BitmapFactory.decodeByteArray(buffer, 0, buffer.length, o2);
+		Bitmap result = BitmapFactory.decodeByteArray(buffer, 0, buffer.length, o2);
+		buffer = null;
+		System.gc();
+		return result;
 	}
 
 	public static String decodeYoutubeUrl(String directLink) throws UnsupportedEncodingException {

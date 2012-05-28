@@ -25,12 +25,12 @@ import android.util.Log;
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
+import com.app.dlna.dmc.processor.playlist.PlaylistItem;
+import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 
 public class DMSProcessorImpl implements DMSProcessor {
 
 	private static final String TAG = DMSProcessorImpl.class.getName();
-	private static final String ACTION_REMOVE = "Remove";
-	private static final String ACTION_ADD = "Add";
 	@SuppressWarnings("rawtypes")
 	private Device m_server;
 	private ControlPoint m_controlPoint;
@@ -171,7 +171,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 
 	private void modifyCurrentItems(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener,
 			String actionType) {
-		actionListener.onActionStart();
+		actionListener.onActionStart(actionType);
 		if (playlistProcessor == null) {
 			Log.w(TAG, "Playlist processor = null");
 			actionListener.onActionFail(new RuntimeException("Playlist is null"));
@@ -179,9 +179,9 @@ public class DMSProcessorImpl implements DMSProcessor {
 		}
 		int count = m_DIDLObjectList.size();
 		for (int i = 0; i < count; ++i) {
-			addItemToPlaylist(playlistProcessor, actionType, m_DIDLObjectList.get(i));
+			modifyItem(playlistProcessor, actionType, m_DIDLObjectList.get(i));
 		}
-		actionListener.onActionComplete();
+		actionListener.onActionComplete("");
 	}
 
 	@Override
@@ -203,7 +203,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void modifyContainerItemsInPlaylist(final PlaylistProcessor playlistProcessor,
 			final DMSAddRemoveContainerListener actionListener, final String actionType) {
-		actionListener.onActionStart();
+		actionListener.onActionStart(actionType);
 		Service cds = m_server.findService(new ServiceType("schemas-upnp-org", "ContentDirectory"));
 		if (cds != null) {
 			Action action = cds.getAction("Browse");
@@ -227,14 +227,38 @@ public class DMSProcessorImpl implements DMSProcessor {
 						if (playlistProcessor == null) {
 							actionListener.onActionFail(new RuntimeException("Playlist processor is null"));
 						} else {
-							int count = items.size();
-							for (int i = 0; i < count; ++i) {
-								DIDLObject object = items.get(i);
-								if (object instanceof Item) {
-									addItemToPlaylist(playlistProcessor, actionType, object);
+							if (actionType.equals(ACTION_ADD)) {
+								List<PlaylistItem> playlistItems = new ArrayList<PlaylistItem>();
+								int numberItem = playlistProcessor.getMaxSize()
+										- playlistProcessor.getAllItems().size();
+								int count = 0;
+								if (numberItem == 0) {
+									actionListener.onActionComplete("Playlist is full, 0 items inserted.");
+								} else {
+									for (Item item : items) {
+										playlistItems.add(PlaylistItem.createFromDLDIObject(item));
+										if (++count == numberItem)
+											break;
+									}
+									int insertedCount = PlaylistManager.insertAllItem(playlistItems, playlistProcessor
+											.getData().getId());
+									actionListener.onActionComplete(String.valueOf(insertedCount) + " items inserted");
 								}
+							} else if (actionType.equals(ACTION_REMOVE)) {
+								// modifyItem(playlistProcessor, actionType,
+								// object);
+								int count = 0;
+								for (PlaylistItem playlistItem : playlistProcessor.getAllItems()) {
+									for (Item item : items) {
+										if (item.getResources().get(0).getValue().equals(playlistItem.getUrl())) {
+											PlaylistManager.deletePlaylistItem(playlistItem.getId());
+											++count;
+											break;
+										}
+									}
+								}
+								actionListener.onActionComplete(String.valueOf(count) + " items removed");
 							}
-							actionListener.onActionComplete();
 						}
 
 					} catch (Exception e) {
@@ -253,11 +277,13 @@ public class DMSProcessorImpl implements DMSProcessor {
 		}
 	}
 
-	private void addItemToPlaylist(final PlaylistProcessor playlistProcessor, final String actionType, DIDLObject object) {
+	private PlaylistItem modifyItem(final PlaylistProcessor playlistProcessor, final String actionType,
+			DIDLObject object) {
 		if (actionType.equals(ACTION_ADD))
-			playlistProcessor.addDIDLObject(object);
+			return playlistProcessor.addDIDLObject(object);
 		else if (actionType.equals(ACTION_REMOVE))
-			playlistProcessor.removeDIDLObject(object);
+			return playlistProcessor.removeDIDLObject(object);
+		return null;
 	}
 
 }

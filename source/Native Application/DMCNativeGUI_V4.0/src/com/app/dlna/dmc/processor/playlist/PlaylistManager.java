@@ -87,8 +87,7 @@ public class PlaylistManager {
 			values.put(PlaylistSQLiteHelper.COL_URL, playlistItem.getUrl());
 			values.put(PlaylistSQLiteHelper.COL_TYPE, playlistItem.getType().toString());
 			values.put(PlaylistSQLiteHelper.COL_PLAYLIST_ID, playlist_id);
-			ContentResolver contentResolver = RESOLVER;
-			Uri uri = contentResolver.insert(PlaylistProvider.PLAYLIST_ITEM_URI, values);
+			Uri uri = RESOLVER.insert(PlaylistProvider.PLAYLIST_ITEM_URI, values);
 			if (uri == null)
 				return false;
 			String newId = uri.getQueryParameter("newid");
@@ -102,17 +101,16 @@ public class PlaylistManager {
 
 	public static boolean createPlaylist(Playlist playlist) {
 		try {
-			ContentResolver resolver = RESOLVER;
 			ContentValues values = new ContentValues();
 			values.put(PlaylistSQLiteHelper.COL_NAME, playlist.getName());
 			values.put(PlaylistSQLiteHelper.COL_CURRENT_POSITION, playlist.getCurrentIdx());
-			Uri uri = resolver.insert(PlaylistProvider.PLAYLIST_URI, values);
+			Uri uri = RESOLVER.insert(PlaylistProvider.PLAYLIST_URI, values);
 			if (uri != null) {
 				String newId = uri.getQueryParameter("newid");
 				playlist.setId(Long.valueOf(newId));
 				ContentValues updateValues = new ContentValues();
 				updateValues.put(PlaylistSQLiteHelper.COL_PLAYLIST_ID, newId);
-				resolver.update(PlaylistProvider.PLAYLIST_ITEM_URI, updateValues, PlaylistSQLiteHelper.COL_PLAYLIST_ID
+				RESOLVER.update(PlaylistProvider.PLAYLIST_ITEM_URI, updateValues, PlaylistSQLiteHelper.COL_PLAYLIST_ID
 						+ " = ?", new String[] { "1" });
 				return true;
 			}
@@ -159,4 +157,16 @@ public class PlaylistManager {
 				new String[] { String.valueOf(playlist.getId()) });
 	}
 
+	public static int insertAllItem(List<PlaylistItem> items, long playlist_id) {
+		ContentValues[] valuesList = new ContentValues[items.size()];
+		for (int i = 0; i < items.size(); ++i) {
+			valuesList[i] = new ContentValues();
+			PlaylistItem playlistItem = items.get(i);
+			valuesList[i].put(PlaylistSQLiteHelper.COL_TITLE, playlistItem.getTitle());
+			valuesList[i].put(PlaylistSQLiteHelper.COL_URL, playlistItem.getUrl());
+			valuesList[i].put(PlaylistSQLiteHelper.COL_TYPE, playlistItem.getType().toString());
+			valuesList[i].put(PlaylistSQLiteHelper.COL_PLAYLIST_ID, playlist_id);
+		}
+		return RESOLVER.bulkInsert(PlaylistProvider.PLAYLIST_ITEM_URI, valuesList);
+	}
 }

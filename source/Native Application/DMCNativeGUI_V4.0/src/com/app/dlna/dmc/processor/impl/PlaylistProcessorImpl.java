@@ -4,14 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.teleal.cling.support.model.DIDLObject;
-import org.teleal.cling.support.model.item.AudioItem;
-import org.teleal.cling.support.model.item.VideoItem;
-
-import android.net.Uri;
-import android.util.Log;
 
 import com.app.dlna.dmc.gui.activity.MainActivity;
-import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.playlist.Playlist;
@@ -21,7 +15,6 @@ import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 
 public class PlaylistProcessorImpl implements PlaylistProcessor {
-	private static final String TAG = PlaylistProcessorImpl.class.getName();
 	private List<PlaylistItem> m_playlistItems;
 	private int m_currentItemIdx;
 	private int m_maxSize;
@@ -132,12 +125,15 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 			if (m_playlistItems.contains(item))
 				return item;
 			if (m_playlistItems.size() >= m_maxSize) {
-				// remove last item
-				PlaylistItem lastItem = m_playlistItems.get(m_playlistItems.size() - 1);
-				PlaylistManager.deletePlaylistItem(lastItem.getId());
-				m_playlistItems.remove(lastItem);
+				// // remove last item
+				// PlaylistItem lastItem =
+				// m_playlistItems.get(m_playlistItems.size() - 1);
+				// PlaylistManager.deletePlaylistItem(lastItem.getId());
+				// m_playlistItems.remove(lastItem);
+				return null;
 			}
-			PlaylistManager.createPlaylistItem(item, m_data.getId());
+			if (!PlaylistManager.createPlaylistItem(item, m_data.getId()))
+				return null;
 			m_playlistItems.add(item);
 			if (m_playlistItems.size() == 1) {
 				m_currentItemIdx = 0;
@@ -182,38 +178,12 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 
 	@Override
 	public PlaylistItem addDIDLObject(DIDLObject object) {
-		return addItem(createPlaylistItem(object));
+		return addItem(PlaylistItem.createFromDLDIObject(object));
 	}
 
 	@Override
 	public PlaylistItem removeDIDLObject(DIDLObject object) {
-		return removeItem(createPlaylistItem(object));
-	}
-
-	private PlaylistItem createPlaylistItem(DIDLObject object) {
-		PlaylistItem item = new PlaylistItem();
-		item.setTitle(object.getTitle());
-		Uri uri = Uri.parse(object.getResources().get(0).getValue());
-		boolean isLocal = uri.getHost().equals(HTTPServerData.HOST) && uri.getPort() == HTTPServerData.PORT;
-		item.setUrl(object.getResources().get(0).getValue());
-		Log.i(TAG, "PlaylistItem url = " + object.getResources().get(0).getValue());
-		if (object instanceof AudioItem) {
-			if (isLocal) {
-				item.setType(Type.AUDIO_LOCAL);
-			} else
-				item.setType(Type.AUDIO_REMOTE);
-		} else if (object instanceof VideoItem) {
-			if (isLocal) {
-				item.setType(Type.VIDEO_LOCAL);
-			} else
-				item.setType(Type.VIDEO_REMOTE);
-		} else {
-			if (isLocal) {
-				item.setType(Type.IMAGE_LOCAL);
-			} else
-				item.setType(Type.IMAGE_REMOTE);
-		}
-		return item;
+		return removeItem(PlaylistItem.createFromDLDIObject(object));
 	}
 
 	@Override

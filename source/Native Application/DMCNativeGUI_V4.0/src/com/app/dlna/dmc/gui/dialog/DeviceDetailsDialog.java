@@ -21,12 +21,12 @@ public class DeviceDetailsDialog extends Dialog {
 	@SuppressWarnings("rawtypes")
 	public DeviceDetailsDialog(Context context, Device device, DeviceDetailsListener listener) {
 		super(context);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
 		m_device = device;
 		m_listener = listener;
-
+		requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		setContentView(R.layout.dl_devicedetails);
+		setTitle("Device info");
+		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_info);
 		((Button) findViewById(R.id.btn_select)).setOnClickListener(m_selectClick);
 		((Button) findViewById(R.id.btn_writeToTag)).setOnClickListener(m_saveTagClick);
 		((Button) findViewById(R.id.btn_close)).setOnClickListener(m_closeClick);

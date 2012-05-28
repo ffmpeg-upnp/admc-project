@@ -3,6 +3,12 @@ package com.app.dlna.dmc.processor.playlist;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.teleal.cling.support.model.DIDLObject;
+import org.teleal.cling.support.model.item.AudioItem;
+import org.teleal.cling.support.model.item.VideoItem;
+
+import android.net.Uri;
+
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 
 public class PlaylistItem {
@@ -74,6 +80,31 @@ public class PlaylistItem {
 		PlaylistItem other = (PlaylistItem) o;
 		return other.getUrl().equals(this.getUrl()) && other.m_type.equals(this.m_type)
 				&& other.m_title.equals(this.m_title);
+	}
+
+	public static PlaylistItem createFromDLDIObject(DIDLObject object) {
+		PlaylistItem item = new PlaylistItem();
+		item.setTitle(object.getTitle());
+		Uri uri = Uri.parse(object.getResources().get(0).getValue());
+		boolean isLocal = uri.getHost().equals(HTTPServerData.HOST) && uri.getPort() == HTTPServerData.PORT;
+		item.setUrl(object.getResources().get(0).getValue());
+		if (object instanceof AudioItem) {
+			if (isLocal) {
+				item.setType(Type.AUDIO_LOCAL);
+			} else
+				item.setType(Type.AUDIO_REMOTE);
+		} else if (object instanceof VideoItem) {
+			if (isLocal) {
+				item.setType(Type.VIDEO_LOCAL);
+			} else
+				item.setType(Type.VIDEO_REMOTE);
+		} else {
+			if (isLocal) {
+				item.setType(Type.IMAGE_LOCAL);
+			} else
+				item.setType(Type.IMAGE_REMOTE);
+		}
+		return item;
 	}
 
 }

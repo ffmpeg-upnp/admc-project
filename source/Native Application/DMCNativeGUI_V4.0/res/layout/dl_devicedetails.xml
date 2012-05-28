@@ -12,9 +12,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/deviceName"
-        android:background="@drawable/bg_textview_bottom_line"
         android:text="@string/device_name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/blue" />
 
     <TextView
         android:id="@+id/deviceName"
@@ -33,9 +33,9 @@
         android:layout_alignRight="@+id/deviceName"
         android:layout_below="@+id/deviceName"
         android:layout_marginTop="5dp"
-        android:background="@drawable/bg_textview_bottom_line"
         android:text="@string/device_type"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/blue" />
 
     <TextView
         android:id="@+id/deviceType"
@@ -54,9 +54,9 @@
         android:layout_alignRight="@+id/deviceType"
         android:layout_below="@+id/deviceType"
         android:layout_marginTop="5dp"
-        android:background="@drawable/bg_textview_bottom_line"
         android:text="@string/device_udn"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/blue" />
 
     <TextView
         android:id="@+id/deviceUDN"
@@ -82,21 +82,24 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/select" />
+            android:text="@string/select"
+            android:textSize="12dp" />
 
         <Button
             android:id="@+id/btn_writeToTag"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/writeToTag" />
+            android:text="@string/writeToTag"
+            android:textSize="12dp" />
 
         <Button
             android:id="@+id/btn_close"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/close" />
+            android:text="@string/close"
+            android:textSize="12dp" />
     </LinearLayout>
 
 </RelativeLayout>

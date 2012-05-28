@@ -56,6 +56,7 @@ import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.localdevice.service.LocalContentDirectoryService;
+import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 import com.app.dlna.dmc.processor.receiver.NetworkStateReceiver;
 import com.app.dlna.dmc.processor.receiver.NetworkStateReceiver.RouterStateListener;
 import com.app.dlna.dmc.utility.Utility;
@@ -215,6 +216,7 @@ public class CoreUpnpService extends Service {
 				@Override
 				protected Void doInBackground(Void... params) {
 					try {
+						PlaylistManager.clearPlaylist(1);// Clear UNSAVED Playlist
 						m_upnpService.getRegistry().removeAllLocalDevices();
 						m_upnpService.getRegistry().removeAllRemoteDevices();
 						m_upnpService.getRegistry().removeListener(m_registryListener);

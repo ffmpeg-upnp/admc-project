@@ -29,18 +29,21 @@ public class LocalMediaPlayer extends MediaPlayer {
 	}
 
 	public void scaleContent() {
+		try {
+			int video_width = getVideoWidth();
+			int video_height = getVideoHeight();
+			if (surface_width != 0 && surface_height != 0 && video_width != 0 && video_height != 0
+					&& m_surfaceHolder != null) {
+				float scale_width = (float) video_width / surface_width;
+				float scale_height = (float) video_height / surface_height;
+				float max_scale = scale_width > scale_height ? scale_width : scale_height;
+				int target_width = (int) (video_width / max_scale);
+				int target_height = (int) (video_height / max_scale);
+				Log.e(TAG, "targetwidth = " + target_width + " :::::: targetheight = " + target_height);
+				m_surfaceHolder.setFixedSize(target_width, target_height);
+			}
+		} catch (Exception ex) {
 
-		int video_width = getVideoWidth();
-		int video_height = getVideoHeight();
-		if (surface_width != 0 && surface_height != 0 && video_width != 0 && video_height != 0
-				&& m_surfaceHolder != null) {
-			float scale_width = (float) video_width / surface_width;
-			float scale_height = (float) video_height / surface_height;
-			float max_scale = scale_width > scale_height ? scale_width : scale_height;
-			int target_width = (int) (video_width / max_scale);
-			int target_height = (int) (video_height / max_scale);
-			Log.e(TAG, "targetwidth = " + target_width + " :::::: targetheight = " + target_height);
-			m_surfaceHolder.setFixedSize(target_width, target_height);
 		}
 	}
 }

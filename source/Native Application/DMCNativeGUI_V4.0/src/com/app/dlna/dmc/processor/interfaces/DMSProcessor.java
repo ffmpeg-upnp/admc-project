@@ -6,6 +6,9 @@ import java.util.Map;
 import org.teleal.cling.support.model.DIDLObject;
 
 public interface DMSProcessor {
+	static final String ACTION_REMOVE = "Remove";
+	static final String ACTION_ADD = "Add";
+
 	void browse(String objectID, int pageIndex, DMSProcessorListner listener);
 
 	void nextPage(DMSProcessorListner listener);
@@ -37,10 +40,10 @@ public interface DMSProcessor {
 	}
 
 	public interface DMSAddRemoveContainerListener {
-		void onActionComplete();
+		void onActionComplete(String message);
 
 		void onActionFail(Exception ex);
 
-		void onActionStart();
+		void onActionStart(String action);
 	}
 }

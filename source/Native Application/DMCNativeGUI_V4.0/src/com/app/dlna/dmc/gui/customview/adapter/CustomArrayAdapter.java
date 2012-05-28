@@ -288,7 +288,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 			else if (childCount == 1)
 				childCountStr = "1 child";
 			else
-				childCountStr = childCount + " childs";
+				childCountStr = childCount + " items";
 			holder.desc.setText(childCountStr);
 		} else {
 			String objectUrl = object.getResources().get(0).getValue();
@@ -467,6 +467,9 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 						} else {
 							if (playlistProcessor.addDIDLObject(object) != null)
 								updateSingleView(v, position);
+							else {
+								Toast.makeText(getContext(), "Current playlist is full", Toast.LENGTH_SHORT).show();
+							}
 						}
 					}
 				} else {

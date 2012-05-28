@@ -45,6 +45,7 @@ public class NowPlayingActivity extends Activity {
 	private ImageView m_image;
 	private boolean m_isPausing;
 	private LinearLayout m_content;
+	private Bitmap m_previousBitmap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +67,7 @@ public class NowPlayingActivity extends Activity {
 		m_content.setOnTouchListener(m_swipeDetector);
 		m_image = (ImageView) findViewById(R.id.image);
 		m_image.setOnTouchListener(m_swipeDetector);
+		m_image.setDrawingCacheEnabled(false);
 
 		m_surface = (SurfaceView) findViewById(R.id.surface);
 		m_surface.setOnTouchListener(m_swipeDetector);
@@ -230,11 +232,18 @@ public class NowPlayingActivity extends Activity {
 					} catch (IOException e) {
 						e.printStackTrace();
 						return null;
+					} catch (OutOfMemoryError e) {
+						e.printStackTrace();
+						return null;
 					}
 				}
 
 				@Override
 				protected void onPostExecute(Bitmap result) {
+					if (m_previousBitmap != null)
+						m_previousBitmap.recycle();
+					System.gc();
+					m_previousBitmap = result;
 					if (result == null) {
 						m_image.setImageDrawable(getResources().getDrawable(R.drawable.ic_didlobject_image_large));
 					} else {

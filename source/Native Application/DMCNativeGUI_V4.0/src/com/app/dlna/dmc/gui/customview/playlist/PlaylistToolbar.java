@@ -82,6 +82,8 @@ public class PlaylistToolbar extends LinearLayout {
 				@Override
 				protected Void doInBackground(Void... params) {
 					PlaylistManager.clearPlaylist(m_playlistView.getCurrentPlaylistProcessor().getData().getId());
+					LibraryActivity activity = (LibraryActivity) getContext();
+					activity.getPlaylistView().udpateCurrentPlaylistProcessor();
 					return null;
 				}
 

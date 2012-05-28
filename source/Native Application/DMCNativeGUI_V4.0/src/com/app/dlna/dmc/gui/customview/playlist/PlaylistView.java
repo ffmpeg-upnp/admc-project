@@ -188,4 +188,14 @@ public class PlaylistView extends DMRListenerView {
 		return m_currentPlaylist;
 	}
 
+	public void udpateCurrentPlaylistProcessor() {
+		if (m_currentPlaylist == null) {
+			Playlist unsaved = new Playlist();
+			unsaved.setId(1);
+			m_currentPlaylist = PlaylistManager.getPlaylistProcessor(unsaved);
+		} else {
+			m_currentPlaylist = PlaylistManager.getPlaylistProcessor(m_currentPlaylist.getData());
+		}
+	}
+
 }

@@ -193,7 +193,6 @@ public class HomeNetworkView extends DMRListenerView {
 			} else {
 				if (playlistProcessor.isFull()) {
 					Toast.makeText(getContext(), "Current playlist is full", Toast.LENGTH_SHORT).show();
-					// dmrProcessor.setURIandPlay(object.getResources().get(0).getValue());
 				} else {
 					Toast.makeText(getContext(), "An error occurs, try again later", Toast.LENGTH_SHORT).show();
 				}

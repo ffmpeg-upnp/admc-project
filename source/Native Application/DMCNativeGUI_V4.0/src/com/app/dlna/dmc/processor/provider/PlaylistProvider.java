@@ -28,6 +28,7 @@ public class PlaylistProvider extends ContentProvider {
 
 	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
+		Log.e(TAG, "update database");
 		switch (uriMatcher.match(uri)) {
 		case PLAYLIST: {
 			SQLiteDatabase database = dbPlaylistHelper.getWritableDatabase();
@@ -36,7 +37,7 @@ public class PlaylistProvider extends ContentProvider {
 			return deleted;
 		}
 		case PLAYLIST_ITEM: {
-			Log.i(TAG,"Delete item, id = " + selectionArgs[0]);
+			Log.i(TAG, "Delete item, id = " + selectionArgs[0]);
 			SQLiteDatabase database = dbPlaylistHelper.getWritableDatabase();
 			int deleted = database.delete(PlaylistSQLiteHelper.TABLE_PLAYLIST_ITEMS, selection, selectionArgs);
 			Log.i(TAG, "Delete item count = " + deleted);
@@ -54,6 +55,7 @@ public class PlaylistProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
+		Log.e(TAG, "insert database");
 		switch (uriMatcher.match(uri)) {
 		case PLAYLIST: {
 			SQLiteDatabase database = dbPlaylistHelper.getWritableDatabase();
@@ -70,6 +72,39 @@ public class PlaylistProvider extends ContentProvider {
 		}
 		default:
 			return null;
+		}
+	}
+
+	@Override
+	public int bulkInsert(Uri uri, ContentValues[] values) {
+		Log.e(TAG, "bulk insert");
+		switch (uriMatcher.match(uri)) {
+		case PLAYLIST_ITEM: {
+			Log.i(TAG, "Insert list of item playlist item " + values.toString());
+			int insertCount = 0;
+			SQLiteDatabase database = dbPlaylistHelper.getWritableDatabase();
+			database.beginTransaction();
+			try {
+				for (ContentValues cv : values) {
+					long newID = database.insertOrThrow(PlaylistSQLiteHelper.TABLE_PLAYLIST_ITEMS, null, cv);
+					if (newID <= 0) {
+						break;
+					} else {
+						++insertCount;
+					}
+				}
+				if (insertCount == values.length)
+					database.setTransactionSuccessful();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			} finally {
+				database.endTransaction();
+			}
+			database.close();
+			return insertCount;
+		}
+		default:
+			return 0;
 		}
 	}
 
@@ -104,6 +139,7 @@ public class PlaylistProvider extends ContentProvider {
 
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+		Log.e(TAG, "update database");
 		int count = -1;
 		switch (uriMatcher.match(uri)) {
 		case PLAYLIST: {
@@ -125,5 +161,4 @@ public class PlaylistProvider extends ContentProvider {
 		}
 		return count;
 	}
-
 }

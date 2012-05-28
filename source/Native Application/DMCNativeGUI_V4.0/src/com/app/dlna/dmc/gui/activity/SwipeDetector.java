@@ -1,6 +1,5 @@
 package com.app.dlna.dmc.gui.activity;
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 

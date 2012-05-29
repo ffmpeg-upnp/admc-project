@@ -65,7 +65,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	private boolean m_user_stop;
 	private boolean m_seftAutoNext;
 	private int m_autoNextPending = 0;
-	private String m_currentTrackURI;
 	private PlaylistItem m_currentItem;
 
 	private class UpdateThread extends Thread {
@@ -91,7 +90,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 							// Log.v(TAG, positionInfo.toString());
 							// Log.v(TAG, "Track uri = " +
 							// positionInfo.getTrackURI());
-							m_currentTrackURI = positionInfo.getTrackURI();
 							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(),
 									positionInfo.getTrackDurationSeconds());
 
@@ -459,7 +457,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public String getCurrentTrackURI() {
-		return null == m_currentTrackURI ? "" : m_currentTrackURI;
+		return null == m_currentItem ? "" : m_currentItem.getUrl();
 	}
 
 	@Override
@@ -469,12 +467,17 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void setURIandPlay(final PlaylistItem item) {
+		if (item == null) {
+			m_currentItem = null;
+			stop();
+			return;
+		}
 		final String url = item.getUrl();
 		Log.i(TAG, "url = " + item.getUrl());
 		m_autoNextPending = AUTO_NEXT_DELAY;
 		if (m_controlPoint == null || m_avtransportService == null)
 			return;
-		if (m_currentItem.equals(item))
+		if (m_currentItem != null && m_currentItem.equals(item))
 			return;
 		m_isBusy = true;
 		m_currentItem = item;
@@ -638,5 +641,10 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				}
 			});
 		}
+	}
+
+	@Override
+	public PlaylistItem getCurrentItem() {
+		return m_currentItem;
 	}
 }

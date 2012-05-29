@@ -9,12 +9,14 @@ import org.teleal.cling.model.meta.Action;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -24,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
 
+import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.gui.activity.NowPlayingActivity;
 import com.app.dlna.dmc.gui.customview.adapter.AdapterItem;
@@ -33,7 +36,9 @@ import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.playlist.Playlist;
+import com.app.dlna.dmc.processor.playlist.Playlist.ViewMode;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
+import com.app.dlna.dmc.processor.playlist.PlaylistItem.Type;
 import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 import com.app.dlna.dmc.utility.Utility;
 
@@ -46,13 +51,17 @@ public class RendererControlView extends LinearLayout {
 	protected static final String TAG = RendererControlView.class.getName();
 	private TextView m_tv_current;
 	private TextView m_tv_max;
-	private ImageView m_btn_playPause, m_btn_stop, m_btn_next, m_btn_prev;
+	private ImageView m_btn_playPause, m_btn_next, m_btn_prev;
 	private SeekBar m_sb_duration;
 	private SeekBar m_sb_volume;
 	private boolean m_isSeeking = false;
 	private AlertDialog m_alertDialog;
 	private CustomArrayAdapter m_playlistAdapter;
 	private CustomArrayAdapter m_playlistItemAdapter;
+	private LinearLayout m_ll_seekControl;
+	private ImageView m_btn_fakeDropdow;
+	private ImageView m_btn_playlistName;
+	private Button m_btn_viewMode;
 
 	public RendererControlView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -83,8 +92,6 @@ public class RendererControlView extends LinearLayout {
 		m_btn_prev.setOnClickListener(onPrevClick);
 		m_btn_playPause = (ImageView) findViewById(R.id.btn_playPause);
 		m_btn_playPause.setOnClickListener(onPlayPauseClick);
-		m_btn_stop = (ImageView) findViewById(R.id.btn_stop);
-		m_btn_stop.setOnClickListener(onStopClick);
 		m_btn_next = (ImageView) findViewById(R.id.btn_next);
 		m_btn_next.setOnClickListener(onNextClick);
 
@@ -99,8 +106,15 @@ public class RendererControlView extends LinearLayout {
 		m_playlistItemAdapter = new CustomArrayAdapter(MainActivity.INSTANCE, 0);
 		m_playlistItemAdapter.setDropDownMode(true);
 
-		((ImageView) findViewById(R.id.btn_fakeDropdown)).setOnClickListener(onShowPlaylistItems);
-		((ImageView) findViewById(R.id.tv_playlistName)).setOnClickListener(onShowPlaylists);
+		m_btn_fakeDropdow = (ImageView) findViewById(R.id.btn_fakeDropdown);
+		m_btn_fakeDropdow.setOnClickListener(onShowPlaylistItems);
+		m_btn_playlistName = (ImageView) findViewById(R.id.tv_playlistName);
+		m_btn_playlistName.setOnClickListener(onShowPlaylists);
+		m_ll_seekControl = (LinearLayout) findViewById(R.id.ll_seekControl);
+
+		m_btn_viewMode = (Button) findViewById(R.id.btn_viewmode);
+		m_btn_viewMode.setOnClickListener(m_viewModeClick);
+		m_btn_viewMode.setText(AppPreference.getPlaylistViewMode().getCompactString());
 	}
 
 	OnClickListener onShowPlaylists = new OnClickListener() {
@@ -126,8 +140,8 @@ public class RendererControlView extends LinearLayout {
 						m_playlistAdapter.add(new AdapterItem(playlist));
 					}
 
-					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView).setNegativeButton("Close", null)
-							.create();
+					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView)
+							.setNegativeButton("Close", null).create();
 					m_alertDialog.show();
 				};
 
@@ -141,14 +155,16 @@ public class RendererControlView extends LinearLayout {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, final int position, long arg3) {
 			PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-			if (playlistProcessor != null && m_playlistAdapter.getItem(position).getData().equals(playlistProcessor.getData()))
+			if (playlistProcessor != null
+					&& m_playlistAdapter.getItem(position).getData().equals(playlistProcessor.getData()))
 				dismissSelectDialog();
 			else
 				new AsyncTaskWithProgressDialog<Void, Void, PlaylistProcessor>("Loading playlist") {
 
 					@Override
 					protected PlaylistProcessor doInBackground(Void... params) {
-						return PlaylistManager.getPlaylistProcessor((Playlist) m_playlistAdapter.getItem(position).getData());
+						return PlaylistManager.getPlaylistProcessor((Playlist) m_playlistAdapter.getItem(position)
+								.getData());
 					}
 
 					protected void onPostExecute(PlaylistProcessor result) {
@@ -193,6 +209,7 @@ public class RendererControlView extends LinearLayout {
 
 				protected void onPostExecute(java.util.List<PlaylistItem> result) {
 					super.onPostExecute(result);
+					PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 					if (result.size() == 0) {
 						Toast.makeText(getContext(), "Current playlist is empty", Toast.LENGTH_SHORT).show();
 						return;
@@ -216,12 +233,12 @@ public class RendererControlView extends LinearLayout {
 					listView.setAdapter(m_playlistItemAdapter);
 					m_playlistItemAdapter.clear();
 
-					for (PlaylistItem playlistItem : result) {
+					for (PlaylistItem playlistItem : playlistProcessor.getAllItemsByViewMode()) {
 						m_playlistItemAdapter.add(new AdapterItem(playlistItem));
 					}
 
-					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView).setNegativeButton("Close", null)
-							.create();
+					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView)
+							.setNegativeButton("Close", null).create();
 					m_alertDialog.show();
 				};
 
@@ -262,16 +279,17 @@ public class RendererControlView extends LinearLayout {
 			}
 		}
 	};
-	private OnClickListener onStopClick = new OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-			if (dmrProcessor == null)
-				return;
-			dmrProcessor.stop();
-		}
-	};
+	// private OnClickListener onStopClick = new OnClickListener() {
+	//
+	// @Override
+	// public void onClick(View v) {
+	// DMRProcessor dmrProcessor =
+	// MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+	// if (dmrProcessor == null)
+	// return;
+	// dmrProcessor.stop();
+	// }
+	// };
 
 	private OnClickListener onNextClick = new OnClickListener() {
 
@@ -349,7 +367,8 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_play));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
+							R.drawable.ic_btn_media_play));
 					m_sb_duration.setProgress(0);
 				}
 			});
@@ -362,7 +381,8 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_pause));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
+							R.drawable.ic_btn_media_pause));
 				}
 			});
 
@@ -375,7 +395,8 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_play));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
+							R.drawable.ic_btn_media_play));
 				}
 			});
 
@@ -414,5 +435,46 @@ public class RendererControlView extends LinearLayout {
 
 		}
 
+	};
+
+	public void updateViewForContentType(Type type) {
+		switch (type) {
+		case AUDIO_LOCAL:
+		case AUDIO_REMOTE:
+		case VIDEO_LOCAL:
+		case VIDEO_REMOTE:
+			m_ll_seekControl.setVisibility(View.VISIBLE);
+			m_btn_playPause.setVisibility(View.VISIBLE);
+			break;
+		case IMAGE_LOCAL:
+		case IMAGE_REMOTE:
+			m_ll_seekControl.setVisibility(View.GONE);
+			m_btn_playPause.setVisibility(View.GONE);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private OnClickListener m_viewModeClick = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			final ViewMode[] viewModes = ViewMode.values();
+			int len = viewModes.length;
+			String items[] = new String[len];
+			for (int i = 0; i < len; ++i) {
+				items[i] = viewModes[i].getString();
+			}
+			new AlertDialog.Builder(getContext()).setTitle("Select filter mode")
+					.setItems(items, new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							AppPreference.setPlaylistViewMode(viewModes[which]);
+							((NowPlayingActivity) getContext()).updateItemInfo();
+						}
+					}).create().show();
+		}
 	};
 }

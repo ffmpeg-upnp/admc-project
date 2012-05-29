@@ -13,16 +13,27 @@
         <item name="75">75</item>
         <item name="100">100</item>
     </string-array>
-    
-     <string-array name="imageQuality">
-        <item name="low">Low</item>
-        <item name="medium">Medium</item>
-        <item name="hight">Hight</item>
+    <string-array name="imageQuality">
+        <item name="256">Low</item>
+        <item name="512">Medium</item>
+        <item name="1024">Hight</item>
     </string-array>
     <string-array name="imageQualityValues">
-        <item name="low">256</item>
-        <item name="medium">512</item>
-        <item name="hight">1024</item>
+        <item name="256">256</item>
+        <item name="512">512</item>
+        <item name="1024">1024</item>
+    </string-array>
+    <string-array name="viewMode">
+        <item name="all">All items</item>
+        <item name="audio_only">Audio only</item>
+        <item name="video_only">Video only</item>
+        <item name="image_only">Image only</item>
+    </string-array>
+    <string-array name="viewModeValues">
+        <item name="all">ALL</item>
+        <item name="audio_only">AUDIO_ONLY</item>
+        <item name="video_only">VIDEO_ONLY</item>
+        <item name="image_only">IMAGE_ONLY</item>
     </string-array>
 
 </resources>

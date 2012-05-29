@@ -59,5 +59,9 @@ public interface PlaylistProcessor {
 	int getCurrentItemIndex();
 
 	void updateItemList();
+	
+	List<PlaylistItem> getAllItemsByViewMode();
+	
+	void updateForViewMode();
 
 }

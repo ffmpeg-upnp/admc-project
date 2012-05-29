@@ -22,12 +22,19 @@
         android:summary="Media Renderer"
         android:title="Media Renderer" >
         <ListPreference
-            android:defaultValue="Medium"
+            android:defaultValue="512"
             android:entries="@array/imageQuality"
             android:entryValues="@array/imageQualityValues"
             android:key="image_qualitiy"
             android:summary="Higher quality can cause loading problem."
             android:title="Image quality" />
+        <ListPreference
+            android:defaultValue="ALL"
+            android:entries="@array/viewMode"
+            android:entryValues="@array/viewModeValues"
+            android:key="playlist_viewmode"
+            android:summary="Filter item in playlist"
+            android:title="View Mode" />
     </PreferenceCategory>
     <PreferenceCategory
         android:summary="Internet"

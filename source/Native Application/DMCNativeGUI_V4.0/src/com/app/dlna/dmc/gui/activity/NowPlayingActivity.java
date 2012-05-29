@@ -15,7 +15,6 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -107,15 +106,16 @@ public class NowPlayingActivity extends Activity {
 		m_viewFlipper.setOnTouchListener(m_swipeDetector);
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
-
 		m_playlistView = (ListView) findViewById(R.id.playlist);
 		m_adapter = new CustomArrayAdapter(NowPlayingActivity.this, 0);
+		m_adapter.setDropDownMode(true);
 		m_playlistView.setAdapter(m_adapter);
 		m_playlistView.setOnItemClickListener(m_playlistItemClick);
-		if (MainActivity.UPNP_PROCESSOR.getPlaylistProcessor() != null)
-			for (PlaylistItem item : MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getAllItems())
+		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+		if (playlistProcessor != null)
+			for (PlaylistItem item : playlistProcessor.getAllItemsByViewMode())
 				m_adapter.add(new AdapterItem(item));
-
+		m_playlistView.smoothScrollToPosition(playlistProcessor.getCurrentItemIndex());
 		if (m_lastInfoState) {
 			m_viewFlipper.setVisibility(View.VISIBLE);
 			m_rendererControl.setVisibility(View.VISIBLE);
@@ -130,6 +130,7 @@ public class NowPlayingActivity extends Activity {
 		@Override
 		public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
 			Log.i(TAG, "On ItemClick");
+			m_lastInfoState = true;
 			final Object object = m_adapter.getItem(position).getData();
 			PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 			if (playlistProcessor == null)
@@ -240,9 +241,19 @@ public class NowPlayingActivity extends Activity {
 		DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 		if (dmrProcessor == null || playlistProcessor == null)
 			return;
+		PlaylistItem playing = dmrProcessor.getCurrentItem();
+		if (playing != null && !AppPreference.getPlaylistViewMode().compatibleWith(playing.getType())) {
+			dmrProcessor.stop();
+			dmrProcessor.setURIandPlay(null);
+			playlistProcessor.updateForViewMode();
+		}
 		PlaylistItem item = playlistProcessor.getCurrentItem();
-		if (item == null)
+		if (item == null) {
+			Log.e(TAG, "item = null");
+			dmrProcessor.stop();
 			return;
+		}
+		m_rendererControl.updateViewForContentType(item.getType());
 		((TextView) m_viewFlipper.getCurrentView()).setText(item.getTitle());
 		switch (item.getType()) {
 		case AUDIO_LOCAL:
@@ -280,10 +291,10 @@ public class NowPlayingActivity extends Activity {
 		}
 		case IMAGE_LOCAL:
 		case IMAGE_REMOTE: {
+			m_playlistView.setVisibility(View.GONE);
 			new AsyncTaskWithProgressDialog<String, Void, Bitmap>("Loading image") {
 
 				protected void onPreExecute() {
-					m_playlistView.setVisibility(View.GONE);
 					if (m_previousBitmap != null)
 						m_previousBitmap.recycle();
 					System.gc();
@@ -325,7 +336,8 @@ public class NowPlayingActivity extends Activity {
 						Toast.makeText(NowPlayingActivity.this,
 								"Image loading error. Reduce image quality in Settings maybe fix this problem",
 								Toast.LENGTH_SHORT).show();
-						m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_didlobject_image_large));
+						m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+								R.drawable.ic_didlobject_image_large));
 						m_image.setMaxZoom(1f);
 						m_image.setOnTouchListener(m_swipeDetector);
 					} else {
@@ -403,10 +415,14 @@ public class NowPlayingActivity extends Activity {
 					localDMR.setHolder(null);
 				} else {
 					Log.i(TAG, "suface state = " + m_surface.isShown());
-					// if (m_surface.isShown()) {
-					LocalMediaPlayer.surface_width = m_content.getWidth();
-					LocalMediaPlayer.surface_height = m_content.getHeight();
-					localDMR.setHolder(m_surface.getHolder());
+					if (m_surface.getVisibility() == View.GONE) {
+						localDMR.setHolder(null);
+					} else {
+						// if (m_surface.isShown()) {
+						LocalMediaPlayer.surface_width = m_content.getWidth();
+						LocalMediaPlayer.surface_height = m_content.getHeight();
+						localDMR.setHolder(m_surface.getHolder());
+					}
 					// }
 				}
 			}

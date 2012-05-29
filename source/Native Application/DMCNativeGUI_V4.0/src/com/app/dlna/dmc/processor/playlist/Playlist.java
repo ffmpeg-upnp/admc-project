@@ -1,9 +1,17 @@
 package com.app.dlna.dmc.processor.playlist;
 
+import com.app.dlna.dmc.processor.playlist.PlaylistItem.Type;
+
 public class Playlist {
 	private long m_id;
 	private String m_name;
 	private int m_currentIdx;
+
+	public Playlist() {
+		m_id = -1;
+		m_name = "";
+		m_currentIdx = 0;
+	}
 
 	public long getId() {
 		return m_id;
@@ -36,5 +44,44 @@ public class Playlist {
 
 	public void setCurrentIdx(int currentIdx) {
 		this.m_currentIdx = currentIdx;
+	}
+
+	public enum ViewMode {
+		ALL("All items", "All"), AUDIO_ONLY("Audio only", "Audio"), VIDEO_ONLY("Video only", "Video"), IMAGE_ONLY(
+				"Image only", "Image");
+		String viewMode = "";
+		String compactString;
+
+		ViewMode(String viewMode, String compactString) {
+			this.viewMode = viewMode;
+			this.compactString = compactString;
+		}
+
+		public String getString() {
+			return viewMode;
+		}
+
+		public String getCompactString() {
+			return compactString;
+		}
+
+		public boolean compatibleWith(Type type) {
+			if (this.equals(ALL))
+				return true;
+			switch (type) {
+			case AUDIO_LOCAL:
+			case AUDIO_REMOTE:
+				return this.equals(AUDIO_ONLY);
+			case VIDEO_LOCAL:
+			case VIDEO_REMOTE:
+			case YOUTUBE:
+				return this.equals(VIDEO_ONLY);
+			case IMAGE_LOCAL:
+			case IMAGE_REMOTE:
+				return this.equals(IMAGE_ONLY);
+			default:
+				return false;
+			}
+		}
 	}
 }

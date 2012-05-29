@@ -42,12 +42,22 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	private class UpdateThread extends Thread {
 
-		private boolean running = true;
+		private boolean running = false;
+
+		public UpdateThread() {
+			running = true;
+		}
 
 		public void stopThread() {
 			Log.e(TAG, " stop thread");
 			running = false;
 			this.interrupt();
+		}
+
+		@Override
+		public synchronized void start() {
+			running = true;
+			super.start();
 		}
 
 		@Override
@@ -77,7 +87,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 						e.printStackTrace();
 					}
 					if (!running)
-						return;
+						break;
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					running = false;
@@ -94,7 +104,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 					fireOnStopedEvent();
 					if (m_playlistProcessor != null)
 						m_playlistProcessor.next();
-					return;
+					break;
 				}
 			}
 		}
@@ -114,7 +124,12 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	@Override
 	public void setURIandPlay(final PlaylistItem item) {
 		Log.i(TAG, "Call SetURIAndPlay");
-		if (m_currentItem.equals(item))
+		if (item == null) {
+			m_currentItem = null;
+			stop();
+			return;
+		}
+		if (m_currentItem != null && m_currentItem.equals(item))
 			return;
 		m_currentItem = item;
 		setRunning(true);
@@ -323,9 +338,10 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	@Override
 	public void addListener(DMRProcessorListner listener) {
 		synchronized (m_listeners) {
-			if (!m_listeners.contains(listener)) {
-				m_listeners.add(listener);
+			if (m_listeners.contains(listener)) {
+				m_listeners.remove(listener);
 			}
+			m_listeners.add(listener);
 			setRunning(true);
 		}
 	}
@@ -377,12 +393,14 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void setRunning(boolean running) {
+		Log.e(TAG, "setrunning = " + running);
 		if (running) {
 			if (m_updateThread != null) {
 				m_updateThread.stopThread();
-				m_updateThread = new UpdateThread();
-				m_updateThread.start();
+				m_updateThread = null;
 			}
+			m_updateThread = new UpdateThread();
+			m_updateThread.start();
 		} else {
 			if (m_updateThread != null)
 				m_updateThread.stopThread();
@@ -436,5 +454,10 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 			m_player.scaleContent();
 			// m_player.setSufaceDimension(width, height);
 		}
+	}
+
+	@Override
+	public PlaylistItem getCurrentItem() {
+		return m_currentItem;
 	}
 }

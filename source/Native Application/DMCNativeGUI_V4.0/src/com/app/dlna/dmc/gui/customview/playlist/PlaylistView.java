@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
 
+import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.gui.customview.adapter.AdapterItem;
 import com.app.dlna.dmc.gui.customview.adapter.CustomArrayAdapter;
@@ -21,6 +22,7 @@ import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
 import com.app.dlna.dmc.processor.playlist.Playlist;
+import com.app.dlna.dmc.processor.playlist.Playlist.ViewMode;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 
@@ -166,8 +168,27 @@ public class PlaylistView extends DMRListenerView {
 				dmrProcessor.setPlaylistProcessor(m_currentPlaylist);
 				dmrProcessor.setSeftAutoNext(true);
 
-				m_currentPlaylist.setCurrentItem((PlaylistItem) object);
-				dmrProcessor.setURIandPlay((PlaylistItem) object);
+				PlaylistItem playlistItem = (PlaylistItem) object;
+				m_currentPlaylist.setCurrentItem(playlistItem);
+				dmrProcessor.setURIandPlay(playlistItem);
+				switch (playlistItem.getType()) {
+				case AUDIO_LOCAL:
+				case AUDIO_REMOTE:
+					AppPreference.setPlaylistViewMode(ViewMode.AUDIO_ONLY);
+					break;
+				case VIDEO_LOCAL:
+				case VIDEO_REMOTE:
+				case YOUTUBE:
+					AppPreference.setPlaylistViewMode(ViewMode.VIDEO_ONLY);
+					break;
+				case IMAGE_LOCAL:
+				case IMAGE_REMOTE:
+					AppPreference.setPlaylistViewMode(ViewMode.IMAGE_ONLY);
+					break;
+				default:
+					AppPreference.setPlaylistViewMode(ViewMode.ALL);
+					break;
+				}
 			}
 
 		}

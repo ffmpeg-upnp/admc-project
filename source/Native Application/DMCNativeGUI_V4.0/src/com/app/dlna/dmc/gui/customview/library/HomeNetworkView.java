@@ -27,6 +27,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
 
+import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.LibraryActivity;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.gui.customview.adapter.AdapterItem;
@@ -40,6 +41,7 @@ import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSProcessorListner;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.DevicesListener;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
+import com.app.dlna.dmc.processor.playlist.Playlist.ViewMode;
 
 public class HomeNetworkView extends DMRListenerView {
 	// private static final String TAG = HomeNetworkView.class.getName();
@@ -53,7 +55,8 @@ public class HomeNetworkView extends DMRListenerView {
 	public HomeNetworkView(Context context) {
 		super(context);
 		m_isBrowsing = false;
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork,
+				this);
 		m_listView = (ListView) findViewById(R.id.lv_mediasource_browsing);
 		m_adapter = new CustomArrayAdapter(context, 0);
 		m_listView.setAdapter(m_adapter);
@@ -91,8 +94,8 @@ public class HomeNetworkView extends DMRListenerView {
 						&& !m_progressDlg.isShowing()
 						&& firstVisibleItem + visibleItemCount == totalItemCount
 						&& m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData() instanceof DIDLObject
-						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId().equals(
-								"-1")) {
+						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId()
+								.equals("-1")) {
 					doLoadMoreItems();
 				}
 			} catch (Exception ex) {
@@ -183,13 +186,33 @@ public class HomeNetworkView extends DMRListenerView {
 			LibraryActivity activity = (LibraryActivity) getContext();
 			PlaylistProcessor playlistProcessor = activity.getPlaylistView().getCurrentPlaylistProcessor();
 			DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+			if (playlistProcessor == null || dmrProcessor == null)
+				return;
+			MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(playlistProcessor);
+			playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 			PlaylistItem added = playlistProcessor.addDIDLObject(object);
 			if (added != null) {
 				m_adapter.notifyVisibleItemChanged(m_listView);
-				Toast.makeText(getContext(), "Added item to playlist", Toast.LENGTH_SHORT).show();
+				switch (added.getType()) {
+				case AUDIO_LOCAL:
+				case AUDIO_REMOTE:
+					AppPreference.setPlaylistViewMode(ViewMode.AUDIO_ONLY);
+					break;
+				case VIDEO_LOCAL:
+				case VIDEO_REMOTE:
+				case YOUTUBE:
+					AppPreference.setPlaylistViewMode(ViewMode.VIDEO_ONLY);
+					break;
+				case IMAGE_LOCAL:
+				case IMAGE_REMOTE:
+					AppPreference.setPlaylistViewMode(ViewMode.IMAGE_ONLY);
+					break;
+				default:
+					AppPreference.setPlaylistViewMode(ViewMode.ALL);
+					break;
+				}
 				playlistProcessor.setCurrentItem(added);
 				dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
-				MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(playlistProcessor);
 			} else {
 				if (playlistProcessor.isFull()) {
 					Toast.makeText(getContext(), "Current playlist is full", Toast.LENGTH_SHORT).show();

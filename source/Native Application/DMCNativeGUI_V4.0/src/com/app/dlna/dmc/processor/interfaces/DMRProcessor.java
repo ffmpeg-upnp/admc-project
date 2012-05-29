@@ -38,6 +38,8 @@ public interface DMRProcessor {
 	String getCurrentTrackURI();
 
 	void setRunning(boolean running);
+	
+	PlaylistItem getCurrentItem();
 
 	public interface DMRProcessorListner {
 		void onUpdatePosition(long current, long max);

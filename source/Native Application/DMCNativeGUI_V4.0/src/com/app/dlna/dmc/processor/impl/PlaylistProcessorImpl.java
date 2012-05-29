@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.teleal.cling.support.model.DIDLObject;
 
+import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
@@ -52,12 +53,19 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 
 	@Override
 	public void next() {
-		if (m_playlistItems.size() == 0)
+		List<PlaylistItem> playlistItems = getAllItemsByViewMode();
+		if (playlistItems.size() == 0)
 			return;
-		m_currentItemIdx = (m_currentItemIdx + 1) % m_playlistItems.size();
-		if (m_currentItemIdx >= m_playlistItems.size()) {
-			m_currentItemIdx = 0;
-		}
+		int currentIdx = playlistItems.indexOf(m_playlistItems.get(m_currentItemIdx));
+		++currentIdx;
+		if (currentIdx >= playlistItems.size())
+			currentIdx = 0;
+		m_currentItemIdx = m_playlistItems.indexOf(playlistItems.get(currentIdx));
+		// m_currentItemIdx = (m_currentItemIdx + 1) % playlistItems.size();
+		// if (m_currentItemIdx < 0 || m_currentItemIdx >= playlistItems.size())
+		// {
+		// m_currentItemIdx = 0;
+		// }
 		fireOnNextEvent();
 	}
 
@@ -71,12 +79,22 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 
 	@Override
 	public void previous() {
-		if (m_playlistItems.size() == 0)
+		// List<PlaylistItem> playlistItems = getAllItemsByViewMode();
+		// if (playlistItems.size() == 0)
+		// return;
+		// m_currentItemIdx = (m_currentItemIdx - 1) % playlistItems.size();
+		// if (m_currentItemIdx < 0) {
+		// m_currentItemIdx = playlistItems.size() - 1;
+		// } else if (m_currentItemIdx >= playlistItems.size())
+		// m_currentItemIdx = 0;
+		List<PlaylistItem> playlistItems = getAllItemsByViewMode();
+		if (playlistItems.size() == 0)
 			return;
-		m_currentItemIdx = (m_currentItemIdx - 1) % m_playlistItems.size();
-		if (m_currentItemIdx < 0) {
-			m_currentItemIdx = m_playlistItems.size() - 1;
-		}
+		int currentIdx = playlistItems.indexOf(m_playlistItems.get(m_currentItemIdx));
+		--currentIdx;
+		if (currentIdx < 0)
+			currentIdx = playlistItems.size() - 1;
+		m_currentItemIdx = m_playlistItems.indexOf(playlistItems.get(currentIdx));
 		fireOnPrevEvent();
 	}
 
@@ -90,9 +108,10 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 
 	@Override
 	public PlaylistItem getCurrentItem() {
-		if (m_currentItemIdx == -1 && m_playlistItems.size() > 0) {
-			return m_playlistItems.get(m_currentItemIdx = 0);
+		if (m_currentItemIdx == -1) {
+			return null;
 		}
+		
 		if (m_playlistItems.size() > 0 && m_currentItemIdx < m_playlistItems.size()) {
 			return m_playlistItems.get(m_currentItemIdx);
 		}
@@ -101,21 +120,15 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 
 	@Override
 	public int setCurrentItem(int idx) {
-		if (0 <= idx && idx < m_playlistItems.size()) {
-			m_currentItemIdx = idx;
-			return m_currentItemIdx;
-		}
+		if (0 <= idx && idx < m_playlistItems.size())
+			return m_currentItemIdx = idx;
 		return -1;
 	}
 
 	@Override
 	public int setCurrentItem(PlaylistItem item) {
 		synchronized (m_playlistItems) {
-			if (m_playlistItems.contains(item)) {
-				m_currentItemIdx = m_playlistItems.indexOf(item);
-				return m_currentItemIdx;
-			}
-			return -1;
+			return m_currentItemIdx = m_playlistItems.indexOf(item);
 		}
 	}
 
@@ -235,6 +248,41 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		synchronized (m_playlistItems) {
 			m_playlistItems = PlaylistManager.getAllPlaylistItem(getData().getId());
 		}
+	}
+
+	@Override
+	public List<PlaylistItem> getAllItemsByViewMode() {
+		List<PlaylistItem> result = new ArrayList<PlaylistItem>();
+		switch (AppPreference.getPlaylistViewMode()) {
+		case ALL:
+			return m_playlistItems;
+		case AUDIO_ONLY:
+			for (PlaylistItem item : m_playlistItems) {
+				if (item.getType().equals(Type.AUDIO_LOCAL) || item.getType().equals(Type.AUDIO_REMOTE))
+					result.add(item);
+			}
+			break;
+		case IMAGE_ONLY:
+			for (PlaylistItem item : m_playlistItems) {
+				if (item.getType().equals(Type.IMAGE_LOCAL) || item.getType().equals(Type.IMAGE_REMOTE))
+					result.add(item);
+			}
+			break;
+		case VIDEO_ONLY:
+			for (PlaylistItem item : m_playlistItems) {
+				if (item.getType().equals(Type.VIDEO_LOCAL) || item.getType().equals(Type.VIDEO_REMOTE)
+						|| item.getType().equals(Type.YOUTUBE))
+					result.add(item);
+			}
+			break;
+		}
+		return result;
+	}
+
+	@Override
+	public void updateForViewMode() {
+		List<PlaylistItem> playlistItems = getAllItemsByViewMode();
+		m_currentItemIdx = playlistItems.size() > 0 ? m_playlistItems.indexOf(playlistItems.get(0)) : -1;
 	}
 
 }

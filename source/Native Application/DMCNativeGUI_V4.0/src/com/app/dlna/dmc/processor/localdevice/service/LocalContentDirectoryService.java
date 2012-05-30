@@ -31,6 +31,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
+import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.resource.ResourceManager;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.utility.Utility;
@@ -44,7 +45,7 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	private static List<ImageItem> m_listPhoto = null;
 	private static List<String> m_musicMap = null;
 	private static List<String> m_videoMap = null;
-	private static List<String> m_photoMap = null;
+	private static List<String> m_imageMap = null;
 	private static Map<String, String> m_mineMap = null;
 	private static boolean IS_SCANNING;
 
@@ -69,26 +70,17 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 
 		m_musicMap = new ArrayList<String>();
 		m_videoMap = new ArrayList<String>();
-		m_photoMap = new ArrayList<String>();
+		m_imageMap = new ArrayList<String>();
 
-		m_musicMap.add("mp3");
-		m_musicMap.add("wma");
-		m_musicMap.add("wav");
-		m_musicMap.add("mid");
-		m_musicMap.add("midi");
-
-		m_videoMap.add("mp4");
-		m_videoMap.add("flv");
-		m_videoMap.add("mpg");
-		m_videoMap.add("avi");
-		m_videoMap.add("mkv");
-		m_videoMap.add("m4v");
-
-		m_photoMap.add("jpg");
-		m_photoMap.add("jpeg");
-		m_photoMap.add("png");
-		m_photoMap.add("bmp");
-		m_photoMap.add("gif");
+		for (String music_ext : AppPreference.getMusicExtension())
+			if (!music_ext.trim().isEmpty())
+				m_musicMap.add(music_ext);
+		for (String video_ext : AppPreference.getVideoExtension())
+			if (!video_ext.trim().isEmpty())
+				m_videoMap.add(video_ext);
+		for (String image_ext : AppPreference.getImageExtension())
+			if (!image_ext.trim().isEmpty())
+				m_imageMap.add(image_ext);
 
 		Log.e(TAG, "Start media scanning");
 		new Thread(new Runnable() {
@@ -184,7 +176,7 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 									subFile.length(), Utility.createLink(subFile)));
 					m_listVideo.add(new VideoItem(videoItem));
 					return videoItem;
-				} else if (m_photoMap.contains(fileExtension)) {
+				} else if (m_imageMap.contains(fileExtension)) {
 					ImageItem imageItem = new ImageItem("0/3/" + subFile.getName(), "0/3", subFile.getName(),
 							"local dms", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
 									subFile.length(), Utility.createLink(subFile)));

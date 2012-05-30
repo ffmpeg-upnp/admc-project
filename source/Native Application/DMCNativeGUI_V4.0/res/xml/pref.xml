@@ -2,6 +2,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory
+        android:summary="Application"
+        android:title="Application" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="kill_process"
+            android:summary="WARNING: Not recommended. Use this option only when application do something wrong."
+            android:title="Kill process after exit" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:summary="Media Server"
         android:title="Media Server" >
         <ListPreference
@@ -17,6 +26,22 @@
             android:key="dms_exported"
             android:summary="Export content on device"
             android:title="Export DMS" />
+
+        <EditTextPreference
+            android:defaultValue="mp3;wma;midi;wav;mid;midi;"
+            android:key="music_ext"
+            android:summary="Extension of music file want to share"
+            android:title="Music extension" />
+        <EditTextPreference
+            android:defaultValue="mp4;flv;mpg;avi;mkv;m4v;"
+            android:key="video_ext"
+            android:summary="Extension of video file want to share"
+            android:title="Video extension" />
+        <EditTextPreference
+            android:defaultValue="jpeg;jpg;png;gif;bmp;gif;"
+            android:key="image_ext"
+            android:summary="Extension of image file want to share"
+            android:title="Image extension" />
     </PreferenceCategory>
     <PreferenceCategory
         android:summary="Media Renderer"

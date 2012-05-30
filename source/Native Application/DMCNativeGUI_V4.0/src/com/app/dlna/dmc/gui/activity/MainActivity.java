@@ -432,7 +432,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 			Toast.makeText(MainActivity.this, "Rescan sdcard", Toast.LENGTH_SHORT).show();
 			if (!LocalContentDirectoryService.isScanning())
 				LocalContentDirectoryService.scanMedia(MainActivity.this);
-			UPNP_PROCESSOR.refreshDevicesList();
 			break;
 		case R.id.menu_refresh_devices:
 			Toast.makeText(MainActivity.this, "Refresh", Toast.LENGTH_SHORT).show();

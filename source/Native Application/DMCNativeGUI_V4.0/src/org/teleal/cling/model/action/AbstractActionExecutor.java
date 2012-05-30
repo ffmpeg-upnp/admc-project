@@ -60,7 +60,7 @@ public abstract class AbstractActionExecutor implements ActionExecutor {
 	public void execute(final ActionInvocation<LocalService> actionInvocation) {
 
 		log.fine("Invoking on local service: " + actionInvocation);
-
+		
 		final LocalService service = actionInvocation.getAction().getService();
 
 		try {

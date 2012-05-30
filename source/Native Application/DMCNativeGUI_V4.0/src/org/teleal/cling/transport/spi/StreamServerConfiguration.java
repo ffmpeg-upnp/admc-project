@@ -28,5 +28,9 @@ public interface StreamServerConfiguration {
      * @return The TCP port to listen on for HTTP requests.
      */
     public int getListenPort();
+    
+    public boolean isExported();
+    
+    public void setExported(boolean value);
 
 }

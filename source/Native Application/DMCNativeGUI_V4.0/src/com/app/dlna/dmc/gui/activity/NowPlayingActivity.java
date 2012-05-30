@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
@@ -58,6 +59,7 @@ public class NowPlayingActivity extends Activity {
 	private SwipeDetector m_swipeDetector;
 	private ListView m_playlistView;
 	private CustomArrayAdapter m_adapter;
+	private AsyncTask<String, Void, Bitmap> m_loadingImageTask;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +83,9 @@ public class NowPlayingActivity extends Activity {
 		// m_image.setOnTouchListener(m_swipeDetector);
 		m_image.setDrawingCacheEnabled(false);
 		m_image.setMaxZoom(4f);
+		if (!AppPreference.getImageZoomable()) {
+			m_image.setOnTouchListener(m_swipeDetector);
+		}
 		m_image.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -112,10 +117,11 @@ public class NowPlayingActivity extends Activity {
 		m_playlistView.setAdapter(m_adapter);
 		m_playlistView.setOnItemClickListener(m_playlistItemClick);
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-		if (playlistProcessor != null)
+		if (playlistProcessor != null) {
 			for (PlaylistItem item : playlistProcessor.getAllItemsByViewMode())
 				m_adapter.add(new AdapterItem(item));
-		m_playlistView.smoothScrollToPosition(playlistProcessor.getCurrentItemIndex());
+			m_playlistView.smoothScrollToPosition(playlistProcessor.getCurrentItemIndex());
+		}
 		if (m_lastInfoState) {
 			m_viewFlipper.setVisibility(View.VISIBLE);
 			m_rendererControl.setVisibility(View.VISIBLE);
@@ -159,6 +165,7 @@ public class NowPlayingActivity extends Activity {
 
 		@Override
 		public void onPrev() {
+			cancelLoadingTask();
 			runOnUiThread(new Runnable() {
 
 				@Override
@@ -179,6 +186,7 @@ public class NowPlayingActivity extends Activity {
 
 		@Override
 		public void onNext() {
+			cancelLoadingTask();
 			runOnUiThread(new Runnable() {
 
 				@Override
@@ -198,7 +206,18 @@ public class NowPlayingActivity extends Activity {
 			});
 
 		}
+
 	};
+
+	private void cancelLoadingTask() {
+		try {
+			if (m_loadingImageTask != null && !m_loadingImageTask.isCancelled())
+				m_loadingImageTask.cancel(true);
+			m_loadingImageTask = null;
+		} catch (Exception ex) {
+
+		}
+	}
 
 	private AnimationListener m_animationListner = new AnimationListener() {
 
@@ -292,7 +311,8 @@ public class NowPlayingActivity extends Activity {
 		case IMAGE_LOCAL:
 		case IMAGE_REMOTE: {
 			m_playlistView.setVisibility(View.GONE);
-			new AsyncTaskWithProgressDialog<String, Void, Bitmap>("Loading image") {
+			cancelLoadingTask();
+			m_loadingImageTask = new AsyncTaskWithProgressDialog<String, Void, Bitmap>("Loading image") {
 
 				protected void onPreExecute() {
 					if (m_previousBitmap != null)
@@ -345,7 +365,8 @@ public class NowPlayingActivity extends Activity {
 						m_image.setMaxZoom(4f);
 					}
 				}
-			}.execute(new String[] { item.getUrl(), String.valueOf(AppPreference.getImageDimension()),
+			};
+			m_loadingImageTask.execute(new String[] { item.getUrl(), String.valueOf(AppPreference.getImageDimension()),
 					String.valueOf(AppPreference.getImageDimension()) });
 			break;
 		}

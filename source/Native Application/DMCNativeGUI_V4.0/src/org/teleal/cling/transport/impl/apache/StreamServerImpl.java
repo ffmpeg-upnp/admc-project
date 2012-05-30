@@ -35,135 +35,143 @@ import org.teleal.cling.transport.spi.InitializationException;
 import org.teleal.cling.transport.spi.StreamServer;
 import org.teleal.cling.transport.spi.UpnpStream;
 
+import android.util.Log;
+
+import com.app.dlna.dmc.processor.http.HTTPServerData;
+import com.sun.net.httpserver.HttpServer;
+
 /**
- * Implementation based on <a href="http://hc.apache.org/">Apache HTTP Components</a>.
+ * Implementation based on <a href="http://hc.apache.org/">Apache HTTP
+ * Components</a>.
  * <p>
  * This implementation works on Android.
  * </p>
  * <p>
- * Thread-safety is guaranteed through synchronization of methods of this service and
- * by the thread-safe underlying socket.
+ * Thread-safety is guaranteed through synchronization of methods of this
+ * service and by the thread-safe underlying socket.
  * </p>
- *
+ * 
  * @author Christian Bauer
  */
 public class StreamServerImpl implements StreamServer<StreamServerConfigurationImpl> {
 
-    final private static Logger log = Logger.getLogger(StreamServer.class.getName());
+	final private static Logger log = Logger.getLogger(StreamServer.class.getName());
 
-    final protected StreamServerConfigurationImpl configuration;
+	final protected StreamServerConfigurationImpl configuration;
 
-    protected Router router;
-    protected ServerSocket serverSocket;
-    protected HttpParams globalParams = new BasicHttpParams();
-    private volatile boolean stopped = false;
+	protected Router router;
+	protected ServerSocket serverSocket;
+	protected HttpParams globalParams = new BasicHttpParams();
+	private volatile boolean stopped = false;
 
-    public StreamServerImpl(StreamServerConfigurationImpl configuration) {
-        this.configuration = configuration;
-    }
+	public StreamServerImpl(StreamServerConfigurationImpl configuration) {
+		this.configuration = configuration;
+	}
 
-    public StreamServerConfigurationImpl getConfiguration() {
-        return configuration;
-    }
+	public StreamServerConfigurationImpl getConfiguration() {
+		return configuration;
+	}
 
-    synchronized public void init(InetAddress bindAddress, Router router) throws InitializationException {
+	synchronized public void init(InetAddress bindAddress, Router router) throws InitializationException {
 
-        try {
+		try {
 
-            this.router = router;
+			this.router = router;
 
-            this.serverSocket =
-                    new ServerSocket(
-                            configuration.getListenPort(),
-                            configuration.getTcpConnectionBacklog(),
-                            bindAddress
-                    );
+			this.serverSocket = new ServerSocket(configuration.getListenPort(),
+					configuration.getTcpConnectionBacklog(), bindAddress);
 
-            log.info("Created socket (for receiving TCP streams) on: " + serverSocket.getLocalSocketAddress());
+			log.info("Created socket (for receiving TCP streams) on: " + serverSocket.getLocalSocketAddress());
 
-            this.globalParams
-                    .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, configuration.getDataWaitTimeoutSeconds() * 1000)
-                    .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, configuration.getBufferSizeKilobytes() * 1024)
-                    .setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, configuration.isStaleConnectionCheck())
-                    .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, configuration.isTcpNoDelay());
+			this.globalParams
+					.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, configuration.getDataWaitTimeoutSeconds() * 1000)
+					.setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE,
+							configuration.getBufferSizeKilobytes() * 1024)
+					.setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK,
+							configuration.isStaleConnectionCheck())
+					.setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, configuration.isTcpNoDelay());
 
-        } catch (Exception ex) {
-            throw new InitializationException("Could not initialize "+getClass().getSimpleName()+": " + ex.toString(), ex);
-        }
+		} catch (Exception ex) {
+			throw new InitializationException("Could not initialize " + getClass().getSimpleName() + ": "
+					+ ex.toString(), ex);
+		}
 
-    }
+	}
 
-    synchronized public int getPort() {
-        return this.serverSocket.getLocalPort();
-    }
+	synchronized public int getPort() {
+		return this.serverSocket.getLocalPort();
+	}
 
-    synchronized public void stop() {
-        stopped = true;
-        try {
-            serverSocket.close();
-        } catch (IOException ex) {
-            log.fine("Exception closing streaming server socket: " + ex);
-        }
-    }
+	synchronized public void stop() {
+		stopped = true;
+		try {
+			serverSocket.close();
+		} catch (IOException ex) {
+			log.fine("Exception closing streaming server socket: " + ex);
+		}
+	}
 
-    public void run() {
+	public void run() {
 
-        log.fine("Entering blocking receiving loop, listening for HTTP stream requests on: " + serverSocket.getLocalSocketAddress());
-        while (!stopped) {
+		log.fine("Entering blocking receiving loop, listening for HTTP stream requests on: "
+				+ serverSocket.getLocalSocketAddress());
+		while (!stopped) {
 
-            try {
+			try {
+				Log.e("StreamServer", "waiting for client " + configuration.isExported());
+				// Block until we have a connection
+				Socket clientSocket = serverSocket.accept();
+				log.info("Incoming connection from: " + clientSocket.getInetAddress());
+				if (HTTPServerData.HOST != null
+						&& !clientSocket.getInetAddress().getHostAddress().equals(HTTPServerData.HOST)
+						&& !configuration.isExported()) {
+					clientSocket.close();
+					continue;
+				}
+				// We have to force this fantastic library to accept HTTP
+				// methods which are not in the holy RFCs.
+				DefaultHttpServerConnection httpServerConnection = new DefaultHttpServerConnection() {
+					@Override
+					protected HttpRequestFactory createHttpRequestFactory() {
+						return new UpnpHttpRequestFactory();
+					}
+				};
 
-                // Block until we have a connection
-                Socket clientSocket = serverSocket.accept();
+				httpServerConnection.bind(clientSocket, globalParams);
+				// Wrap the processing of the request in a UpnpStream
+				UpnpStream connectionStream = new HttpServerConnectionUpnpStream(router.getProtocolFactory(),
+						httpServerConnection, globalParams);
 
-                // We have to force this fantastic library to accept HTTP methods which are not in the holy RFCs.
-                DefaultHttpServerConnection httpServerConnection = new DefaultHttpServerConnection() {
-                    @Override
-                    protected HttpRequestFactory createHttpRequestFactory() {
-                        return new UpnpHttpRequestFactory();
-                    }
-                };
+				router.received(connectionStream);
 
-                log.fine("Incoming connection from: " + clientSocket.getInetAddress());
-                httpServerConnection.bind(clientSocket, globalParams);
+			} catch (InterruptedIOException ex) {
+				log.info("I/O has been interrupted, stopping receiving loop, bytes transfered: " + ex.bytesTransferred);
+				break;
+			} catch (SocketException ex) {
+				if (!stopped) {
+					// That's not good, could be anything
+					log.info("Exception using server socket: " + ex.getMessage());
+				} else {
+					// Well, it's just been stopped so that's totally fine and
+					// expected
+				}
+				break;
+			} catch (IOException ex) {
+				log.info("Exception initializing receiving loop: " + ex.getMessage());
+				break;
+			}
+		}
 
-                // Wrap the processing of the request in a UpnpStream
-                UpnpStream connectionStream =
-                        new HttpServerConnectionUpnpStream(
-                                router.getProtocolFactory(),
-                                httpServerConnection,
-                                globalParams
-                        );
+		try {
+			log.fine("Receiving loop stopped");
+			if (!serverSocket.isClosed()) {
+				log.fine("Closing streaming server socket");
+				serverSocket.close();
+			}
+		} catch (Exception ex) {
+			log.info("Exception closing streaming server socket: " + ex.getMessage());
+		}
 
-                router.received(connectionStream);
-
-            } catch (InterruptedIOException ex) {
-                log.fine("I/O has been interrupted, stopping receiving loop, bytes transfered: " + ex.bytesTransferred);
-                break;
-            } catch (SocketException ex) {
-                if (!stopped) {
-                    // That's not good, could be anything
-                    log.fine("Exception using server socket: " + ex.getMessage());
-                } else {
-                    // Well, it's just been stopped so that's totally fine and expected
-                }
-                break;
-            } catch (IOException ex) {
-                log.fine("Exception initializing receiving loop: " + ex.getMessage());
-                break;
-            }
-        }
-
-        try {
-            log.fine("Receiving loop stopped");
-            if (!serverSocket.isClosed()) {
-                log.fine("Closing streaming server socket");
-                serverSocket.close();
-            }
-        } catch (Exception ex) {
-            log.info("Exception closing streaming server socket: " + ex.getMessage());
-        }
-
-    }
+	}
 
 }

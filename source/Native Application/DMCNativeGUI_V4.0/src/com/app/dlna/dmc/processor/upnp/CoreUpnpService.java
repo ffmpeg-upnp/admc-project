@@ -27,6 +27,8 @@ import org.teleal.cling.protocol.ProtocolFactory;
 import org.teleal.cling.registry.Registry;
 import org.teleal.cling.registry.RegistryListener;
 import org.teleal.cling.transport.Router;
+import org.teleal.cling.transport.spi.NetworkAddressFactory;
+import org.teleal.cling.transport.spi.StreamServer;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -216,7 +218,8 @@ public class CoreUpnpService extends Service {
 				@Override
 				protected Void doInBackground(Void... params) {
 					try {
-						PlaylistManager.clearPlaylist(1);// Clear UNSAVED Playlist
+						PlaylistManager.clearPlaylist(1);// Clear UNSAVED
+															// Playlist
 						m_upnpService.getRegistry().removeAllLocalDevices();
 						m_upnpService.getRegistry().removeAllRemoteDevices();
 						m_upnpService.getRegistry().removeListener(m_registryListener);
@@ -231,7 +234,7 @@ public class CoreUpnpService extends Service {
 				protected void onPostExecute(Void result) {
 					if (m_notificationManager != null)
 						m_notificationManager.cancel(NOTIFICATION);
-					// android.os.Process.killProcess(android.os.Process.myPid());
+					android.os.Process.killProcess(android.os.Process.myPid());
 				};
 			}.execute(new Void[] {});
 		}
@@ -334,6 +337,11 @@ public class CoreUpnpService extends Service {
 			m_registryListener = listener;
 			m_upnpService.getRegistry().addListener(listener);
 		}
+
+		public void setDMSExported(boolean value) {
+			if (m_upnpService != null)
+				m_upnpService.getConfiguration().getStreamServerConfiguration().setExported(value);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -341,9 +349,10 @@ public class CoreUpnpService extends Service {
 		try {
 			String deviceName = Build.MODEL.toUpperCase() + " " + Build.DEVICE.toUpperCase() + " - DMS";
 			String MACAddress = m_wifiManager.getConnectionInfo().getMacAddress();
-			Log.i(TAG, "Local DMS: Device name = " + deviceName + ";MAC = " + MACAddress);
+			// Log.i(TAG, "Local DMS: Device name = " + deviceName + ";MAC = " +
+			// MACAddress);
 			String hashUDN = Utility.getMD5(deviceName + "-" + MACAddress + "-LocalDMS");
-			Log.i(TAG, "Hash UDN = " + hashUDN);
+			// Log.i(TAG, "Hash UDN = " + hashUDN);
 			String uDNString = hashUDN.substring(0, 8) + "-" + hashUDN.substring(8, 12) + "-"
 					+ hashUDN.substring(12, 16) + "-" + hashUDN.substring(16, 20) + "-" + hashUDN.substring(20);
 			LocalService<LocalContentDirectoryService> localService = new AnnotationLocalServiceBinder()
@@ -353,15 +362,14 @@ public class CoreUpnpService extends Service {
 			m_localDMS_UDN = new UDN(uDNString);
 			DeviceIdentity identity = new DeviceIdentity(m_localDMS_UDN);
 			DeviceType type = new DeviceType("schemas-upnp-org", "MediaServer");
-			DeviceDetails details = new DeviceDetails(deviceName,
-					new ManufacturerDetails("Android Digital Controller"), new ModelDetails("v1.0"), "", "");
+			DeviceDetails details = new DeviceDetails(deviceName, new ManufacturerDetails("Media2Share Local Server"),
+					new ModelDetails("v1.0"), "", "");
 
 			LocalDevice localDevice = new LocalDevice(identity, type, details, localService);
-
 			m_upnpService.getRegistry().addDevice(localDevice);
-			Log.d(TAG, "Create Local Device complete");
+			// Log.d(TAG, "Create Local Device complete");
 		} catch (Exception ex) {
-			Log.d(TAG, "Cannot create Local Device");
+			// Log.d(TAG, "Cannot create Local Device");
 			ex.printStackTrace();
 		}
 	}

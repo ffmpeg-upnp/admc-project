@@ -21,99 +21,112 @@ import org.teleal.cling.transport.spi.StreamServerConfiguration;
 
 /**
  * Settings for the Apache HTTP Components implementation.
- *
+ * 
  * @author Christian Bauer
  */
 public class StreamServerConfigurationImpl implements StreamServerConfiguration {
 
-    private int listenPort = 0;
-    private int dataWaitTimeoutSeconds = 5;
-    private int bufferSizeKilobytes = 8;
-    // TODO: This seems to be only relevant for HTTP clients, no?
-    private boolean staleConnectionCheck = true;
-    private boolean tcpNoDelay = true;
-    private int tcpConnectionBacklog = 0;
+	private int listenPort = 0;
+	private int dataWaitTimeoutSeconds = 5;
+	private int bufferSizeKilobytes = 8;
+	// TODO: This seems to be only relevant for HTTP clients, no?
+	private boolean staleConnectionCheck = true;
+	private boolean tcpNoDelay = true;
+	private int tcpConnectionBacklog = 0;
+	// for exported or not
+	private boolean isExported = true;
 
-    /**
-     * Defaults to port '0', ephemeral.
-     */
-    public StreamServerConfigurationImpl() {
-    }
+	/**
+	 * Defaults to port '0', ephemeral.
+	 */
+	public StreamServerConfigurationImpl() {
+	}
 
-    public StreamServerConfigurationImpl(int listenPort) {
-        this.listenPort = listenPort;
-    }
+	public StreamServerConfigurationImpl(int listenPort) {
+		this.listenPort = listenPort;
+	}
 
-    public int getListenPort() {
-        return listenPort;
-    }
+	public int getListenPort() {
+		return listenPort;
+	}
 
-    public void setListenPort(int listenPort) {
-        this.listenPort = listenPort;
-    }
+	public void setListenPort(int listenPort) {
+		this.listenPort = listenPort;
+	}
 
-    /**
-     * Defines the socket timeout (SO_TIMEOUT) in seconds, which is the timeout for waiting
-     * for data. Defaults to 5 seconds.
-     */
-    public int getDataWaitTimeoutSeconds() {
-        return dataWaitTimeoutSeconds;
-    }
+	/**
+	 * Defines the socket timeout (SO_TIMEOUT) in seconds, which is the timeout
+	 * for waiting for data. Defaults to 5 seconds.
+	 */
+	public int getDataWaitTimeoutSeconds() {
+		return dataWaitTimeoutSeconds;
+	}
 
-    public void setDataWaitTimeoutSeconds(int dataWaitTimeoutSeconds) {
-        this.dataWaitTimeoutSeconds = dataWaitTimeoutSeconds;
-    }
+	public void setDataWaitTimeoutSeconds(int dataWaitTimeoutSeconds) {
+		this.dataWaitTimeoutSeconds = dataWaitTimeoutSeconds;
+	}
 
-    /**
-     * Determines the size of the internal socket buffer used to buffer data while
-     * receiving/transmitting HTTP messages. Defaults to 8 kilobytes.
-     */
-    public int getBufferSizeKilobytes() {
-        return bufferSizeKilobytes;
-    }
+	/**
+	 * Determines the size of the internal socket buffer used to buffer data
+	 * while receiving/transmitting HTTP messages. Defaults to 8 kilobytes.
+	 */
+	public int getBufferSizeKilobytes() {
+		return bufferSizeKilobytes;
+	}
 
-    public void setBufferSizeKilobytes(int bufferSizeKilobytes) {
-        this.bufferSizeKilobytes = bufferSizeKilobytes;
-    }
+	public void setBufferSizeKilobytes(int bufferSizeKilobytes) {
+		this.bufferSizeKilobytes = bufferSizeKilobytes;
+	}
 
-    /**
-     * Determines whether stale connection check is to be used. Disabling stale connection
-     * check may result in slight performance improvement at the risk of getting an I/O
-     * error when executing a request over a connection that has been closed at the server
-     * side. Defaults to <code>true</code>.
-     */
-    public boolean isStaleConnectionCheck() {
-        return staleConnectionCheck;
-    }
+	/**
+	 * Determines whether stale connection check is to be used. Disabling stale
+	 * connection check may result in slight performance improvement at the risk
+	 * of getting an I/O error when executing a request over a connection that
+	 * has been closed at the server side. Defaults to <code>true</code>.
+	 */
+	public boolean isStaleConnectionCheck() {
+		return staleConnectionCheck;
+	}
 
-    public void setStaleConnectionCheck(boolean staleConnectionCheck) {
-        this.staleConnectionCheck = staleConnectionCheck;
-    }
+	public void setStaleConnectionCheck(boolean staleConnectionCheck) {
+		this.staleConnectionCheck = staleConnectionCheck;
+	}
 
-    /**
-     * Determines whether Nagle's algorithm is to be used.  Defaults to <code>true</code>.
-     */
-    public boolean isTcpNoDelay() {
-        return tcpNoDelay;
-    }
+	/**
+	 * Determines whether Nagle's algorithm is to be used. Defaults to
+	 * <code>true</code>.
+	 */
+	public boolean isTcpNoDelay() {
+		return tcpNoDelay;
+	}
 
-    public void setTcpNoDelay(boolean tcpNoDelay) {
-        this.tcpNoDelay = tcpNoDelay;
-    }
+	public void setTcpNoDelay(boolean tcpNoDelay) {
+		this.tcpNoDelay = tcpNoDelay;
+	}
 
-    /**
-     * This is the maximum number of queued incoming connections to allow on the listening socket.
-     * Queued TCP connections exceeding this limit may be rejected by the TCP implementation.
-     * @return The number of queued connections, defaults to system default.
-     */
-    public int getTcpConnectionBacklog() {
-        return tcpConnectionBacklog;
-    }
+	/**
+	 * This is the maximum number of queued incoming connections to allow on the
+	 * listening socket. Queued TCP connections exceeding this limit may be
+	 * rejected by the TCP implementation.
+	 * 
+	 * @return The number of queued connections, defaults to system default.
+	 */
+	public int getTcpConnectionBacklog() {
+		return tcpConnectionBacklog;
+	}
 
-    public void setTcpConnectionBacklog(int tcpConnectionBacklog) {
-        this.tcpConnectionBacklog = tcpConnectionBacklog;
-    }
+	public void setTcpConnectionBacklog(int tcpConnectionBacklog) {
+		this.tcpConnectionBacklog = tcpConnectionBacklog;
+	}
 
+	@Override
+	public boolean isExported() {
+		return isExported;
+	}
 
+	@Override
+	public void setExported(boolean value) {
+		isExported = value;
+	}
 
 }

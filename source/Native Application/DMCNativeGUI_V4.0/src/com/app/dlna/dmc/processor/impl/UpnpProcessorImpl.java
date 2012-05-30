@@ -420,4 +420,10 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 		m_upnpService.getControlPoint().search();
 	}
 
+	@Override
+	public void setDMSExproted(boolean value) {
+		if (m_upnpService != null)
+			m_upnpService.setDMSExported(value);
+	}
+
 }

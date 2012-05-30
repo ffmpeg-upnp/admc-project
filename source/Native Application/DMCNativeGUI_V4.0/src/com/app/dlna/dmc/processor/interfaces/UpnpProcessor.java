@@ -51,6 +51,8 @@ public interface UpnpProcessor {
 	DownloadProcessor getDownloadProcessor();
 
 	void setPlaylistProcessor(PlaylistProcessor playlistProcessor);
+	
+	void setDMSExproted(boolean value);
 
 	public interface DevicesListener {
 
@@ -79,5 +81,5 @@ public interface UpnpProcessor {
 
 		void onRouterDisabledEvent();
 	}
-
+	
 }

@@ -166,6 +166,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 		if (m_nfcAdapter != null)
 			m_nfcAdapter.enableForegroundDispatch(this, m_pendingIntent, m_filters, m_techLists);
 		updateToggleButtonForOrientation();
+		if (UPNP_PROCESSOR != null)
+			UPNP_PROCESSOR.setDMSExproted(AppPreference.getDMSExported());
 	};
 
 	@Override

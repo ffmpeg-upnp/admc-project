@@ -140,7 +140,6 @@ public class TouchImageView extends ImageView {
 
 	public void setMaxZoom(float x) {
 		maxScale = x;
-		setOnTouchListener(mTouchListener);
 	}
 
 	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {

@@ -40,17 +40,23 @@ import org.teleal.common.util.Exceptions;
 /**
  * Handles reception of control messages, invoking actions on local services.
  * <p>
- * Actions are invoked through the {@link org.teleal.cling.model.action.ActionExecutor} returned by the registered
- * {@link org.teleal.cling.model.meta.LocalService#getExecutor(org.teleal.cling.model.meta.Action)} method.
+ * Actions are invoked through the
+ * {@link org.teleal.cling.model.action.ActionExecutor} returned by the
+ * registered
+ * {@link org.teleal.cling.model.meta.LocalService#getExecutor(org.teleal.cling.model.meta.Action)}
+ * method.
  * </p>
  * <p>
- * This class offers two shortcut thread-local variables, which providers of UPnP services might find useful in some situations. You can access these methods
- * statically from within your service implementation:
+ * This class offers two shortcut thread-local variables, which providers of
+ * UPnP services might find useful in some situations. You can access these
+ * methods statically from within your service implementation:
  * </p>
  * <ul>
- * <li>The {@link #getRequestMessage()} static method offers access to the original action request message, including all received HTTP headers, etc.</li>
+ * <li>The {@link #getRequestMessage()} static method offers access to the
+ * original action request message, including all received HTTP headers, etc.</li>
  * <li>
- * The {@link #getExtraResponseHeaders()} static method offers modifiable HTTP headers which will be added to the action response after the invocation, and
+ * The {@link #getExtraResponseHeaders()} static method offers modifiable HTTP
+ * headers which will be added to the action response after the invocation, and
  * returned to the client.</li>
  * </ul>
  * 
@@ -69,10 +75,13 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 
 	protected StreamResponseMessage executeSync() {
 
-		ContentTypeHeader contentTypeHeader = getInputMessage().getHeaders().getFirstHeader(UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class);
-
+		ContentTypeHeader contentTypeHeader = getInputMessage().getHeaders().getFirstHeader(
+				UpnpHeader.Type.CONTENT_TYPE, ContentTypeHeader.class);
+		ContentTypeHeader header = getInputMessage().getHeaders().getFirstHeader(
+				UpnpHeader.Type.LOCATION, ContentTypeHeader.class);
 		// Special rules for action messages! UDA 1.0 says:
-		// 'If the CONTENT-TYPE header specifies an unsupported value (other then "text/xml") the
+		// 'If the CONTENT-TYPE header specifies an unsupported value (other
+		// then "text/xml") the
 		// device must return an HTTP status code "415 Unsupported Media Type".'
 		if (contentTypeHeader != null && !contentTypeHeader.isUDACompliantXML()) {
 			log.warning("Received invalid Content-Type '" + contentTypeHeader + "': " + getInputMessage());
@@ -83,7 +92,8 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 			log.warning("Received without Content-Type: " + getInputMessage());
 		}
 
-		ServiceControlResource resource = getUpnpService().getRegistry().getResource(ServiceControlResource.class, getInputMessage().getUri());
+		ServiceControlResource resource = getUpnpService().getRegistry().getResource(ServiceControlResource.class,
+				getInputMessage().getUri());
 
 		if (resource == null) {
 			log.fine("No local resource found: " + getInputMessage());
@@ -98,7 +108,8 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 		try {
 
 			// Throws ActionException if the action can't be found
-			IncomingActionRequestMessage requestMessage = new IncomingActionRequestMessage(getInputMessage(), resource.getModel());
+			IncomingActionRequestMessage requestMessage = new IncomingActionRequestMessage(getInputMessage(),
+					resource.getModel());
 
 			// Preserve message in a TL
 			requestThreadLocal.set(requestMessage);
@@ -117,7 +128,8 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 			if (invocation.getFailure() == null) {
 				responseMessage = new OutgoingActionResponseMessage(invocation.getAction());
 			} else {
-				responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR, invocation.getAction());
+				responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR,
+						invocation.getAction());
 
 			}
 
@@ -132,14 +144,16 @@ public class ReceivingAction extends ReceivingSync<StreamRequestMessage, StreamR
 				log.log(Level.FINER, "Error reading action request XML body: " + ex.toString(), Exceptions.unwrap(ex));
 			}
 
-			invocation = new ActionInvocation(Exceptions.unwrap(ex) instanceof ActionException ? (ActionException) Exceptions.unwrap(ex) : new ActionException(
-					ErrorCode.ACTION_FAILED, ex.getMessage()));
+			invocation = new ActionInvocation(
+					Exceptions.unwrap(ex) instanceof ActionException ? (ActionException) Exceptions.unwrap(ex)
+							: new ActionException(ErrorCode.ACTION_FAILED, ex.getMessage()));
 			responseMessage = new OutgoingActionResponseMessage(UpnpResponse.Status.INTERNAL_SERVER_ERROR);
 
 		} finally {
 
 			if (responseMessage != null && extraResponseHeadersThreadLocal.get() != null) {
-				log.fine("Merging extra headers into action response message: " + extraResponseHeadersThreadLocal.get().size());
+				log.fine("Merging extra headers into action response message: "
+						+ extraResponseHeadersThreadLocal.get().size());
 				responseMessage.getHeaders().putAll(extraResponseHeadersThreadLocal.get());
 			}
 

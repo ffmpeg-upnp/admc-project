@@ -53,6 +53,7 @@ import org.teleal.cling.transport.spi.NetworkAddressFactory;
 import org.teleal.cling.transport.spi.SOAPActionProcessor;
 import org.teleal.cling.transport.spi.StreamClient;
 import org.teleal.cling.transport.spi.StreamServer;
+import org.teleal.cling.transport.spi.StreamServerConfiguration;
 import org.teleal.common.util.Exceptions;
 
 /**
@@ -115,7 +116,8 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
 	protected DefaultUpnpServiceConfiguration(int streamListenPort, boolean checkRuntime) {
 		if (checkRuntime && ModelUtil.ANDROID_RUNTIME) {
-			throw new Error("Unsupported runtime environment, use org.teleal.cling.android.AndroidUpnpServiceConfiguration");
+			throw new Error(
+					"Unsupported runtime environment, use org.teleal.cling.android.AndroidUpnpServiceConfiguration");
 		}
 
 		this.streamListenPort = streamListenPort;
@@ -149,8 +151,8 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 	}
 
 	public MulticastReceiver createMulticastReceiver(NetworkAddressFactory networkAddressFactory) {
-		return new MulticastReceiverImpl(new MulticastReceiverConfigurationImpl(networkAddressFactory.getMulticastGroup(),
-				networkAddressFactory.getMulticastPort()));
+		return new MulticastReceiverImpl(new MulticastReceiverConfigurationImpl(
+				networkAddressFactory.getMulticastGroup(), networkAddressFactory.getMulticastPort()));
 	}
 
 	public DatagramIO createDatagramIO(NetworkAddressFactory networkAddressFactory) {
@@ -273,7 +275,8 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
 		public ClingExecutor(ThreadFactory threadFactory, RejectedExecutionHandler rejectedHandler) {
 			// This is the same as Executors.newCachedThreadPool
-			super(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), threadFactory, rejectedHandler);
+			super(0, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), threadFactory,
+					rejectedHandler);
 		}
 
 		@Override
@@ -309,5 +312,10 @@ public class DefaultUpnpServiceConfiguration implements UpnpServiceConfiguration
 
 			return t;
 		}
+	}
+
+	@Override
+	public StreamServerConfiguration getStreamServerConfiguration() {
+		return null;
 	}
 }

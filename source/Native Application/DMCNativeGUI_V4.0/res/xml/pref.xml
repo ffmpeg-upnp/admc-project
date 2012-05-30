@@ -13,8 +13,8 @@
             android:title="Number of item per load" />
 
         <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="enable_exported_dms"
+            android:defaultValue="true"
+            android:key="dms_exported"
             android:summary="Export content on device"
             android:title="Export DMS" />
     </PreferenceCategory>
@@ -35,6 +35,12 @@
             android:key="playlist_viewmode"
             android:summary="Filter item in playlist"
             android:title="View Mode" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="image_zoomable"
+            android:summary="Enable zoom for Image item (swipe to next/previous item will be disabled)"
+            android:title="Zoomable Image" />
     </PreferenceCategory>
     <PreferenceCategory
         android:summary="Internet"

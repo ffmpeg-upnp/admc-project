@@ -31,6 +31,7 @@ import org.teleal.cling.transport.spi.NetworkAddressFactory;
 import org.teleal.cling.transport.spi.SOAPActionProcessor;
 import org.teleal.cling.transport.spi.StreamClient;
 import org.teleal.cling.transport.spi.StreamServer;
+import org.teleal.cling.transport.spi.StreamServerConfiguration;
 
 /**
  * Shared configuration data of the UPnP stack..
@@ -162,6 +163,12 @@ public interface UpnpServiceConfiguration {
 	 * @return The executor which runs the notification threads of registry listeners.
 	 */
 	public Executor getRegistryListenerExecutor();
+	
+	//Phu Nguyen
+	/**
+	 * @return The configuration of the StreamServer 
+	 */
+	public StreamServerConfiguration getStreamServerConfiguration();
 
 	/**
 	 * Called by the {@link org.teleal.cling.UpnpService} on shutdown, useful to e.g. shutdown thread pools.

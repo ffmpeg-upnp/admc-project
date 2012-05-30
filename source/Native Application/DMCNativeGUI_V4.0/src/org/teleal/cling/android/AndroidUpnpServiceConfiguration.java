@@ -35,6 +35,7 @@ import org.teleal.cling.transport.impl.apache.StreamServerImpl;
 import org.teleal.cling.transport.spi.NetworkAddressFactory;
 import org.teleal.cling.transport.spi.StreamClient;
 import org.teleal.cling.transport.spi.StreamServer;
+import org.teleal.cling.transport.spi.StreamServerConfiguration;
 
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
@@ -42,15 +43,20 @@ import android.net.wifi.WifiManager;
 /**
  * Configuration settings for deployment on Android.
  * <p>
- * This configuration utilizes the Apache HTTP Components transport implementation found in {@link org.teleal.cling.transport.impl.apache} for TCP/HTTP
- * networking. It will attempt to bind only to the WiFi network interface and addresses on an Android device.
+ * This configuration utilizes the Apache HTTP Components transport
+ * implementation found in {@link org.teleal.cling.transport.impl.apache} for
+ * TCP/HTTP networking. It will attempt to bind only to the WiFi network
+ * interface and addresses on an Android device.
  * </p>
  * <p>
- * This configuration utilizes the SAX default descriptor binders found in {@link org.teleal.cling.binding.xml}. The system property
- * <code>org.xml.sax.driver</code> is set to <code>org.xmlpull.v1.sax2.Driver</code>.
+ * This configuration utilizes the SAX default descriptor binders found in
+ * {@link org.teleal.cling.binding.xml}. The system property
+ * <code>org.xml.sax.driver</code> is set to
+ * <code>org.xmlpull.v1.sax2.Driver</code>.
  * </p>
  * <p>
- * The thread <code>Executor</code> is a <code>ThreadPoolExecutor</code> with the following properties, optimized for machines with limited resources:
+ * The thread <code>Executor</code> is a <code>ThreadPoolExecutor</code> with
+ * the following properties, optimized for machines with limited resources:
  * </p>
  * <ul>
  * <li>Core pool size of minimum 8 idle threads</li>
@@ -59,7 +65,8 @@ import android.net.wifi.WifiManager;
  * <li>A FIFO queue of maximum 512 tasks waiting for a thread from the pool</li>
  * </ul>
  * <p>
- * A warning message will be logged when all threads of the pool have been exhausted and executions have to be dropped.
+ * A warning message will be logged when all threads of the pool have been
+ * exhausted and executions have to be dropped.
  * </p>
  * 
  * @author Christian Bauer
@@ -70,6 +77,8 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 
 	final protected WifiManager wifiManager;
 	private ConnectivityManager m_connectivityManager;
+
+	private StreamServerConfigurationImpl streamServerConfiguration;
 
 	public AndroidUpnpServiceConfiguration(WifiManager wifiManager, ConnectivityManager connectivityManager) {
 		this(wifiManager, 0); // Ephemeral port
@@ -91,7 +100,8 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 
 	@Override
 	public StreamServer createStreamServer(NetworkAddressFactory networkAddressFactory) {
-		return new StreamServerImpl(new StreamServerConfigurationImpl(networkAddressFactory.getStreamListenPort()));
+		streamServerConfiguration = new StreamServerConfigurationImpl(networkAddressFactory.getStreamListenPort());
+		return new StreamServerImpl(streamServerConfiguration);
 	}
 
 	@Override
@@ -108,13 +118,16 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 			public boolean getStaleCheckingEnabled() {
 				// comment from AndroidHttpClient.java:
 				//
-				// Turn off stale checking. Our connections break all the time anyway,
-				// and it's not worth it to pay the penalty of checking every time.
+				// Turn off stale checking. Our connections break all the time
+				// anyway,
+				// and it's not worth it to pay the penalty of checking every
+				// time.
 				return false;
 			}
 
 			public int getRequestRetryCount() {
-				// since "connections break all the time anyway", limit number of retries to
+				// since "connections break all the time anyway", limit number
+				// of retries to
 				// minimize time spent in HttpClient.execute()
 				return 1;
 			}
@@ -139,8 +152,10 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 	@Override
 	protected Executor createDefaultExecutor() {
 
-		// Smaller pool and larger queue on Android, devices do not have much resources...
-		ThreadPoolExecutor defaultExecutor = new ThreadPoolExecutor(8, 32, 5, TimeUnit.SECONDS, new ArrayBlockingQueue(512)) {
+		// Smaller pool and larger queue on Android, devices do not have much
+		// resources...
+		ThreadPoolExecutor defaultExecutor = new ThreadPoolExecutor(8, 32, 5, TimeUnit.SECONDS, new ArrayBlockingQueue(
+				512)) {
 			@Override
 			protected void beforeExecute(Thread thread, Runnable runnable) {
 				super.beforeExecute(thread, runnable);
@@ -153,13 +168,18 @@ public class AndroidUpnpServiceConfiguration extends DefaultUpnpServiceConfigura
 			public void rejectedExecution(Runnable runnable, ThreadPoolExecutor threadPoolExecutor) {
 
 				// Log and discard
-				log.warning("Thread pool saturated, discarding execution " + "of '" + runnable.getClass() + "', consider raising the "
-						+ "maximum pool or queue size");
+				log.warning("Thread pool saturated, discarding execution " + "of '" + runnable.getClass()
+						+ "', consider raising the " + "maximum pool or queue size");
 				super.rejectedExecution(runnable, threadPoolExecutor);
 			}
 		});
 
 		return defaultExecutor;
+	}
+
+	@Override
+	public StreamServerConfiguration getStreamServerConfiguration() {
+		return streamServerConfiguration;
 	}
 
 }

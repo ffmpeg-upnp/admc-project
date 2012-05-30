@@ -32,4 +32,12 @@ public class AppPreference {
 	public static ViewMode getPlaylistViewMode() {
 		return ViewMode.valueOf(PREF != null ? PREF.getString("playlist_viewmode", "ALL") : "ALL");
 	}
+
+	public static boolean getDMSExported() {
+		return PREF != null ? PREF.getBoolean("dms_exported", true) : true;
+	}
+
+	public static boolean getImageZoomable() {
+		return PREF != null ? PREF.getBoolean("image_zoomable", false) : false;
+	}
 }

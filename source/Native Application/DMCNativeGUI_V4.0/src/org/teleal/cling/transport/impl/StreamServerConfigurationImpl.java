@@ -21,42 +21,53 @@ import org.teleal.cling.transport.spi.StreamServerConfiguration;
 
 /**
  * Settings for the default implementation.
- *
+ * 
  * @author Christian Bauer
  */
 public class StreamServerConfigurationImpl implements StreamServerConfiguration {
 
-    private int listenPort;
-    private int tcpConnectionBacklog;
+	private int listenPort;
+	private int tcpConnectionBacklog;
+	private boolean isExported = true;
 
-    /**
-     * Defaults to port '0', ephemeral.
-     */
-    public StreamServerConfigurationImpl() {
-    }
+	/**
+	 * Defaults to port '0', ephemeral.
+	 */
+	public StreamServerConfigurationImpl() {
+	}
 
-    public StreamServerConfigurationImpl(int listenPort) {
-        this.listenPort = listenPort;
-    }
+	public StreamServerConfigurationImpl(int listenPort) {
+		this.listenPort = listenPort;
+	}
 
-    public int getListenPort() {
-        return listenPort;
-    }
+	public int getListenPort() {
+		return listenPort;
+	}
 
-    public void setListenPort(int listenPort) {
-        this.listenPort = listenPort;
-    }
+	public void setListenPort(int listenPort) {
+		this.listenPort = listenPort;
+	}
 
-    /**
-     * @return Maximum number of queued incoming connections to allow on the listening socket,
-     *         default is system default.
-     */
-    public int getTcpConnectionBacklog() {
-        return tcpConnectionBacklog;
-    }
+	/**
+	 * @return Maximum number of queued incoming connections to allow on the
+	 *         listening socket, default is system default.
+	 */
+	public int getTcpConnectionBacklog() {
+		return tcpConnectionBacklog;
+	}
 
-    public void setTcpConnectionBacklog(int tcpConnectionBacklog) {
-        this.tcpConnectionBacklog = tcpConnectionBacklog;
-    }
+	public void setTcpConnectionBacklog(int tcpConnectionBacklog) {
+		this.tcpConnectionBacklog = tcpConnectionBacklog;
+	}
+
+	@Override
+	public boolean isExported() {
+		return isExported;
+	}
+
+	@Override
+	public void setExported(boolean value) {
+		isExported = value;
+	}
 
 }

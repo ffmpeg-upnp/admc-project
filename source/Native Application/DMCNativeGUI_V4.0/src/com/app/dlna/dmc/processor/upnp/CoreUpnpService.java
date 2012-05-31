@@ -1,7 +1,9 @@
 package com.app.dlna.dmc.processor.upnp;
 
 import java.net.NetworkInterface;
+import java.net.URI;
 
+import org.apache.commons.io.IOUtils;
 import org.teleal.cling.UpnpService;
 import org.teleal.cling.UpnpServiceConfiguration;
 import org.teleal.cling.UpnpServiceImpl;
@@ -15,6 +17,7 @@ import org.teleal.cling.model.ModelUtil;
 import org.teleal.cling.model.meta.Device;
 import org.teleal.cling.model.meta.DeviceDetails;
 import org.teleal.cling.model.meta.DeviceIdentity;
+import org.teleal.cling.model.meta.Icon;
 import org.teleal.cling.model.meta.LocalDevice;
 import org.teleal.cling.model.meta.LocalService;
 import org.teleal.cling.model.meta.ManufacturerDetails;
@@ -27,8 +30,6 @@ import org.teleal.cling.protocol.ProtocolFactory;
 import org.teleal.cling.registry.Registry;
 import org.teleal.cling.registry.RegistryListener;
 import org.teleal.cling.transport.Router;
-import org.teleal.cling.transport.spi.NetworkAddressFactory;
-import org.teleal.cling.transport.spi.StreamServer;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -43,6 +44,8 @@ import android.net.wifi.WifiManager.WifiLock;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
@@ -87,11 +90,16 @@ public class CoreUpnpService extends Service {
 	private UDN m_localDMS_UDN = null;
 	private UDN m_localDMR_UDN = null;
 	private RegistryListener m_registryListener;
+	private WakeLock m_serviceWakeLock;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		m_isInitialized = false;
+		PowerManager mgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		m_serviceWakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Media2Share WakeLock");
+		m_serviceWakeLock.acquire();
+
 		m_wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 		m_connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		try {
@@ -186,6 +194,7 @@ public class CoreUpnpService extends Service {
 
 	@Override
 	public void onDestroy() {
+		m_serviceWakeLock.release();
 		try {
 			unregisterReceiver(m_networkReceiver);
 		} catch (Exception ex) {
@@ -366,8 +375,9 @@ public class CoreUpnpService extends Service {
 			DeviceType type = new DeviceType("schemas-upnp-org", "MediaServer");
 			DeviceDetails details = new DeviceDetails(deviceName, new ManufacturerDetails("Media2Share Local Server"),
 					new ModelDetails("v1.0"), "", "");
-
-			LocalDevice localDevice = new LocalDevice(identity, type, details, localService);
+			Icon icon = new Icon("image/png", 48, 48, 8, URI.create(""), IOUtils.toByteArray(getResources()
+					.openRawResource(R.raw.ic_launcher)));
+			LocalDevice localDevice = new LocalDevice(identity, type, details, icon, localService);
 			m_upnpService.getRegistry().addDevice(localDevice);
 			// Log.d(TAG, "Create Local Device complete");
 		} catch (Exception ex) {

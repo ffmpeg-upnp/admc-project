@@ -37,6 +37,7 @@ import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.cache.Cache;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.playlist.Playlist;
+import com.app.dlna.dmc.processor.playlist.Playlist.ViewMode;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.app.dlna.dmc.utility.Utility;
 
@@ -50,6 +51,8 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 	private static Bitmap BM_YOUTUBE;
 	private static Bitmap BM_UNKNOW;
 	private boolean m_isDropDown;
+	private Object m_tag;
+	private int m_currentPosition = 0;
 
 	public CustomArrayAdapter(Context context, int textViewResourceId) {
 		super(context, textViewResourceId);
@@ -109,6 +112,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 				break;
 			}
 			if (_object.getUrl().equals(MainActivity.UPNP_PROCESSOR.getDMRProcessor().getCurrentTrackURI())) {
+				m_currentPosition = position;
 				holder.playing.setVisibility(View.VISIBLE);
 			} else {
 				holder.playing.setVisibility(View.GONE);
@@ -518,6 +522,18 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 			if (0 <= i && i < getCount())
 				list.getAdapter().getView(i, view, list);
 		}
+	}
+
+	public Object getTag() {
+		return m_tag;
+	}
+
+	public void setTag(Object tag) {
+		m_tag = tag;
+	}
+	
+	public int getCurrentPostition(){
+		return m_currentPosition;
 	}
 
 }

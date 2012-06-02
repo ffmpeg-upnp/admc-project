@@ -54,11 +54,15 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += "Accept-Ranges: bytes";
 		result += NEWLINE;
+
+		result += "contentFeatures.dlna.org: DLNA.ORG_PN=" + getDLNAType(mimeType)
+				+ ";DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=00F00000000000000000000000000000";
+		result += NEWLINE;
+		result += "TransferMode.DLNA.ORG: Streaming";
+		result += NEWLINE;
 		result += "Date: " + DateTime.getCurrentDate().toString();
 		result += NEWLINE;
 		result += "Last-Modified: " + new Date(f.lastModified()).toString();
-		result += NEWLINE;
-		result += "EXT:";
 		result += NEWLINE;
 		result += "Connection: close";
 		result += NEWLINE;
@@ -67,6 +71,20 @@ public class HTTPHelper {
 		result += NEWLINE;
 
 		return result;
+	}
+
+	private static String getDLNAType(String mimeType) {
+		String DLNAMimeType = "*";
+		// String mimeTypePart[] = mimeType.split("/");
+		// if (mimeTypePart[0].equals("video")) {
+		// if (mimeTypePart[1].equals("mp4")){
+		// }
+		// } else if (mimeTypePart[0].equals("image")) {
+		// DLNAMimeType = IMAGE;
+		// } else if (mimeTypePart[0].equals("audio")) {
+		// DLNAMimeType = AUDIO;
+		// }
+		return DLNAMimeType;
 	}
 
 	public static String makeHttp206Reponse(String filename, long range) {
@@ -83,11 +101,14 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += "Accept-Ranges: bytes";
 		result += NEWLINE;
+
+		result += "contentFeatures.dlna.org: DLNA.ORG_PN=" + getDLNAType(mimeType)
+				+ ";DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=00F00000000000000000000000000000";
+		result += "TransferMode.DLNA.ORG: Streaming";
+		result += NEWLINE;
 		result += "Date: " + DateTime.getCurrentDate().toString();
 		result += NEWLINE;
 		result += "Last-Modified: " + new Date(f.lastModified()).toString();
-		result += NEWLINE;
-		result += "EXT:";
 		result += NEWLINE;
 		result += "Connection: close";
 		result += NEWLINE;

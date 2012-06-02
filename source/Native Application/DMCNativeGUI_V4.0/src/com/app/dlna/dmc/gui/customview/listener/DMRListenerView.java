@@ -79,7 +79,7 @@ public class DMRListenerView extends LinearLayout {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void onActionFail(Action actionCallback, UpnpResponse response, String cause) {
-			MainActivity.UPNP_PROCESSOR.refreshDevicesList();
+//			MainActivity.UPNP_PROCESSOR.refreshDevicesList();
 		}
 
 		@Override

@@ -12,6 +12,8 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
@@ -81,8 +83,7 @@ public class Utility {
 		long hour = seconds / 3600;
 		long minute = (seconds - hour * 3600) / 60;
 		long second = seconds - hour * 3600 - minute * 60;
-		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":"
-				+ String.format("%02d", second));
+		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second));
 
 		return sb.toString();
 	}
@@ -95,8 +96,8 @@ public class Utility {
 		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
-	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl,
-			final Map<String, Bitmap> cache, final int size) {
+	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl, final Map<String, Bitmap> cache,
+			final int size) {
 		MainActivity.INSTANCE.EXEC.execute(new Runnable() {
 
 			@Override
@@ -192,6 +193,16 @@ public class Utility {
 			connection.setConnectTimeout(3000);
 			connection.setRequestMethod("HEAD");
 			result.setReachable(connection.getResponseCode() == HttpURLConnection.HTTP_OK);
+			Map<String, List<String>> resultHeaders = new HashMap<String, List<String>>();
+			resultHeaders = connection.getHeaderFields();
+			Log.e(TAG, "Begin::::::::::::::::::::::::::::::::::::::::");
+			for (String key : resultHeaders.keySet()) {
+				// Log.e(TAG, "Header = " + key + " : ");
+				for (String value : resultHeaders.get(key)) {
+					Log.e(TAG, "Header = " + key + "  ;  value = " + value);
+				}
+			}
+			Log.e(TAG, "End::::::::::::::::::::::::::::::::::::::::");
 		} catch (Exception ex) {
 			Log.w(TAG, "check fail, url = " + item.getUrl());
 		}

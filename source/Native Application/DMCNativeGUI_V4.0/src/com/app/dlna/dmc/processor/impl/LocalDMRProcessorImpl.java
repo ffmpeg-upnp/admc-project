@@ -49,21 +49,14 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		}
 
 		public void stopThread() {
-			Log.e(TAG, " stop thread");
 			running = false;
 			this.interrupt();
 		}
 
 		@Override
-		public synchronized void start() {
-			running = true;
-			super.start();
-		}
-
-		@Override
 		public void run() {
 			while (running && m_player != null) {
-				Log.d(TAG, "Update thread still running");
+				Log.d(TAG,"Upate thread is running, [LOCAL] + " + getId());
 				try {
 					if (m_player != null && m_player.isPlaying()) {
 						int currentPosition = (int) (m_player.getCurrentPosition() / 1000);
@@ -115,7 +108,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		m_currentItem = new PlaylistItem();
 		m_audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		m_maxVolume = m_audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		// m_isRunning = true;
 		m_selfAutoNext = true;
 		m_updateThread = new UpdateThread();
 		m_updateThread.start();
@@ -135,50 +127,47 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		setRunning(true);
 		switch (m_currentItem.getType()) {
 		case YOUTUBE:
-			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()),
-					new IYoutubeProcessorListener() {
+			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()), new IYoutubeProcessorListener() {
 
-						@Override
-						public void onStartPorcess() {
-							Log.d(TAG, "Get direct-link from YoutubeVideo, id = " + item.getUrl());
-						}
+				@Override
+				public void onStartPorcess() {
+					Log.d(TAG, "Get direct-link from YoutubeVideo, id = " + item.getUrl());
+				}
 
-						@Override
-						public void onSearchComplete(List<YoutubeItem> result) {
-						}
+				@Override
+				public void onSearchComplete(List<YoutubeItem> result) {
+				}
 
-						@Override
-						public void onGetDirectLinkComplete(YoutubeItem result) {
-							Log.d(TAG,
-									"Get direct-link complete from id = " + result.getId() + "; link = "
-											+ result.getDirectLink());
-							stop();
-							m_player = new LocalMediaPlayer();
-							m_player.setDisplay(m_holder);
-							m_player.setOnPreparedListener(m_preparedListener);
-							m_player.setOnCompletionListener(m_completeListener);
-							m_player.setOnErrorListener(m_onErrorListener);
-							m_player.setScreenOnWhilePlaying(true);
-							if (result.getId().equals(m_currentItem.getUrl()))
-								synchronized (m_currentItem) {
-									try {
-										m_player.setDataSource(result.getDirectLink());
-										m_player.prepareAsync();
-									} catch (IllegalArgumentException e) {
-										e.printStackTrace();
-									} catch (IllegalStateException e) {
-										e.printStackTrace();
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-								}
+				@Override
+				public void onGetDirectLinkComplete(YoutubeItem result) {
+					Log.d(TAG, "Get direct-link complete from id = " + result.getId() + "; link = " + result.getDirectLink());
+					stop();
+					m_player = new LocalMediaPlayer();
+					m_player.setDisplay(m_holder);
+					m_player.setOnPreparedListener(m_preparedListener);
+					m_player.setOnCompletionListener(m_completeListener);
+					m_player.setOnErrorListener(m_onErrorListener);
+					m_player.setScreenOnWhilePlaying(true);
+					if (result.getId().equals(m_currentItem.getUrl()))
+						synchronized (m_currentItem) {
+							try {
+								m_player.setDataSource(result.getDirectLink());
+								m_player.prepareAsync();
+							} catch (IllegalArgumentException e) {
+								e.printStackTrace();
+							} catch (IllegalStateException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
+				}
 
-						@Override
-						public void onFail(Exception ex) {
-							ex.printStackTrace();
-						}
-					});
+				@Override
+				public void onFail(Exception ex) {
+					ex.printStackTrace();
+				}
+			});
 			break;
 		case IMAGE_LOCAL:
 		case IMAGE_REMOTE:
@@ -359,15 +348,8 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		Log.e(TAG, "dispose");
 		m_listeners.clear();
 		stop();
-		// m_isRunning = false;
-		// Thread tmpThread = m_updateThread;
-		// m_updateThread = null;
-		// if (tmpThread != null) {
-		// tmpThread.interrupt();
-		// }
 		if (m_updateThread != null) {
 			m_updateThread.stopThread();
-			m_updateThread.interrupt();
 		}
 	}
 
@@ -393,7 +375,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void setRunning(boolean running) {
-		Log.e(TAG, "setrunning = " + running);
 		if (running) {
 			if (m_updateThread != null) {
 				m_updateThread.stopThread();

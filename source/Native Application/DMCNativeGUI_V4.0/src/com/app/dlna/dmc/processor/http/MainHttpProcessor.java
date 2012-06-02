@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import android.util.Log;
 
 public class MainHttpProcessor extends Thread {
-	private static final String TAG = MainHttpProcessor.class.getName();
+	private static final String TAG = "HTTPServerLOG";
 	private ServerSocket m_server;
 	private static final int SIZE = 6;
 	private ThreadPoolExecutor m_executor = new ThreadPoolExecutor(SIZE, SIZE, 0, TimeUnit.SECONDS,
@@ -49,7 +49,7 @@ public class MainHttpProcessor extends Thread {
 
 	@Override
 	public void run() {
-		// Log.i(TAG, "Start HTTP Thread");
+		Log.e(TAG, "Start HTTP Thread");
 		try {
 			m_server = new ServerSocket(HTTPServerData.PORT);
 			while (HTTPServerData.RUNNING) {
@@ -66,9 +66,9 @@ public class MainHttpProcessor extends Thread {
 							String request = null;
 							String requesttype = null;
 							long range = 0;
-							// Log.i(TAG, "<--START HEADER-->");
+							Log.e(TAG, "<--START HEADER-->");
 							while ((line = br.readLine()) != null && (line.length() != 0)) {
-								// Log.i(TAG, line);
+								Log.e(TAG, line);
 								rawrequest.add(line);
 								if (line.contains("GET")) {
 									requesttype = "GET";
@@ -81,17 +81,16 @@ public class MainHttpProcessor extends Thread {
 									range = Long.valueOf(strrange);
 								}
 							}
-							// Log.i(TAG, "<--END HEADER-->");
+							Log.e(TAG, "<--END HEADER-->");
 							String filename = null;
 							if (request != null) {
-								Log.d(TAG, "Request = " + request);
+								Log.e(TAG, "Request = " + request);
 								if (HTTPLinkManager.LINK_MAP.containsKey(request)) {
-									Log.d(TAG, "Youtube Proxy mode");
-									HTTPHelper.handleProxyDataRequest(client, rawrequest,
-											HTTPLinkManager.LINK_MAP.get(request));
+									Log.e(TAG, "Youtube Proxy mode");
+									HTTPHelper.handleProxyDataRequest(client, rawrequest, HTTPLinkManager.LINK_MAP.get(request));
 								} else {
 									filename = URLDecoder.decode(request, "ASCII");
-									Log.d(TAG, "Play-to mode, file name = " + filename);
+									Log.e(TAG, "Play-to mode, file name = " + filename);
 									if (filename != null && filename.length() != 0) {
 										HTTPHelper.handleClientRequest(client, requesttype, range, filename);
 									}

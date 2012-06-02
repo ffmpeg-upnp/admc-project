@@ -55,7 +55,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	private Service m_renderingControl = null;
 	private List<DMRProcessorListner> m_listeners;
 	private PlaylistProcessor m_playlistProcessor;
-	private boolean m_isRunning = true;
 	private int m_currentVolume;
 	private boolean m_isBusy = false;
 	// private int m_state = -1;
@@ -66,11 +65,24 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	private boolean m_seftAutoNext;
 	private int m_autoNextPending = 0;
 	private PlaylistItem m_currentItem;
+	private UpdateThread m_updateThread = null;
 
 	private class UpdateThread extends Thread {
+		private boolean running = false;
+
+		public UpdateThread() {
+			running = true;
+		}
+
+		public void stopThread() {
+			running = false;
+			this.interrupt();
+		}
+
 		@Override
 		public void run() {
-			while (m_isRunning) {
+			while (running) {
+				Log.d(TAG,"Upate thread is running, [REMOTE] + " + getId());
 				if (m_avtransportService == null)
 					return;
 				if (!m_checkGetPositionInfo) {
@@ -87,31 +99,10 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 						@SuppressWarnings("rawtypes")
 						@Override
 						public void received(ActionInvocation invocation, PositionInfo positionInfo) {
-							// Log.v(TAG, positionInfo.toString());
-							// Log.v(TAG, "Track uri = " +
-							// positionInfo.getTrackURI());
-							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(),
-									positionInfo.getTrackDurationSeconds());
+							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(), positionInfo.getTrackDurationSeconds());
 
 							if (positionInfo.getTrackDurationSeconds() == 0) {
-								// Log.v(TAG, "auto next");
-								// m_state = STOP;
 								fireOnEndTrackEvent();
-								// new Thread(new Runnable() {
-								//
-								// @Override
-								// public void run() {
-								// try {
-								// Thread.sleep(2000);
-								// if (m_state == STOP && m_user_stop == false)
-								// {
-								// fireOnEndTrackEvent();
-								// }
-								// } catch (InterruptedException e) {
-								// e.printStackTrace();
-								// }
-								// }
-								// }).start();
 							}
 							m_checkGetPositionInfo = false;
 						}
@@ -176,10 +167,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				try {
 					Thread.sleep(UPDATE_INTERVAL);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
 				}
 			}
-			super.run();
 		}
 	}
 
@@ -193,7 +182,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		m_currentItem = new PlaylistItem();
 		m_seftAutoNext = true;
 		m_user_stop = false;
-		new UpdateThread().start();
+		m_updateThread = new UpdateThread();
+		m_updateThread.start();
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -295,13 +285,10 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@SuppressWarnings("rawtypes")
 	private void fireOnFailEvent(Action action, UpnpResponse response, String message) {
-		if (!m_isRunning)
-			return;
 		synchronized (m_listeners) {
 			for (DMRProcessorListner listener : m_listeners) {
 				listener.onActionFail(action, response, message);
 			}
-			m_isRunning = false;
 		}
 	}
 
@@ -375,12 +362,12 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void dispose() {
-		m_isRunning = false;
+		stop();
+		if (m_updateThread != null)
+			m_updateThread.stopThread();
 		synchronized (m_listeners) {
 			m_listeners.clear();
 		}
-		// TODO: must check preferent here
-		stop();
 	}
 
 	public void seek(String position) {
@@ -462,7 +449,18 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void setRunning(boolean running) {
-		m_isRunning = running;
+		if (running) {
+			if (m_updateThread != null) {
+				m_updateThread.stopThread();
+				m_updateThread = null;
+			}
+			m_updateThread = new UpdateThread();
+			m_updateThread.start();
+		} else {
+			if (m_updateThread != null)
+				m_updateThread.stopThread();
+			m_updateThread = null;
+		}
 	}
 
 	@Override
@@ -484,34 +482,31 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		stop();
 		switch (item.getType()) {
 		case YOUTUBE:
-			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()),
-					new IYoutubeProcessorListener() {
+			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()), new IYoutubeProcessorListener() {
 
-						@Override
-						public void onStartPorcess() {
-							Log.d(TAG, "Get direct-link from YoutubeVideo, id = " + item.getUrl());
+				@Override
+				public void onStartPorcess() {
+					Log.d(TAG, "Get direct-link from YoutubeVideo, id = " + item.getUrl());
+				}
+
+				@Override
+				public void onSearchComplete(List<YoutubeItem> result) {
+				}
+
+				@Override
+				public void onGetDirectLinkComplete(YoutubeItem result) {
+					Log.d(TAG, "Get direct-link complete from id = " + result.getId() + "; link = " + result.getDirectLink());
+					if (result.getId().equals(m_currentItem.getUrl()))
+						synchronized (m_currentItem) {
+							setUriAndPlay(result.getDirectLink());
 						}
+				}
 
-						@Override
-						public void onSearchComplete(List<YoutubeItem> result) {
-						}
+				@Override
+				public void onFail(Exception ex) {
 
-						@Override
-						public void onGetDirectLinkComplete(YoutubeItem result) {
-							Log.d(TAG,
-									"Get direct-link complete from id = " + result.getId() + "; link = "
-											+ result.getDirectLink());
-							if (result.getId().equals(m_currentItem.getUrl()))
-								synchronized (m_currentItem) {
-									setUriAndPlay(result.getDirectLink());
-								}
-						}
-
-						@Override
-						public void onFail(Exception ex) {
-
-						}
-					});
+				}
+			});
 			break;
 		// case VIDEO_LOCAL:
 		// case AUDIO_LOCAL:
@@ -621,8 +616,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 									}
 
 									@Override
-									public void failure(ActionInvocation invocation, UpnpResponse response,
-											String defaultMsg) {
+									public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
 										fireOnFailEvent(invocation.getAction(), response, defaultMsg);
 										m_isBusy = false;
 									}

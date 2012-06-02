@@ -2,6 +2,7 @@ package com.app.dlna.dmc.gui.activity;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -38,6 +39,7 @@ import com.app.dlna.dmc.processor.impl.LocalDMRProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
+import com.app.dlna.dmc.processor.playlist.Playlist.ViewMode;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.app.dlna.dmc.utility.Utility;
 
@@ -112,16 +114,37 @@ public class NowPlayingActivity extends Activity {
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_playlistView = (ListView) findViewById(R.id.playlist);
+		m_playlistView.setTag(AppPreference.getPlaylistViewMode());
 		m_adapter = new CustomArrayAdapter(NowPlayingActivity.this, 0);
+		m_adapter.setTag(AppPreference.getPlaylistViewMode());
 		m_adapter.setDropDownMode(true);
-		m_playlistView.setAdapter(m_adapter);
-		m_playlistView.setOnItemClickListener(m_playlistItemClick);
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 		if (playlistProcessor != null) {
+			// List<PlaylistItem> items =
+			// playlistProcessor.getAllItemsByViewMode();
+			// for (int i = 0; i < items.size(); ++i) {
+			// PlaylistItem item = items.get(i);
+			// m_adapter.add(new AdapterItem(item));
+			// }
 			for (PlaylistItem item : playlistProcessor.getAllItemsByViewMode())
 				m_adapter.add(new AdapterItem(item));
-			m_playlistView.smoothScrollToPosition(playlistProcessor.getCurrentItemIndex());
+			PlaylistItem current = playlistProcessor.getCurrentItem();
+			if (current == null) {
+				m_playlistView.smoothScrollToPosition(0);
+			} else {
+				int idx = 0;
+				if (AppPreference.getPlaylistViewMode().equals(ViewMode.ALL)) {
+					idx = playlistProcessor.getAllItems().indexOf(current);
+				} else {
+					idx = playlistProcessor.getAllItemsByViewMode().indexOf(current);
+				}
+
+				m_playlistView.smoothScrollToPosition(idx < 3 ? 0 : idx + 3);
+			}
 		}
+		m_playlistView.setAdapter(m_adapter);
+		m_playlistView.setOnItemClickListener(m_playlistItemClick);
+		m_playlistView.setVisibility(View.VISIBLE);
 		if (m_lastInfoState) {
 			m_viewFlipper.setVisibility(View.VISIBLE);
 			m_rendererControl.setVisibility(View.VISIBLE);
@@ -327,6 +350,9 @@ public class NowPlayingActivity extends Activity {
 				protected Bitmap doInBackground(String... params) {
 					Log.i(TAG, "Load in background");
 					String url = params[0];
+					PlaylistItem item = new PlaylistItem();
+					item.setUrl(url);
+					Utility.checkItemURL(item);
 					int width = Integer.parseInt(params[1]);
 					int height = Integer.parseInt(params[2]);
 					Log.d(TAG, "imagewidth ::::::::: " + width + ";imageheight ::::::::" + height);
@@ -356,8 +382,7 @@ public class NowPlayingActivity extends Activity {
 						Toast.makeText(NowPlayingActivity.this,
 								"Image loading error. Reduce image quality in Settings maybe fix this problem",
 								Toast.LENGTH_SHORT).show();
-						m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-								R.drawable.ic_didlobject_image_large));
+						m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_didlobject_image_large));
 						m_image.setMaxZoom(1f);
 						m_image.setOnTouchListener(m_swipeDetector);
 					} else {
@@ -408,6 +433,7 @@ public class NowPlayingActivity extends Activity {
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 		if (playlistProcessor != null)
 			playlistProcessor.removeListener(m_playlistListener);
+		m_adapter = null;
 	}
 
 	public void updatePlaylist() {

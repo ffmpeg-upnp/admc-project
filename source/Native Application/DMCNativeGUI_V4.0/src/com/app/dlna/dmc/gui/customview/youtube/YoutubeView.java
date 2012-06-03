@@ -133,7 +133,7 @@ public class YoutubeView extends LinearLayout {
 		}
 
 		@Override
-		public void onGetDirectLinkComplete(final YoutubeItem result) {
+		public void onGetLinkComplete(final YoutubeItem result) {
 			// if (m_progress.isShowing())
 			// MainActivity.INSTANCE.runOnUiThread(new Runnable() {
 			//

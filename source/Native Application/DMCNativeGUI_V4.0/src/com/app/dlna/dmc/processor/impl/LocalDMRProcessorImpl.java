@@ -139,7 +139,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 				}
 
 				@Override
-				public void onGetDirectLinkComplete(YoutubeItem result) {
+				public void onGetLinkComplete(YoutubeItem result) {
 					Log.d(TAG, "Get direct-link complete from id = " + result.getId() + "; link = " + result.getDirectLink());
 					stop();
 					m_player = new LocalMediaPlayer();

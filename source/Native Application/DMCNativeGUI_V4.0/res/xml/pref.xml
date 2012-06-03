@@ -26,6 +26,11 @@
             android:key="dms_exported"
             android:summary="Export content on device"
             android:title="Export DMS" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="proxy_mode"
+            android:summary="Must enable for some DLNA TV when playing Youtube Video"
+            android:title="Youtube Proxy Mode" />
 
         <EditTextPreference
             android:defaultValue="mp3;wma;midi;wav;mid;midi;"

@@ -10,14 +10,14 @@ public interface YoutubeProcessor {
 
 	void getDirectLinkAsync(YoutubeItem item, IYoutubeProcessorListener callback);
 
-	void registURLAsync(String link, IYoutubeProcessorListener callback);
+	void registURLAsync(YoutubeItem item, IYoutubeProcessorListener callback);
 	
 	String getDirectLink(String id);
 
 	public interface IYoutubeProcessorListener {
 		void onStartPorcess();
 
-		void onGetDirectLinkComplete(YoutubeItem result);
+		void onGetLinkComplete(YoutubeItem result);
 
 		void onFail(Exception ex);
 

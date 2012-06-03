@@ -8,13 +8,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.http.protocol.HTTP;
 import org.teleal.cling.support.messagebox.model.DateTime;
 
 import android.util.Log;
@@ -54,9 +58,7 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += "Accept-Ranges: bytes";
 		result += NEWLINE;
-
-		result += "contentFeatures.dlna.org: DLNA.ORG_PN=" + getDLNAType(mimeType)
-				+ ";DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=00F00000000000000000000000000000";
+		result += createDLNAHeaderField();
 		result += NEWLINE;
 		result += "TransferMode.DLNA.ORG: Streaming";
 		result += NEWLINE;
@@ -73,18 +75,22 @@ public class HTTPHelper {
 		return result;
 	}
 
-	private static String getDLNAType(String mimeType) {
-		String DLNAMimeType = "*";
-		// String mimeTypePart[] = mimeType.split("/");
-		// if (mimeTypePart[0].equals("video")) {
-		// if (mimeTypePart[1].equals("mp4")){
-		// }
-		// } else if (mimeTypePart[0].equals("image")) {
-		// DLNAMimeType = IMAGE;
-		// } else if (mimeTypePart[0].equals("audio")) {
-		// DLNAMimeType = AUDIO;
-		// }
-		return DLNAMimeType;
+	// private static String getDLNAType(String mimeType) {
+	// String DLNAMimeType = "*";
+	// // String mimeTypePart[] = mimeType.split("/");
+	// // if (mimeTypePart[0].equals("video")) {
+	// // if (mimeTypePart[1].equals("mp4")){
+	// // }
+	// // } else if (mimeTypePart[0].equals("image")) {
+	// // DLNAMimeType = IMAGE;
+	// // } else if (mimeTypePart[0].equals("audio")) {
+	// // DLNAMimeType = AUDIO;
+	// // }
+	// return DLNAMimeType;
+	// }
+
+	public static String createDLNAHeaderField() {
+		return "contentFeatures.dlna.org: DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000";
 	}
 
 	public static String makeHttp206Reponse(String filename, long range) {
@@ -101,9 +107,8 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += "Accept-Ranges: bytes";
 		result += NEWLINE;
-
-		result += "contentFeatures.dlna.org: DLNA.ORG_PN=" + getDLNAType(mimeType)
-				+ ";DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=00F00000000000000000000000000000";
+		result += createDLNAHeaderField();
+		result += NEWLINE;
 		result += "TransferMode.DLNA.ORG: Streaming";
 		result += NEWLINE;
 		result += "Date: " + DateTime.getCurrentDate().toString();
@@ -160,38 +165,101 @@ public class HTTPHelper {
 	public static void handleProxyDataRequest(Socket client, List<String> rawrequest, String directLink) {
 		try {
 			URL youtube = new URL(directLink);
-			Socket socket = new Socket(youtube.getHost(), 80);
-			PrintStream ps = new PrintStream(socket.getOutputStream());
+			// Socket socket = new Socket(youtube.getHost(), 80);
+			// PrintStream ps = new PrintStream(socket.getOutputStream());
+			//
+			// for (String requestLine : rawrequest) {
+			// Log.d(TAG, "Original request = " + requestLine);
+			// String[] token = requestLine.split(" ");
+			// if (requestLine.contains("HEAD") || requestLine.contains("GET"))
+			// {
+			// ps.println(token[0] + " " + youtube.getFile() + " HTTP/1.1");
+			// } else if (requestLine.contains("Host")) {
+			// ps.println("Host: " + youtube.getAuthority());
+			// } else if (requestLine.contains("Connection:")) {
+			// ps.println("Connection: Close");
+			// } else {
+			// ps.println(requestLine);
+			// }
+			// }
+			// ps.println();
+			// ps.flush();
+			HttpURLConnection connection = (HttpURLConnection) new URL(directLink).openConnection();
+			connection.setConnectTimeout(5000);
+			for (String str : rawrequest) {
+				if (str.contains("HEAD")) {
+					connection.setRequestMethod("HEAD");
+				} else if (str.contains("GET")) {
+					connection.setRequestMethod("GET");
+				} else if (str.contains("Range")) {
+					connection.addRequestProperty("Range", str.split(":")[1]);
+				}
 
-			for (String requestLine : rawrequest) {
-				Log.d(TAG, "Original request = " + requestLine);
-				String[] token = requestLine.split(" ");
-				if (requestLine.contains("HEAD") || requestLine.contains("GET")) {
-					ps.println(token[0] + " " + youtube.getFile() + " HTTP/1.1");
-				} else if (requestLine.contains("Host")) {
-					ps.println("Host: " + youtube.getAuthority());
-				} else if (requestLine.contains("Connection:")) {
-					ps.println("Connection: Close");
+			}
+			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+				Map<String, List<String>> resultHeaders = new HashMap<String, List<String>>();
+				resultHeaders = connection.getHeaderFields();
+				Log.e(TAG, "BEGIN HEADER ================= ");
+				for (String key : resultHeaders.keySet()) {
+					if (key == null)
+						for (String value : resultHeaders.get(key)) {
+							bw.write(value);
+							Log.e(TAG, value);
+							bw.write(NEWLINE);
+						}
+					else
+						for (String value : resultHeaders.get(key)) {
+							bw.write(key + " : " + value);
+							Log.e(TAG, key + " : " + value);
+							bw.write(NEWLINE);
+						}
+				}
+				bw.write(createDLNAHeaderField());
+				bw.write(NEWLINE);
+				bw.write("TransferMode.DLNA.ORG: Streaming");
+				bw.write(NEWLINE);
+				bw.write(NEWLINE);
+				bw.flush();
+				Log.e(TAG, "END   HEADER ================= ");
+				if (connection.getRequestMethod().equals("GET")) {
+					DataInputStream dis = new DataInputStream(connection.getInputStream());
+					DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+
+					byte[] buffer = new byte[65536];
+					int read = -1;
+					while ((read = dis.read(buffer)) > 0 && HTTPServerData.RUNNING) {
+						Log.v(TAG, "read from yt: " + read + " bytes");
+						dos.write(buffer, 0, read);
+						dos.flush();
+					}
+
+					try {
+						dis.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					try {
+						dos.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				} else {
-					ps.println(requestLine);
+					try {
+						bw.close();
+					} catch (Exception e) {
+					}
 				}
 			}
-			ps.println();
-			ps.flush();
-
-			DataInputStream dis = new DataInputStream(socket.getInputStream());
-			DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-
-			byte[] buffer = new byte[65536];
-			int read = -1;
-			while ((read = dis.read(buffer)) > 0 && HTTPServerData.RUNNING) {
-				Log.v(TAG, "read from yt: " + read + " bytes");
-				dos.write(buffer, 0, read);
-			}
-			dis.close();
-			dos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+
+			try {
+				client.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

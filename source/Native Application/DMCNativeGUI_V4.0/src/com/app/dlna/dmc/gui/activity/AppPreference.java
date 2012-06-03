@@ -12,7 +12,7 @@ public class AppPreference {
 		return PREF != null ? Integer.valueOf(PREF.getString("max_item_count", "50")) : 50;
 	}
 
-	public static boolean getVideoQuality() {
+	public static boolean isVideoHQ() {
 		return PREF != null ? PREF.getBoolean("video_quality", false) : false;
 	}
 
@@ -70,5 +70,9 @@ public class AppPreference {
 	
 	public static boolean getKillProcessStatus(){
 		return PREF != null ? PREF.getBoolean("kill_process", false) : false;
+	}
+
+	public static boolean getProxyMode() {
+		return PREF != null ? PREF.getBoolean("proxy_mode", false) : false;
 	}
 }

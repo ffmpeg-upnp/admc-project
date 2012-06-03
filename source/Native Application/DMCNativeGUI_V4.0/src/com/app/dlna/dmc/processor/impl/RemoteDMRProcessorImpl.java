@@ -28,7 +28,10 @@ import org.teleal.cling.support.renderingcontrol.callback.GetVolume;
 import org.teleal.cling.support.renderingcontrol.callback.SetVolume;
 
 import android.util.Log;
+import android.widget.Toast;
 
+import com.app.dlna.dmc.gui.activity.AppPreference;
+import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor.IYoutubeProcessorListener;
@@ -82,7 +85,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		@Override
 		public void run() {
 			while (running) {
-				Log.d(TAG,"Upate thread is running, [REMOTE] + " + getId());
+				Log.d(TAG, "Upate thread is running, [REMOTE] + " + getId());
 				if (m_avtransportService == null)
 					return;
 				if (!m_checkGetPositionInfo) {
@@ -333,7 +336,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	}
 
 	private void fireOnEndTrackEvent() {
-		Log.e(TAG, "fireOnEndTrackEvent, m_autoNextPending = " + m_autoNextPending);
 		if (m_isBusy)
 			return;
 		synchronized (m_listeners) {
@@ -482,11 +484,10 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		stop();
 		switch (item.getType()) {
 		case YOUTUBE:
-			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()), new IYoutubeProcessorListener() {
+			IYoutubeProcessorListener youtubeCallback = new IYoutubeProcessorListener() {
 
 				@Override
 				public void onStartPorcess() {
-					Log.d(TAG, "Get direct-link from YoutubeVideo, id = " + item.getUrl());
 				}
 
 				@Override
@@ -494,8 +495,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				}
 
 				@Override
-				public void onGetDirectLinkComplete(YoutubeItem result) {
-					Log.d(TAG, "Get direct-link complete from id = " + result.getId() + "; link = " + result.getDirectLink());
+				public void onGetLinkComplete(YoutubeItem result) {
 					if (result.getId().equals(m_currentItem.getUrl()))
 						synchronized (m_currentItem) {
 							setUriAndPlay(result.getDirectLink());
@@ -504,9 +504,15 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 				@Override
 				public void onFail(Exception ex) {
-
+					Log.e(TAG, ex.getMessage());
+					Toast.makeText(MainActivity.INSTANCE, ex.getMessage(), Toast.LENGTH_SHORT).show();
 				}
-			});
+			};
+			if (AppPreference.getProxyMode()) {
+				new YoutubeProcessorImpl().registURLAsync(new YoutubeItem(item.getUrl()), youtubeCallback);
+			} else {
+				new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()), youtubeCallback);
+			}
 			break;
 		// case VIDEO_LOCAL:
 		// case AUDIO_LOCAL:
@@ -542,6 +548,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@SuppressWarnings("rawtypes")
 	private void setUriAndPlay(final String url) {
+		Log.e(TAG, "setUriAndPlay = " + url);
 		synchronized (m_currentItem) {
 			m_controlPoint.execute(new GetMediaInfo(m_avtransportService) {
 

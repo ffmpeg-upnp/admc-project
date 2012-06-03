@@ -323,15 +323,15 @@ public class CoreUpnpService extends Service {
 		}
 
 		public UpnpServiceConfiguration getConfiguration() {
-			return m_upnpService.getConfiguration();
+			return m_upnpService != null ? m_upnpService.getConfiguration() : null;
 		}
 
 		public Registry getRegistry() {
-			return m_upnpService.getRegistry();
+			return m_upnpService != null ? m_upnpService.getRegistry() : null;
 		}
 
 		public ControlPoint getControlPoint() {
-			return m_upnpService.getControlPoint();
+			return m_upnpService != null ? m_upnpService.getControlPoint() : null;
 		}
 
 		public void setProcessor(CoreUpnpServiceListener upnpProcessor) {

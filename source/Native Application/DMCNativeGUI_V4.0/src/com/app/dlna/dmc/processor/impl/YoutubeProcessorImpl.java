@@ -18,6 +18,8 @@ import org.json.JSONObject;
 import android.util.Log;
 
 import com.app.dlna.dmc.gui.activity.AppPreference;
+import com.app.dlna.dmc.processor.http.HTTPLinkManager;
+import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor;
 import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 import com.app.dlna.dmc.utility.Utility;
@@ -42,82 +44,13 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 			public void run() {
 				try {
 					callback.onStartPorcess();
-					String directLink = "";
-					URL url = new URL(QUERY_VIDEO_INFO.replace("{id}", item.getId()));
-					String toDecode = IOUtils.toString(url);
-					String[] splitToParam = toDecode.split("&");
-					String urls = "";
-					for (String str : splitToParam) {
-						if (str.contains("url_encoded_fmt_stream_map")) {
-							urls = str;
-						}
-					}
-					if (urls.isEmpty()) {
-						URL htmlUrl = new URL(QUERY_HTML.replace("{id}", item.getId()));
-						HttpGet httpGet = new HttpGet(htmlUrl.toURI());
-						httpGet.setHeader("User-Agent", USER_AGENT);
-						HttpClient client = new DefaultHttpClient();
-						HttpResponse response = client.execute(httpGet);
-						String html = IOUtils.toString(response.getEntity().getContent());
-						Pattern pattern = Pattern.compile(REGEX);
-						Matcher matcher = pattern.matcher(html);
-						while (matcher.find()) {
-							String str = matcher.group();
-							if (!str.contains("crossdomain.xml")) {
-								directLink = str.replace("\\u0026", "&").replace("\\", "")
-										.replace("generate_204", "videoplayback").replace("yt.preload.start(\"", "")
-										.replace("\")", "");
-								directLink = Utility.decodeYoutubeUrl(directLink);
-								break;
-							}
-						}
+					String directLink = getDirectLink(item.getId());
+					if (directLink.trim().isEmpty()) {
+						callback.onFail(new RuntimeException("Cannot get Youtube Video"));
 					} else {
-						String hd720 = "";
-						String medium = "";
-						String other = "";
-						String decoded = URLDecoder.decode(urls, "UTF-8");
-						for (String str : decoded.split("url=")) {
-							if (str.contains("mp4")) {
-								if (str.contains("hd720")) {
-									hd720 = str;
-								} else if (str.contains("medium")) {
-									medium = str;
-								} else {
-									other = str;
-								}
-							}
-						}
-						hd720 = Utility.decodeYoutubeUrl(hd720);
-						medium = Utility.decodeYoutubeUrl(medium);
-						other = Utility.decodeYoutubeUrl(other);
-						switch (AppPreference.getVideoQuality() ? VQ_HD : VQ_NORMAL) {
-						case VQ_NORMAL:
-							directLink = medium;
-							if (directLink.isEmpty())
-								directLink = other;
-							if (directLink.isEmpty())
-								directLink = hd720;
-							break;
-						case VQ_HD:
-							directLink = hd720;
-							if (directLink.isEmpty())
-								directLink = medium;
-							if (directLink.isEmpty())
-								directLink = other;
-							break;
-						default:
-							break;
-						}
-
-						// if (!hd720.isEmpty())
-						// directLink = hd720;
-						// else if (!medium.isEmpty())
-						// directLink = medium;
-						// else if (!other.isEmpty())
-						// directLink = other;
+						item.setDirectLink(directLink);
+						callback.onGetLinkComplete(item);
 					}
-					item.setDirectLink(directLink);
-					callback.onGetDirectLinkComplete(item);
 				} catch (Exception ex) {
 					ex.printStackTrace();
 					callback.onFail(ex);
@@ -129,9 +62,30 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 	}
 
 	@Override
-	public void registURLAsync(String link, final IYoutubeProcessorListener callback) {
-		// callback.onStartPorcess();
-		// getDirectLink(link, new IYoutubeProcessorListener() {
+	public void registURLAsync(final YoutubeItem item, final IYoutubeProcessorListener callback) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					callback.onStartPorcess();
+					String directlink = getDirectLink(item.getId());
+					if (directlink == null || directlink.trim().isEmpty())
+						callback.onFail(new RuntimeException("Cannot get directlink from Youtube"));
+					String disget = Utility.getMD5(directlink);
+					String disgetLink = "/" + disget.substring(0, disget.length() - 1) + ".mp4";
+					HTTPLinkManager.LINK_MAP.put(disgetLink, directlink);
+					Log.e(TAG, "DirectLink = " + directlink);
+					Log.e(TAG, "DisgetLink = " + disgetLink);
+					item.setDirectLink("http://" + HTTPServerData.HOST + ":" + HTTPServerData.PORT + disgetLink);
+					callback.onGetLinkComplete(item);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					callback.onFail(ex);
+				}
+			}
+
+		}).start();
 		//
 		// @Override
 		// public void onStartPorcess() {
@@ -189,8 +143,7 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 						YoutubeItem youtubeItem = new YoutubeItem();
 						youtubeItem.setId(mediaGroup.getJSONObject("yt$videoid").getString("$t"));
 						youtubeItem.setTitle(mediaGroup.getJSONObject("media$title").getString("$t"));
-						youtubeItem.setDuration(Long.valueOf(mediaGroup.getJSONObject("yt$duration").getString(
-								"seconds")));
+						youtubeItem.setDuration(Long.valueOf(mediaGroup.getJSONObject("yt$duration").getString("seconds")));
 						JSONArray thumbs = mediaGroup.getJSONArray("media$thumbnail");
 						youtubeItem.setHTMLLink(mediaGroup.getJSONObject("media$player").getString("url"));
 						if (thumbs.length() > 0)
@@ -234,9 +187,8 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 				while (matcher.find()) {
 					String str = matcher.group();
 					if (!str.contains("crossdomain.xml")) {
-						directLink = str.replace("\\u0026", "&").replace("\\", "")
-								.replace("generate_204", "videoplayback").replace("yt.preload.start(\"", "")
-								.replace("\")", "");
+						directLink = str.replace("\\u0026", "&").replace("\\", "").replace("generate_204", "videoplayback")
+								.replace("yt.preload.start(\"", "").replace("\")", "");
 						directLink = Utility.decodeYoutubeUrl(directLink);
 						break;
 					}
@@ -260,8 +212,7 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 				hd720 = Utility.decodeYoutubeUrl(hd720);
 				medium = Utility.decodeYoutubeUrl(medium);
 				other = Utility.decodeYoutubeUrl(other);
-
-				switch (AppPreference.getVideoQuality() ? VQ_HD : VQ_NORMAL) {
+				switch (AppPreference.isVideoHQ() ? VQ_HD : VQ_NORMAL) {
 				case VQ_NORMAL:
 					directLink = medium;
 					if (directLink.isEmpty())
@@ -279,10 +230,9 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 				default:
 					break;
 				}
-
 			}
 		} catch (Exception e) {
-			Log.e(TAG, "Get direct link fail, Youtube ID = " + id + "; cause = " + e.getMessage());
+			directLink = "";
 		}
 		return directLink;
 	}

@@ -14,11 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import android.util.Log;
-
 import com.app.dlna.dmc.gui.activity.AppPreference;
-import com.app.dlna.dmc.processor.http.HTTPLinkManager;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor;
 import com.app.dlna.dmc.processor.youtube.YoutubeItem;
@@ -32,9 +28,8 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 	private static final String QUERY_VIDEO_INFO = "http://www.youtube.com/get_video_info?video_id={id}";
 	private static final String QUERY_HTML = "http://www.youtube.com/watch?v={id}";
 	private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.202 Safari/535.1";
-	private static final int VQ_NORMAL = 0; // Video Quality Normal 480
-	private static final int VQ_HD = 1;// Video Quality HD 720
-	private static final String TAG = YoutubeProcessorImpl.class.getName();
+
+	// private static final String TAG = YoutubeProcessorImpl.class.getName();
 
 	@Override
 	public void getDirectLinkAsync(final YoutubeItem item, final IYoutubeProcessorListener callback) {
@@ -74,9 +69,9 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 						callback.onFail(new RuntimeException("Cannot get directlink from Youtube"));
 					String disget = Utility.getMD5(directlink);
 					String disgetLink = "/" + disget.substring(0, disget.length() - 1) + ".mp4";
-					HTTPLinkManager.LINK_MAP.put(disgetLink, directlink);
-					Log.e(TAG, "DirectLink = " + directlink);
-					Log.e(TAG, "DisgetLink = " + disgetLink);
+					HTTPServerData.LINK_MAP.put(disgetLink, directlink);
+					// Log.e(TAG, "DirectLink = " + directlink);
+					// Log.e(TAG, "DisgetLink = " + disgetLink);
 					item.setDirectLink("http://" + HTTPServerData.HOST + ":" + HTTPServerData.PORT + disgetLink);
 					callback.onGetLinkComplete(item);
 				} catch (Exception ex) {
@@ -212,23 +207,18 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 				hd720 = Utility.decodeYoutubeUrl(hd720);
 				medium = Utility.decodeYoutubeUrl(medium);
 				other = Utility.decodeYoutubeUrl(other);
-				switch (AppPreference.isVideoHQ() ? VQ_HD : VQ_NORMAL) {
-				case VQ_NORMAL:
-					directLink = medium;
-					if (directLink.isEmpty())
-						directLink = other;
-					if (directLink.isEmpty())
-						directLink = hd720;
-					break;
-				case VQ_HD:
+				if (AppPreference.isVideoHQ()) {
 					directLink = hd720;
 					if (directLink.isEmpty())
 						directLink = medium;
 					if (directLink.isEmpty())
 						directLink = other;
-					break;
-				default:
-					break;
+				} else {
+					directLink = medium;
+					if (directLink.isEmpty())
+						directLink = other;
+					if (directLink.isEmpty())
+						directLink = hd720;
 				}
 			}
 		} catch (Exception e) {

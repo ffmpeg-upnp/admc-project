@@ -41,8 +41,7 @@ public class PlaylistItem {
 			String current;
 			try {
 				URI uri = URI.create(m_url);
-				current = new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT, uri.getPath(), null, null)
-						.toString();
+				current = new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT, uri.getPath(), null, null).toString();
 				return current;
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
@@ -78,8 +77,7 @@ public class PlaylistItem {
 		if (!(o instanceof PlaylistItem))
 			return false;
 		PlaylistItem other = (PlaylistItem) o;
-		return other.getUrl().equals(this.getUrl()) && other.m_type.equals(this.m_type)
-				&& other.m_title.equals(this.m_title);
+		return other.getUrl().equals(this.getUrl()) && other.m_type.equals(this.m_type) && other.m_title.equals(this.m_title);
 	}
 
 	public static PlaylistItem createFromDLDIObject(DIDLObject object) {

@@ -127,8 +127,8 @@ public class PlaylistProvider extends ContentProvider {
 		case PLAYLIST_ITEM: {
 			Log.i(TAG, "query all playlist item, selection = " + selection);
 			SQLiteDatabase database = dbPlaylistHelper.getReadableDatabase();
-			result = database.query(PlaylistSQLiteHelper.TABLE_PLAYLIST_ITEMS, projection, selection, selectionArgs,
-					null, null, null);
+			result = database.query(PlaylistSQLiteHelper.TABLE_PLAYLIST_ITEMS, projection, selection, selectionArgs, null, null,
+					null);
 			break;
 		}
 		default:

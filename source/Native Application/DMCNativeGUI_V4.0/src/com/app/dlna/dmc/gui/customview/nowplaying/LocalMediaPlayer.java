@@ -5,8 +5,6 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class LocalMediaPlayer extends MediaPlayer {
-
-	private static final String TAG = LocalMediaPlayer.class.getName();
 	private SurfaceHolder m_surfaceHolder = null;
 	public static int surface_width;
 	public static int surface_height;
@@ -42,7 +40,6 @@ public class LocalMediaPlayer extends MediaPlayer {
 				float max_scale = scale_width > scale_height ? scale_width : scale_height;
 				int target_width = (int) (video_width / max_scale);
 				int target_height = (int) (video_height / max_scale);
-				Log.e(TAG, "targetwidth = " + target_width + " :::::: targetheight = " + target_height);
 				m_surfaceHolder.setFixedSize(target_width, target_height);
 			}
 		} catch (Exception ex) {

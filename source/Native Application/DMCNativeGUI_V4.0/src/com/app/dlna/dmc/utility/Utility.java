@@ -31,7 +31,8 @@ import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 
 public class Utility {
-	public static final String TAG = Utility.class.getName();
+
+	private static final String TAG = Utility.class.getName();
 
 	public static String intToIp(int i) {
 		String result = "";
@@ -188,21 +189,20 @@ public class Utility {
 	public static CheckResult checkItemURL(PlaylistItem item) {
 		CheckResult result = new CheckResult(item, false);
 		try {
-			Log.i(TAG, "check url = " + item.getUrl());
 			HttpURLConnection connection = (HttpURLConnection) new URL(item.getUrl()).openConnection();
 			connection.setConnectTimeout(3000);
 			connection.setRequestMethod("HEAD");
 			result.setReachable(connection.getResponseCode() == HttpURLConnection.HTTP_OK);
 			Map<String, List<String>> resultHeaders = new HashMap<String, List<String>>();
 			resultHeaders = connection.getHeaderFields();
-			Log.e(TAG, "Begin::::::::::::::::::::::::::::::::::::::::");
-			for (String key : resultHeaders.keySet()) {
-				// Log.e(TAG, "Header = " + key + " : ");
-				for (String value : resultHeaders.get(key)) {
-					Log.e(TAG, "Header = " + key + "  ;  value = " + value);
-				}
-			}
-			Log.e(TAG, "End::::::::::::::::::::::::::::::::::::::::");
+			// Log.e(TAG, "Begin::::::::::::::::::::::::::::::::::::::::");
+			// for (String key : resultHeaders.keySet()) {
+			// // Log.e(TAG, "Header = " + key + " : ");
+			// for (String value : resultHeaders.get(key)) {
+			// Log.e(TAG, "Header = " + key + "  ;  value = " + value);
+			// }
+			// }
+			// Log.e(TAG, "End::::::::::::::::::::::::::::::::::::::::");
 		} catch (Exception ex) {
 			Log.w(TAG, "check fail, url = " + item.getUrl());
 		}

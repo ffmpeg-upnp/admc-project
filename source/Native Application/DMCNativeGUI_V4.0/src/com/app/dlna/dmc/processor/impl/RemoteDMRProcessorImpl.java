@@ -41,12 +41,8 @@ import com.app.dlna.dmc.utility.Utility;
 import com.app.dlna.dmc.utility.Utility.CheckResult;
 
 public class RemoteDMRProcessorImpl implements DMRProcessor {
-	private static final String TAG = RemoteDMRProcessorImpl.class.getName();
 	private static final int UPDATE_INTERVAL = 1000;
 	private static final int MAX_VOLUME = 100;
-	// private static final int PLAYING = 0;
-	// private static final int PAUSE = 1;
-	// private static final int STOP = 2;
 	private static final long SEEK_DELAY_INTERVAL = 200;
 	private static final int AUTO_NEXT_DELAY = 8; // second
 	@SuppressWarnings("rawtypes")
@@ -60,12 +56,11 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	private PlaylistProcessor m_playlistProcessor;
 	private int m_currentVolume;
 	private boolean m_isBusy = false;
-	// private int m_state = -1;
 	private boolean m_checkGetPositionInfo = false;
 	private boolean m_checkGetTransportInfo = false;
 	private boolean m_checkGetVolumeInfo = false;
 	private boolean m_user_stop;
-	private boolean m_seftAutoNext;
+	private boolean m_seftAutoNext = false;
 	private int m_autoNextPending = 0;
 	private PlaylistItem m_currentItem;
 	private UpdateThread m_updateThread = null;
@@ -85,7 +80,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		@Override
 		public void run() {
 			while (running) {
-				Log.d(TAG, "Upate thread is running, [REMOTE] + " + getId());
+				Log.d("RemoteDMRProcessorImpl", "Upate thread is running, [REMOTE] + " + getId());
 				if (m_avtransportService == null)
 					return;
 				if (!m_checkGetPositionInfo) {
@@ -183,7 +178,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		m_renderingControl = m_device.findService(new ServiceType("schemas-upnp-org", "RenderingControl"));
 		m_listeners = new ArrayList<DMRProcessor.DMRProcessorListner>();
 		m_currentItem = new PlaylistItem();
-		m_seftAutoNext = true;
 		m_user_stop = false;
 		m_updateThread = new UpdateThread();
 		m_updateThread.start();
@@ -340,10 +334,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 			return;
 		synchronized (m_listeners) {
 			if (m_seftAutoNext) {
-				// Log.i(TAG, "seft next");
 				if (m_autoNextPending == 0) {
 					if (m_playlistProcessor != null && !m_user_stop) {
-						Log.i(TAG, "Auto next");
 						m_playlistProcessor.next();
 					}
 					m_autoNextPending = AUTO_NEXT_DELAY;
@@ -473,7 +465,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 			return;
 		}
 		final String url = item.getUrl();
-		Log.i(TAG, "url = " + item.getUrl());
 		m_autoNextPending = AUTO_NEXT_DELAY;
 		if (m_controlPoint == null || m_avtransportService == null)
 			return;
@@ -504,7 +495,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 				@Override
 				public void onFail(Exception ex) {
-					Log.e(TAG, ex.getMessage());
 					Toast.makeText(MainActivity.INSTANCE, ex.getMessage(), Toast.LENGTH_SHORT).show();
 				}
 			};
@@ -514,18 +504,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()), youtubeCallback);
 			}
 			break;
-		// case VIDEO_LOCAL:
-		// case AUDIO_LOCAL:
-		// case IMAGE_LOCAL: {
-		// URL itemUrl;
-		// try {
-		// itemUrl = new URL(item.getUrl());
-		// item.setUrl("http://" + HTTPServerData.HOST + ":" +
-		// HTTPServerData.PORT + "/" + itemUrl.getFile());
-		// } catch (MalformedURLException e1) {
-		// e1.printStackTrace();
-		// }
-		// }
 		default:
 			new Thread(new Runnable() {
 
@@ -536,7 +514,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 						if (result.isReachable())
 							setUriAndPlay(url);
 						else {
-							Log.w(TAG, "item unreachable, Url = " + item.getUrl());
 						}
 					}
 				}
@@ -548,7 +525,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@SuppressWarnings("rawtypes")
 	private void setUriAndPlay(final String url) {
-		Log.e(TAG, "setUriAndPlay = " + url);
 		synchronized (m_currentItem) {
 			m_controlPoint.execute(new GetMediaInfo(m_avtransportService) {
 
@@ -560,11 +536,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 				@Override
 				public void received(ActionInvocation invocation, MediaInfo mediaInfo) {
-					// if (mediaInfo != null &&
-					// mediaInfo.getCurrentURIMetaData() !=
-					// null)
-					// Log.e(TAG,
-					// mediaInfo.getCurrentURIMetaData());
 					String current_uri = null;
 					String currentPath = null;
 					String newPath = null;
@@ -591,8 +562,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 									.equals(newQuery)))) {
 						play();
 					} else {
-						// Log.e(TAG, "set AV uri = " +
-						// uri);
 						Stop stop = new Stop(m_avtransportService) {
 							@Override
 							public void success(ActionInvocation invocation) {
@@ -609,15 +578,12 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 											@Override
 											public void failure(ActionInvocation invocation, UpnpResponse operation,
 													String defaultMsg) {
-												// Log.e(TAG,
-												// "Call fail");
 												fireOnFailEvent(invocation.getAction(), operation, defaultMsg);
 												m_isBusy = false;
 											}
 
 											public void success(ActionInvocation invocation) {
 												m_isBusy = false;
-												// m_state = PLAYING;
 											};
 										});
 									}

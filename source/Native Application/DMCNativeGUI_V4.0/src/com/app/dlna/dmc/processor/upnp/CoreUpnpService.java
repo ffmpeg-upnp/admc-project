@@ -46,7 +46,6 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
 
@@ -69,7 +68,6 @@ import com.app.dlna.dmc.utility.Utility;
 
 public class CoreUpnpService extends Service {
 	public static final int NOTIFICATION = 1500;
-	private static final String TAG = CoreUpnpService.class.getName();
 	private MainHttpProcessor m_httpThread;
 	private UpnpService m_upnpService;
 	private CoreUpnpServiceBinder binder = new CoreUpnpServiceBinder();
@@ -112,14 +110,12 @@ public class CoreUpnpService extends Service {
 
 						@Override
 						public void onRouterError(String cause) {
-							Log.e(TAG, "Router error: " + cause);
 							if (m_upnpProcessor != null)
 								m_upnpProcessor.onRouterError("No network found");
 						}
 
 						@Override
 						public void onNetworkChanged(NetworkInterface ni) {
-							Log.w(TAG, "Network interface changed");
 							if (m_upnpProcessor != null) {
 								m_upnpProcessor.onNetworkChanged(ni);
 							}
@@ -159,10 +155,8 @@ public class CoreUpnpService extends Service {
 			if (m_wifiManager.isWifiEnabled()
 					&& m_connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
 				HTTPServerData.HOST = Utility.intToIp(m_wifiManager.getDhcpInfo().ipAddress);
-				Log.i(TAG, "Host = " + HTTPServerData.HOST);
 			} else {
 				HTTPServerData.HOST = null;
-				Log.i(TAG, "Host = null");
 			}
 
 			m_notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -278,10 +272,8 @@ public class CoreUpnpService extends Service {
 			m_dmsProcessor = null;
 			m_currentDMS = m_upnpService.getRegistry().getDevice(uDN, true);
 			if (m_currentDMS != null) {
-				Log.d(TAG, "CURRENT DMS:" + m_currentDMS.toString());
 				m_dmsProcessor = new DMSProcessorImpl(m_currentDMS, getControlPoint());
 			} else {
-				Log.e(TAG, "GET DMS FAIL:" + uDN.toString());
 				Toast.makeText(getApplicationContext(), "Set DMS fail. Cannot get DMS info; UDN = " + uDN.toString(),
 						Toast.LENGTH_SHORT).show();
 				m_dmsProcessor = null;
@@ -289,19 +281,16 @@ public class CoreUpnpService extends Service {
 		}
 
 		public void setCurrentDMR(UDN uDN) {
-			Log.e(TAG, "Set current DMR = " + uDN);
 			if (m_dmrProcessor != null)
 				m_dmrProcessor.dispose();
 			m_dmrProcessor = null;
 			m_currentDMR = m_upnpService.getRegistry().getDevice(uDN, true);
 			if (m_currentDMR != null) {
-				Log.d(TAG, "CURRENT DMR:" + m_currentDMR.toString());
 				if (m_currentDMR instanceof LocalDevice)
 					m_dmrProcessor = new LocalDMRProcessorImpl(CoreUpnpService.this);
 				else
 					m_dmrProcessor = new RemoteDMRProcessorImpl(m_currentDMR, getControlPoint());
 			} else {
-				Log.e(TAG, "GET DMR FAIL:" + uDN.toString());
 				Toast.makeText(getApplicationContext(), "Set DMR fail. Cannot get DMR info; UDN = " + uDN.toString(),
 						Toast.LENGTH_SHORT).show();
 				m_dmrProcessor = null;
@@ -390,9 +379,7 @@ public class CoreUpnpService extends Service {
 		try {
 			String deviceName = Build.MODEL.toUpperCase() + " " + Build.DEVICE.toUpperCase() + " - DMR";
 			String MACAddress = m_wifiManager.getConnectionInfo().getMacAddress();
-			Log.i(TAG, "Local DMR: Device name = " + deviceName + ";MAC = " + MACAddress);
 			String hashUDN = Utility.getMD5(deviceName + "-" + MACAddress + "-LocalDMR");
-			Log.i(TAG, "Hash UDN = " + hashUDN);
 			String uDNString = hashUDN.substring(0, 8) + "-" + hashUDN.substring(8, 12) + "-" + hashUDN.substring(12, 16) + "-"
 					+ hashUDN.substring(16, 20) + "-" + hashUDN.substring(20);
 			m_localDMR_UDN = new UDN(uDNString);
@@ -404,9 +391,7 @@ public class CoreUpnpService extends Service {
 			LocalDevice localDevice = new LocalDevice(identity, type, details, new LocalService[0]);
 
 			m_upnpService.getRegistry().addDevice(localDevice);
-			Log.d(TAG, "Create Local Device complete");
 		} catch (Exception ex) {
-			Log.d(TAG, "Cannot create Local Device");
 			ex.printStackTrace();
 		}
 	}

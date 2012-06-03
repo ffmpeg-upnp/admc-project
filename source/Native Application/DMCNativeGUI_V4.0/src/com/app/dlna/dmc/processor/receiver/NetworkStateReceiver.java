@@ -19,7 +19,6 @@ import android.util.Log;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
-	private static final String TAG = NetworkStateReceiver.class.getSimpleName();
 	private SwitchableRouter m_router;
 	private RouterStateListener m_routerStateListener;
 	private boolean m_disableWifiPending;
@@ -40,7 +39,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 				(WifiManager) context.getSystemService(Context.WIFI_SERVICE),
 				(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
 		if (ni == null) {
-			Log.i(TAG, "Disable router");
 			m_router.disable();
 			m_routerStateListener.onRouterDisabled();
 			m_disableWifiPending = true;
@@ -64,7 +62,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 				}
 			}).start();
 		} else {
-			Log.i(TAG, "Enable router");
 			m_router.enable();
 			m_routerStateListener.onRouterEnabled();
 
@@ -88,7 +85,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 			// break;
 			// }
 			// }
-			Log.i(TAG, "HOST = " + HTTPServerData.HOST);
 			m_disableWifiPending = false;
 		}
 	}

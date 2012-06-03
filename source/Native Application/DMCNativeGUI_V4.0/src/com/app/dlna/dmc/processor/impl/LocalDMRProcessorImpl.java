@@ -32,11 +32,9 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	private AudioManager m_audioManager;
 	private int m_maxVolume;
 	private boolean m_selfAutoNext;
-	// private boolean m_isRunning;
 	private static final int STATE_PLAYING = 0;
 	private static final int STATE_STOPED = 1;
 	private static final int STATE_PAUSED = 2;
-	protected static final String TAG = LocalDMRProcessorImpl.class.getName();
 	private int m_currentState;
 	private UpdateThread m_updateThread;
 
@@ -56,7 +54,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		@Override
 		public void run() {
 			while (running && m_player != null) {
-				Log.d(TAG,"Upate thread is running, [LOCAL] + " + getId());
+				Log.v("LocalDMRProcessorImpl", "Upate thread is running, [LOCAL] + " + getId());
 				try {
 					if (m_player != null && m_player.isPlaying()) {
 						int currentPosition = (int) (m_player.getCurrentPosition() / 1000);
@@ -115,7 +113,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void setURIandPlay(final PlaylistItem item) {
-		Log.i(TAG, "Call SetURIAndPlay");
 		if (item == null) {
 			m_currentItem = null;
 			stop();
@@ -131,7 +128,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 				@Override
 				public void onStartPorcess() {
-					Log.d(TAG, "Get direct-link from YoutubeVideo, id = " + item.getUrl());
 				}
 
 				@Override
@@ -140,7 +136,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 				@Override
 				public void onGetLinkComplete(YoutubeItem result) {
-					Log.d(TAG, "Get direct-link complete from id = " + result.getId() + "; link = " + result.getDirectLink());
 					stop();
 					m_player = new LocalMediaPlayer();
 					m_player.setDisplay(m_holder);
@@ -207,7 +202,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 									}
 							}
 						else {
-							Log.w(TAG, "item unreachable, Url = " + item.getUrl());
 							autoNext();
 						}
 					}
@@ -294,7 +288,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void seek(String position) {
-		Log.e(TAG, " seek call");
 		try {
 			String[] elements = position.split(":");
 			long miliSec = new Integer(elements[0]) * 3600 + new Integer(elements[1]) * 60 + new Integer(elements[2]);
@@ -345,7 +338,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void dispose() {
-		Log.e(TAG, "dispose");
 		m_listeners.clear();
 		stop();
 		if (m_updateThread != null) {

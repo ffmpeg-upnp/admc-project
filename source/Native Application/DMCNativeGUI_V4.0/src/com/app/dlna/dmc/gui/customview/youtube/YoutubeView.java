@@ -29,8 +29,6 @@ import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 
 public class YoutubeView extends LinearLayout {
-
-	protected static final String TAG = YoutubeView.class.getName();
 	private ListView m_listView;
 	private EditText m_ed_query;
 	private ImageView m_btn_search;
@@ -77,13 +75,9 @@ public class YoutubeView extends LinearLayout {
 			PlaylistItem added = playlistProcessor.addYoutubeItem(m_adapter.getItem(position));
 			if (added != null) {
 				Toast.makeText(getContext(), "Added item to playlist", Toast.LENGTH_SHORT).show();
-				Log.i(TAG, "new idx = 	" + playlistProcessor.setCurrentItem(added));
 				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 				if (dmrProcessor != null)
 					dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
-
-				// m_youtubeProcessor.getDirectLinkAsync(m_adapter.getItem(position),
-				// m_youtubeListener);
 			} else {
 				if (playlistProcessor.isFull()) {
 					Toast.makeText(getContext(), "Current playlist is full", Toast.LENGTH_SHORT).show();

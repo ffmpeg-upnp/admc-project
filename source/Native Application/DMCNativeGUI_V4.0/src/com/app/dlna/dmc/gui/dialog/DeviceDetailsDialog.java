@@ -11,9 +11,6 @@ import android.widget.TextView;
 import app.dlna.controller.v4.R;
 
 public class DeviceDetailsDialog extends Dialog {
-
-	protected static final String TAG = DeviceDetailsDialog.class.getName();
-
 	@SuppressWarnings("rawtypes")
 	private Device m_device;
 	private DeviceDetailsListener m_listener;

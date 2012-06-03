@@ -37,7 +37,6 @@ import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.utility.Utility;
 
 public class LocalContentDirectoryService extends AbstractContentDirectoryService {
-	private static final String TAG = "LocalContentDirectoryService";
 	private static final int SCANNING_NOTIFICATION = 37000;
 	private static NotificationManager m_notificationManager;
 	private static List<MusicTrack> m_listMusic = null;
@@ -52,8 +51,8 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	public static void scanMedia(final Context context) {
 		IS_SCANNING = true;
 		m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		final Notification notification = new Notification(ResourceManager.getScanningIcon(),
-				"Scanning content on sdcard", System.currentTimeMillis());
+		final Notification notification = new Notification(ResourceManager.getScanningIcon(), "Scanning content on sdcard",
+				System.currentTimeMillis());
 
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(), 0);
 
@@ -82,7 +81,6 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			if (!image_ext.trim().isEmpty())
 				m_imageMap.add(image_ext);
 
-		Log.e(TAG, "Start media scanning");
 		new Thread(new Runnable() {
 
 			@Override
@@ -165,21 +163,21 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 		if (mimeType != null) {
 			if (fileExtension != null) {
 				if (m_musicMap.contains(fileExtension)) {
-					MusicTrack musicTrack = new MusicTrack("0/1/" + subFile.getName(), "0/1", subFile.getName(),
-							"local dms", "", "", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
-									subFile.length(), Utility.createLink(subFile)));
+					MusicTrack musicTrack = new MusicTrack("0/1/" + subFile.getName(), "0/1", subFile.getName(), "local dms", "",
+							"", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]), subFile.length(),
+									Utility.createLink(subFile)));
 					m_listMusic.add(musicTrack);
 					return musicTrack;
 				} else if (m_videoMap.contains(fileExtension)) {
-					VideoItem videoItem = new VideoItem("0/2/" + subFile.getName(), "0/2", subFile.getName(),
-							"local dms", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
-									subFile.length(), Utility.createLink(subFile)));
+					VideoItem videoItem = new VideoItem("0/2/" + subFile.getName(), "0/2", subFile.getName(), "local dms",
+							new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]), subFile.length(),
+									Utility.createLink(subFile)));
 					m_listVideo.add(new VideoItem(videoItem));
 					return videoItem;
 				} else if (m_imageMap.contains(fileExtension)) {
-					ImageItem imageItem = new ImageItem("0/3/" + subFile.getName(), "0/3", subFile.getName(),
-							"local dms", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
-									subFile.length(), Utility.createLink(subFile)));
+					ImageItem imageItem = new ImageItem("0/3/" + subFile.getName(), "0/3", subFile.getName(), "local dms",
+							new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]), subFile.length(),
+									Utility.createLink(subFile)));
 					m_listPhoto.add(new ImageItem(imageItem));
 					return imageItem;
 				}
@@ -189,8 +187,8 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	}
 
 	@Override
-	public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult,
-			long maxResults, SortCriterion[] orderby) throws ContentDirectoryException {
+	public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults,
+			SortCriterion[] orderby) throws ContentDirectoryException {
 		BrowseResult br = null;
 		int count = 0;
 		try {
@@ -223,8 +221,8 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			if (maxResults == 0)
 				toIndex = sourceList.size();
 			else
-				toIndex = ((firstResult + maxResults) < (sourceList.size() - 1) ? (int) (firstResult + maxResults)
-						: (sourceList.size() - 1)) + 1;
+				toIndex = ((firstResult + maxResults) < (sourceList.size() - 1) ? (int) (firstResult + maxResults) : (sourceList
+						.size() - 1)) + 1;
 			for (DIDLObject didlObject : sourceList.subList((int) firstResult, toIndex)) {
 				if (didlObject != null) {
 					content.addItem((Item) didlObject);

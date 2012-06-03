@@ -16,7 +16,6 @@ import com.app.dlna.dmc.gui.customview.youtube.YoutubeView;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 
 public class LibraryActivity extends Activity {
-	protected static final String TAG = LibraryActivity.class.getName();
 	private ViewPager m_pager;
 	private HomeNetworkView m_homeNetworkView;
 	private YoutubeView m_youtubeView;
@@ -129,12 +128,12 @@ public class LibraryActivity extends Activity {
 	public PlaylistView getPlaylistView() {
 		return m_playlistView;
 	}
-	
-	public HomeNetworkView getHomeNetworkView(){
+
+	public HomeNetworkView getHomeNetworkView() {
 		return m_homeNetworkView;
 	}
-	
-	public YoutubeView getYoutubeView(){
+
+	public YoutubeView getYoutubeView() {
 		return m_youtubeView;
 	}
 

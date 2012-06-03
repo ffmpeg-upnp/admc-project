@@ -35,7 +35,6 @@ import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 
 public class DMRListActivity extends Activity implements SystemListener {
-	private static final String TAG = DMRListActivity.class.getName();
 	private UpnpProcessorImpl m_upnpProcessor;
 	boolean m_isYoutubeItem = false;
 	@SuppressWarnings("rawtypes")
@@ -149,18 +148,13 @@ public class DMRListActivity extends Activity implements SystemListener {
 		try {
 			Intent intent = getIntent();
 			if (intent != null) {
-				Log.e(TAG, "intent = " + intent);
-				Log.e(TAG, "extra = " + intent.getExtras().get(Intent.EXTRA_TEXT));
-				Log.e(TAG, "data = " + intent.getData());
-				Log.e(TAG, "scheme = " + intent.getScheme());
 				if (Intent.ACTION_VIEW.equals(intent.getAction())) {
 					m_playToURI = URLDecoder.decode(intent.getDataString().substring(7), "ASCII");
 				} else if (Intent.ACTION_SEND.equals(intent.getAction())) {
 					if (intent.getType().equals("text/plain")) {
 						// Link from Youtube App or Browser
 						m_isYoutubeItem = true;
-						m_playToURI = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString())
-								.getQueryParameter("v");
+						m_playToURI = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString()).getQueryParameter("v");
 						if (null == m_playToURI || m_playToURI.isEmpty()) {
 							String fragment = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString())
 									.getEncodedFragment();
@@ -189,7 +183,6 @@ public class DMRListActivity extends Activity implements SystemListener {
 				}
 
 			}
-			Log.e(TAG, "Remote playtoURI = " + m_playToURI);
 			PlaylistManager.RESOLVER = getContentResolver();
 		} catch (Exception e) {
 			e.printStackTrace();

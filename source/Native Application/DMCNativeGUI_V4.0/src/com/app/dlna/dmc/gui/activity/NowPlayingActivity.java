@@ -2,7 +2,6 @@ package com.app.dlna.dmc.gui.activity;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -10,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -44,7 +42,6 @@ import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.app.dlna.dmc.utility.Utility;
 
 public class NowPlayingActivity extends Activity {
-	protected String TAG = NowPlayingActivity.class.getName();
 	private RendererControlView m_rendererControl;
 	private ViewFlipper m_viewFlipper;
 	private ProgressDialog m_progressDialog;
@@ -82,7 +79,6 @@ public class NowPlayingActivity extends Activity {
 		m_content = (RelativeLayout) findViewById(R.id.content);
 		m_content.setOnTouchListener(m_swipeDetector);
 		m_image = (TouchImageView) findViewById(R.id.image);
-		// m_image.setOnTouchListener(m_swipeDetector);
 		m_image.setDrawingCacheEnabled(false);
 		m_image.setMaxZoom(4f);
 		if (!AppPreference.getImageZoomable()) {
@@ -158,7 +154,6 @@ public class NowPlayingActivity extends Activity {
 
 		@Override
 		public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-			Log.i(TAG, "On ItemClick");
 			m_lastInfoState = true;
 			final Object object = m_adapter.getItem(position).getData();
 			PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
@@ -291,7 +286,6 @@ public class NowPlayingActivity extends Activity {
 		}
 		PlaylistItem item = playlistProcessor.getCurrentItem();
 		if (item == null) {
-			Log.e(TAG, "item = null");
 			dmrProcessor.stop();
 			return;
 		}
@@ -348,14 +342,12 @@ public class NowPlayingActivity extends Activity {
 
 				@Override
 				protected Bitmap doInBackground(String... params) {
-					Log.i(TAG, "Load in background");
 					String url = params[0];
 					PlaylistItem item = new PlaylistItem();
 					item.setUrl(url);
 					Utility.checkItemURL(item);
 					int width = Integer.parseInt(params[1]);
 					int height = Integer.parseInt(params[2]);
-					Log.d(TAG, "imagewidth ::::::::: " + width + ";imageheight ::::::::" + height);
 					try {
 						return Utility.getBitmapFromURL(url, width < height ? width : height);
 					} catch (MalformedURLException e) {
@@ -414,7 +406,6 @@ public class NowPlayingActivity extends Activity {
 
 	@Override
 	protected void onResume() {
-		Log.e(TAG, "nowplaying ressume");
 		super.onResume();
 		m_lastInfoState = true;
 		m_isPausing = false;
@@ -424,7 +415,6 @@ public class NowPlayingActivity extends Activity {
 
 	@Override
 	protected void onPause() {
-		Log.e(TAG, "nowplaying pause");
 		super.onPause();
 		m_isPausing = true;
 		m_surface.setVisibility(View.GONE);
@@ -461,7 +451,6 @@ public class NowPlayingActivity extends Activity {
 				if (m_isPausing) {
 					localDMR.setHolder(null);
 				} else {
-					Log.i(TAG, "suface state = " + m_surface.isShown());
 					if (m_surface.getVisibility() == View.GONE) {
 						localDMR.setHolder(null);
 					} else {
@@ -482,7 +471,6 @@ public class NowPlayingActivity extends Activity {
 
 		@Override
 		public void surfaceDestroyed(SurfaceHolder holder) {
-			Log.e(TAG, "surface destroyed");
 			DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 			if (dmrProcessor instanceof LocalDMRProcessorImpl) {
 				LocalDMRProcessorImpl localDMR = (LocalDMRProcessorImpl) dmrProcessor;
@@ -492,24 +480,20 @@ public class NowPlayingActivity extends Activity {
 
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
-			Log.e(TAG, "surface created");
 			updateSurfaceView();
 		}
 
 		@Override
 		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-			Log.e(TAG, "surface changed");
 			updateSurfaceView();
 		}
 	};
 
 	public void switchToPortrait() {
-		Log.e(TAG, "switch to portrait");
 		updateItemInfo();
 	}
 
 	public void switchToLandscape() {
-		Log.e(TAG, "switch to landscape");
 		updateItemInfo();
 	};
 

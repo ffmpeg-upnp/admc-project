@@ -32,8 +32,6 @@ import com.app.dlna.dmc.processor.upnp.CoreUpnpService.CoreUpnpServiceBinder;
 import com.app.dlna.dmc.processor.upnp.CoreUpnpService.CoreUpnpServiceListener;
 
 public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreUpnpServiceListener {
-	private static String TAG = UpnpProcessorImpl.class.getName();
-
 	private Activity m_activity;
 
 	private CoreUpnpServiceBinder m_upnpService;
@@ -66,7 +64,6 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 				m_upnpService = (CoreUpnpServiceBinder) service;
 				if (m_upnpService.isInitialized()) {
 					m_upnpService.addRegistryListener(UpnpProcessorImpl.this);
-					Log.i(TAG, "Upnp Service Ready");
 					fireOnStartCompleteEvent();
 					m_upnpService.setProcessor(UpnpProcessorImpl.this);
 					m_upnpService.getControlPoint().search();
@@ -83,7 +80,6 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 
 	public void unbindUpnpService() {
 		try {
-			Log.i(TAG, "Unbind to service");
 			if (m_serviceConnection != null) {
 				try {
 					m_activity.unbindService(m_serviceConnection);
@@ -367,13 +363,11 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 
 	@Override
 	public void onNetworkChanged(NetworkInterface ni) {
-		Log.w(TAG, "NetworkInterface changed to: " + ni.getDisplayName());
 		fireOnNetworkChangedEvent();
 	}
 
 	@Override
 	public void onRouterError(String message) {
-		Log.e(TAG, "Router error " + message);
 		fireOnRouterErrorEvent(message);
 	}
 

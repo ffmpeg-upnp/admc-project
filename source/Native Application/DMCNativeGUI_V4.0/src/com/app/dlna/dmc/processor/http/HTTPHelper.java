@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.Socket;
@@ -18,15 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.protocol.HTTP;
 import org.teleal.cling.support.messagebox.model.DateTime;
-
-import android.util.Log;
 
 public class HTTPHelper {
 
 	private static final int BUFFERSIZE = 131702;
-	private static final String TAG = HTTPHelper.class.getName();
 	public static String NEWLINE = "\r\n";
 
 	public static String makeGETrequest(String url) throws MalformedURLException {
@@ -147,7 +142,6 @@ public class HTTPHelper {
 				while (HTTPServerData.RUNNING) {
 					bytesread = dis.read(b);
 					count += bytesread;
-					Log.v(TAG, "Byte read = " + bytesread + "Count = " + count);
 					dos.write(b, 0, bytesread);
 					if (count == new File(filename).length())
 						break;
@@ -164,26 +158,6 @@ public class HTTPHelper {
 
 	public static void handleProxyDataRequest(Socket client, List<String> rawrequest, String directLink) {
 		try {
-			URL youtube = new URL(directLink);
-			// Socket socket = new Socket(youtube.getHost(), 80);
-			// PrintStream ps = new PrintStream(socket.getOutputStream());
-			//
-			// for (String requestLine : rawrequest) {
-			// Log.d(TAG, "Original request = " + requestLine);
-			// String[] token = requestLine.split(" ");
-			// if (requestLine.contains("HEAD") || requestLine.contains("GET"))
-			// {
-			// ps.println(token[0] + " " + youtube.getFile() + " HTTP/1.1");
-			// } else if (requestLine.contains("Host")) {
-			// ps.println("Host: " + youtube.getAuthority());
-			// } else if (requestLine.contains("Connection:")) {
-			// ps.println("Connection: Close");
-			// } else {
-			// ps.println(requestLine);
-			// }
-			// }
-			// ps.println();
-			// ps.flush();
 			HttpURLConnection connection = (HttpURLConnection) new URL(directLink).openConnection();
 			connection.setConnectTimeout(5000);
 			for (String str : rawrequest) {
@@ -200,18 +174,15 @@ public class HTTPHelper {
 				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 				Map<String, List<String>> resultHeaders = new HashMap<String, List<String>>();
 				resultHeaders = connection.getHeaderFields();
-				Log.e(TAG, "BEGIN HEADER ================= ");
 				for (String key : resultHeaders.keySet()) {
 					if (key == null)
 						for (String value : resultHeaders.get(key)) {
 							bw.write(value);
-							Log.e(TAG, value);
 							bw.write(NEWLINE);
 						}
 					else
 						for (String value : resultHeaders.get(key)) {
 							bw.write(key + " : " + value);
-							Log.e(TAG, key + " : " + value);
 							bw.write(NEWLINE);
 						}
 				}
@@ -221,7 +192,6 @@ public class HTTPHelper {
 				bw.write(NEWLINE);
 				bw.write(NEWLINE);
 				bw.flush();
-				Log.e(TAG, "END   HEADER ================= ");
 				if (connection.getRequestMethod().equals("GET")) {
 					DataInputStream dis = new DataInputStream(connection.getInputStream());
 					DataOutputStream dos = new DataOutputStream(client.getOutputStream());
@@ -229,7 +199,6 @@ public class HTTPHelper {
 					byte[] buffer = new byte[65536];
 					int read = -1;
 					while ((read = dis.read(buffer)) > 0 && HTTPServerData.RUNNING) {
-						Log.v(TAG, "read from yt: " + read + " bytes");
 						dos.write(buffer, 0, read);
 						dos.flush();
 					}

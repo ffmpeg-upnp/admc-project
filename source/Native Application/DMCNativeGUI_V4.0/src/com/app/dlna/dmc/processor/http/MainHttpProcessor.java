@@ -18,7 +18,7 @@ import android.util.Log;
 public class MainHttpProcessor extends Thread {
 	private static final String TAG = "HTTPServerLOG";
 	private ServerSocket m_server;
-	private static final int SIZE = 6;
+	private static final int SIZE = 12;
 	private ThreadPoolExecutor m_executor = new ThreadPoolExecutor(SIZE, SIZE, 0, TimeUnit.SECONDS,
 			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
 
@@ -54,7 +54,6 @@ public class MainHttpProcessor extends Thread {
 			m_server = new ServerSocket(HTTPServerData.PORT);
 			while (HTTPServerData.RUNNING) {
 				final Socket client = m_server.accept();
-				// Log.i(TAG, "Client Connected");
 				m_executor.execute(new Runnable() {
 
 					@Override
@@ -66,9 +65,9 @@ public class MainHttpProcessor extends Thread {
 							String request = null;
 							String requesttype = null;
 							long range = 0;
-							Log.e(TAG, "<--START HEADER-->");
+							// Log.e(TAG, "<--START HEADER-->");
 							while ((line = br.readLine()) != null && (line.length() != 0)) {
-								Log.e(TAG, line);
+								// Log.e(TAG, line);
 								rawrequest.add(line);
 								if (line.contains("GET")) {
 									requesttype = "GET";
@@ -81,13 +80,14 @@ public class MainHttpProcessor extends Thread {
 									range = Long.valueOf(strrange);
 								}
 							}
-							Log.e(TAG, "<--END HEADER-->");
+							// Log.e(TAG, "<--END HEADER-->");
 							String filename = null;
 							if (request != null) {
 								Log.e(TAG, "Request = " + request);
-								if (HTTPLinkManager.LINK_MAP.containsKey(request)) {
+								if (HTTPServerData.LINK_MAP.containsKey(request)) {
 									Log.e(TAG, "Youtube Proxy mode");
-									HTTPHelper.handleProxyDataRequest(client, rawrequest, HTTPLinkManager.LINK_MAP.get(request));
+									HTTPHelper.handleProxyDataRequest(client, rawrequest,
+											HTTPServerData.LINK_MAP.get(request));
 								} else {
 									filename = URLDecoder.decode(request, "ASCII");
 									Log.e(TAG, "Play-to mode, file name = " + filename);

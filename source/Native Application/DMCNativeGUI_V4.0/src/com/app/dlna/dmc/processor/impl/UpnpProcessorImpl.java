@@ -20,7 +20,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
@@ -57,7 +56,7 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 		m_serviceConnection = new ServiceConnection() {
 
 			public void onServiceDisconnected(ComponentName name) {
-				m_upnpService = null;
+				// m_upnpService = null;
 			}
 
 			public void onServiceConnected(ComponentName name, IBinder service) {
@@ -68,7 +67,7 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 					m_upnpService.setProcessor(UpnpProcessorImpl.this);
 					m_upnpService.getControlPoint().search();
 				} else {
-					m_upnpService = null;
+					// m_upnpService = null;
 					fireOnStartFailedEvent();
 				}
 			}
@@ -410,8 +409,10 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 
 	@Override
 	public void refreshDevicesList() {
-		m_upnpService.getRegistry().removeAllRemoteDevices();
-		m_upnpService.getControlPoint().search();
+		if (m_upnpService != null) {
+			m_upnpService.getRegistry().removeAllRemoteDevices();
+			m_upnpService.getControlPoint().search();
+		}
 	}
 
 	@Override

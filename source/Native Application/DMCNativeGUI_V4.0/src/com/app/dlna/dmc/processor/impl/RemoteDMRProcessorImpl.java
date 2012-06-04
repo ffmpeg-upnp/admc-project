@@ -97,7 +97,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 						@SuppressWarnings("rawtypes")
 						@Override
 						public void received(ActionInvocation invocation, PositionInfo positionInfo) {
-							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(), positionInfo.getTrackDurationSeconds());
+							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(),
+									positionInfo.getTrackDurationSeconds());
 
 							if (positionInfo.getTrackDurationSeconds() == 0) {
 								fireOnEndTrackEvent();
@@ -494,8 +495,15 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				}
 
 				@Override
-				public void onFail(Exception ex) {
-					Toast.makeText(MainActivity.INSTANCE, ex.getMessage(), Toast.LENGTH_SHORT).show();
+				public void onFail(final Exception ex) {
+					MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+
+						@Override
+						public void run() {
+							Toast.makeText(MainActivity.INSTANCE, ex.getMessage(), Toast.LENGTH_SHORT).show();
+						}
+					});
+
 				}
 			};
 			if (AppPreference.getProxyMode()) {
@@ -589,7 +597,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 									}
 
 									@Override
-									public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
+									public void failure(ActionInvocation invocation, UpnpResponse response,
+											String defaultMsg) {
 										fireOnFailEvent(invocation.getAction(), response, defaultMsg);
 										m_isBusy = false;
 									}

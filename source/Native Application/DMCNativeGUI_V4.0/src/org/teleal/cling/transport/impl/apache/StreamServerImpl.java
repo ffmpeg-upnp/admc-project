@@ -118,10 +118,9 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
 		while (!stopped) {
 
 			try {
-				Log.e("StreamServer", "waiting for client " + configuration.isExported());
 				// Block until we have a connection
 				Socket clientSocket = serverSocket.accept();
-				log.info("Incoming connection from: " + clientSocket.getInetAddress());
+				log.fine("Incoming connection from: " + clientSocket.getInetAddress());
 				if (HTTPServerData.HOST != null
 						&& !clientSocket.getInetAddress().getHostAddress().equals(HTTPServerData.HOST)
 						&& !configuration.isExported()) {

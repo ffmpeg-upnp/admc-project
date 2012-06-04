@@ -1,21 +1,21 @@
 package com.app.dlna.dmc.processor.http;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.sql.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.teleal.cling.support.messagebox.model.DateTime;
 
@@ -63,7 +63,7 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += "Connection: close";
 		result += NEWLINE;
-		result += "Server: SimpleDMS";
+		result += "Server: " + HTTPServerData.HOST;
 		result += NEWLINE;
 		result += NEWLINE;
 
@@ -112,7 +112,7 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += "Connection: close";
 		result += NEWLINE;
-		result += "Server: SimpleDMS";
+		result += "Server: " + HTTPServerData.HOST;
 		result += NEWLINE;
 		result += NEWLINE;
 
@@ -147,87 +147,193 @@ public class HTTPHelper {
 						break;
 				}
 				dos.flush();
+				try {
+					dos.close();
+				} catch (Exception ex) {
 
+				}
+				try {
+					dis.close();
+				} catch (Exception ex) {
+
+				}
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Client close connection");
+		} finally {
+			try {
+				client.close();
+			} catch (Exception ex) {
+
+			}
 		}
 	}
 
 	public static void handleProxyDataRequest(Socket client, List<String> rawrequest, String directLink) {
+		// try {
+		// HttpURLConnection connection = (HttpURLConnection) new
+		// URL(directLink).openConnection();
+		// connection.setConnectTimeout(5000);
+		// connection.setRequestProperty("Connection", "Close");
+		// for (String str : rawrequest) {
+		// Log.e(TAG, str);
+		// if (str.contains("HEAD")) {
+		// connection.setRequestMethod("HEAD");
+		// } else if (str.contains("GET")) {
+		// connection.setRequestMethod("GET");
+		// } else if (str.contains("Range")) {
+		// connection.addRequestProperty("Range", str.split(":")[1]);
+		// Log.e(TAG, "Have range request, skip = " + str.split(":")[1]);
+		// }
+		// }
+		// connection.connect();
+		// int responseCode = connection.getResponseCode();
+		// if (responseCode == HttpURLConnection.HTTP_OK || responseCode ==
+		// HttpURLConnection.HTTP_PARTIAL) {
+		// BufferedWriter bw = new BufferedWriter(new
+		// OutputStreamWriter(client.getOutputStream()));
+		// Map<String, List<String>> resultHeaders = new HashMap<String,
+		// List<String>>();
+		// resultHeaders = connection.getHeaderFields();
+		// for (String key : resultHeaders.keySet()) {
+		// if (key == null)
+		// for (String value : resultHeaders.get(key)) {
+		// bw.write(value);
+		// bw.write(NEWLINE);
+		// }
+		// else
+		// for (String value : resultHeaders.get(key)) {
+		// if (key.contains("X-Content-Type-Options") ||
+		// key.contains("X-Android-Sent-Millis")
+		// || key.contains("X-Android-Received-Millis") ||
+		// key.contains("Expires")
+		// || key.contains("Cache-Control"))
+		// continue;
+		// if (key.equals("Server")) {
+		// bw.write("Server : SimpleDMS");
+		// } else {
+		// bw.write(key + " : " + value);
+		// }
+		// Log.e(TAG,"Youtube Response:" + key + " : " + value);
+		// bw.write(NEWLINE);
+		// }
+		// }
+		// bw.write(createDLNAHeaderField());
+		// bw.write(NEWLINE);
+		// bw.write("TransferMode.DLNA.ORG: Streaming");
+		// bw.write(NEWLINE);
+		// bw.write(NEWLINE);
+		// bw.flush();
+		//
+		// if (connection.getRequestMethod().equals("GET")) {
+		// DataInputStream dis = new
+		// DataInputStream(connection.getInputStream());
+		// DataOutputStream dos = new
+		// DataOutputStream(client.getOutputStream());
+		//
+		// byte[] buffer = new byte[65536];
+		// int read = -1;
+		// while ((read = dis.read(buffer)) > 0 && HTTPServerData.RUNNING) {
+		// dos.write(buffer, 0, read);
+		// dos.flush();
+		// }
+		//
+		// try {
+		// dis.close();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// try {
+		// dos.close();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// } else {
+		// try {
+		// bw.close();
+		// } catch (Exception e) {
+		// }
+		// }
+		// connection.disconnect();
+		// }
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// } finally {
+		//
+		// try {
+		// client.close();
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+		// }
+
 		try {
-			HttpURLConnection connection = (HttpURLConnection) new URL(directLink).openConnection();
-			connection.setConnectTimeout(5000);
-			for (String str : rawrequest) {
-				if (str.contains("HEAD")) {
-					connection.setRequestMethod("HEAD");
-				} else if (str.contains("GET")) {
-					connection.setRequestMethod("GET");
-				} else if (str.contains("Range")) {
-					connection.addRequestProperty("Range", str.split(":")[1]);
-				}
+			URL youtube = new URL(directLink);
+			Socket socket = new Socket(youtube.getHost(), 80);
+			PrintStream ps = new PrintStream(socket.getOutputStream());
 
-			}
-			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
-				Map<String, List<String>> resultHeaders = new HashMap<String, List<String>>();
-				resultHeaders = connection.getHeaderFields();
-				for (String key : resultHeaders.keySet()) {
-					if (key == null)
-						for (String value : resultHeaders.get(key)) {
-							bw.write(value);
-							bw.write(NEWLINE);
-						}
-					else
-						for (String value : resultHeaders.get(key)) {
-							bw.write(key + " : " + value);
-							bw.write(NEWLINE);
-						}
-				}
-				bw.write(createDLNAHeaderField());
-				bw.write(NEWLINE);
-				bw.write("TransferMode.DLNA.ORG: Streaming");
-				bw.write(NEWLINE);
-				bw.write(NEWLINE);
-				bw.flush();
-				if (connection.getRequestMethod().equals("GET")) {
-					DataInputStream dis = new DataInputStream(connection.getInputStream());
-					DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-
-					byte[] buffer = new byte[65536];
-					int read = -1;
-					while ((read = dis.read(buffer)) > 0 && HTTPServerData.RUNNING) {
-						dos.write(buffer, 0, read);
-						dos.flush();
-					}
-
-					try {
-						dis.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					try {
-						dos.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			for (String requestLine : rawrequest) {
+				String[] token = requestLine.split(" ");
+				if (requestLine.contains("HEAD") || requestLine.contains("GET")) {
+					ps.println(token[0] + " " + youtube.getFile() + " HTTP/1.1");
+				} else if (requestLine.contains("Host")) {
+					ps.println("Host: " + youtube.getAuthority());
+				} else if (requestLine.contains("Connection:")) {
+					ps.println("Connection: Close");
 				} else {
-					try {
-						bw.close();
-					} catch (Exception e) {
-					}
+					ps.println(requestLine);
 				}
+			}
+			ps.println();
+			ps.flush();
+
+			// Handle HTTP Header
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			PrintStream clientPs = new PrintStream(client.getOutputStream());
+			String line = null;
+			while ((line = br.readLine()) != null && !line.trim().isEmpty()) {
+				clientPs.println(line);
+			}
+			clientPs.println(createDLNAHeaderField());
+			clientPs.println("TransferMode.DLNA.ORG: Streaming");
+			clientPs.println();
+			clientPs.flush();
+
+			// Handle Data
+
+			DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+			DataInputStream dis = new DataInputStream(socket.getInputStream());
+			byte[] buffer = new byte[65536];
+			int read = -1;
+			while ((read = dis.read(buffer)) > 0 && HTTPServerData.RUNNING) {
+				dos.write(buffer, 0, read);
+			}
+			try {
+				clientPs.close();
+			} catch (Exception e) {
+			}
+			try {
+				br.close();
+			} catch (Exception e) {
+			}
+			try {
+				dis.close();
+			} catch (Exception e) {
+			}
+			try {
+				dos.close();
+			} catch (Exception ex) {
+
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-
 			try {
 				client.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (Exception ex) {
+
 			}
 		}
 	}

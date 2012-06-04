@@ -2,9 +2,7 @@ package com.app.dlna.dmc.processor.localdevice.service;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.teleal.cling.support.contentdirectory.AbstractContentDirectoryService;
 import org.teleal.cling.support.contentdirectory.ContentDirectoryException;
@@ -28,12 +26,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
-import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.resource.ResourceManager;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
+import com.app.dlna.dmc.processor.http.MimeTypeMap;
 import com.app.dlna.dmc.utility.Utility;
 
 public class LocalContentDirectoryService extends AbstractContentDirectoryService {
@@ -45,14 +42,13 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	private static List<String> m_musicMap = null;
 	private static List<String> m_videoMap = null;
 	private static List<String> m_imageMap = null;
-	private static Map<String, String> m_mineMap = null;
 	private static boolean IS_SCANNING;
 
 	public static void scanMedia(final Context context) {
 		IS_SCANNING = true;
 		m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		final Notification notification = new Notification(ResourceManager.getScanningIcon(), "Scanning content on sdcard",
-				System.currentTimeMillis());
+		final Notification notification = new Notification(ResourceManager.getScanningIcon(),
+				"Scanning content on sdcard", System.currentTimeMillis());
 
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(), 0);
 
@@ -60,8 +56,6 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 		notification.flags = Notification.FLAG_NO_CLEAR;
 
 		// TODO: more MIME-Type adding here
-		m_mineMap = new HashMap<String, String>();
-		m_mineMap.put("flv", "video/x-flv");
 
 		m_listMusic = new ArrayList<MusicTrack>();
 		m_listVideo = new ArrayList<VideoItem>();
@@ -155,29 +149,26 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 		if (fileExtension != null) {
 			fileExtension = fileExtension.toLowerCase().replace(".", "");
 		}
-		String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
-		if (mimeType == null) {
-			mimeType = m_mineMap.get(fileExtension);
-		}
+		String mimeType = MimeTypeMap.getMimeType(fileExtension);
 
 		if (mimeType != null) {
 			if (fileExtension != null) {
 				if (m_musicMap.contains(fileExtension)) {
-					MusicTrack musicTrack = new MusicTrack("0/1/" + subFile.getName(), "0/1", subFile.getName(), "local dms", "",
-							"", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]), subFile.length(),
-									Utility.createLink(subFile)));
+					MusicTrack musicTrack = new MusicTrack("0/1/" + subFile.getName(), "0/1", subFile.getName(),
+							"local dms", "", "", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
+									subFile.length(), Utility.createLink(subFile)));
 					m_listMusic.add(musicTrack);
 					return musicTrack;
 				} else if (m_videoMap.contains(fileExtension)) {
-					VideoItem videoItem = new VideoItem("0/2/" + subFile.getName(), "0/2", subFile.getName(), "local dms",
-							new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]), subFile.length(),
-									Utility.createLink(subFile)));
+					VideoItem videoItem = new VideoItem("0/2/" + subFile.getName(), "0/2", subFile.getName(),
+							"local dms", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
+									subFile.length(), Utility.createLink(subFile)));
 					m_listVideo.add(new VideoItem(videoItem));
 					return videoItem;
 				} else if (m_imageMap.contains(fileExtension)) {
-					ImageItem imageItem = new ImageItem("0/3/" + subFile.getName(), "0/3", subFile.getName(), "local dms",
-							new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]), subFile.length(),
-									Utility.createLink(subFile)));
+					ImageItem imageItem = new ImageItem("0/3/" + subFile.getName(), "0/3", subFile.getName(),
+							"local dms", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
+									subFile.length(), Utility.createLink(subFile)));
 					m_listPhoto.add(new ImageItem(imageItem));
 					return imageItem;
 				}
@@ -187,8 +178,8 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	}
 
 	@Override
-	public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults,
-			SortCriterion[] orderby) throws ContentDirectoryException {
+	public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult,
+			long maxResults, SortCriterion[] orderby) throws ContentDirectoryException {
 		BrowseResult br = null;
 		int count = 0;
 		try {
@@ -221,8 +212,8 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			if (maxResults == 0)
 				toIndex = sourceList.size();
 			else
-				toIndex = ((firstResult + maxResults) < (sourceList.size() - 1) ? (int) (firstResult + maxResults) : (sourceList
-						.size() - 1)) + 1;
+				toIndex = ((firstResult + maxResults) < (sourceList.size() - 1) ? (int) (firstResult + maxResults)
+						: (sourceList.size() - 1)) + 1;
 			for (DIDLObject didlObject : sourceList.subList((int) firstResult, toIndex)) {
 				if (didlObject != null) {
 					content.addItem((Item) didlObject);

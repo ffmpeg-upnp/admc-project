@@ -14,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import android.util.Log;
 
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 

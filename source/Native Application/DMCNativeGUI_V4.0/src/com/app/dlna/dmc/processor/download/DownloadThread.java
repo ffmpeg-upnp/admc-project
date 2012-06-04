@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -27,6 +28,26 @@ public class DownloadThread extends Thread {
 	protected String m_name;
 	protected String m_url;
 	protected long m_maxsize;
+	public static HashMap<String,HashMap<String,String>> contentTypeMap;
+	static {
+		contentTypeMap = new HashMap<String, HashMap<String,String>>();
+		HashMap<String, String> musicMap = new HashMap<String, String>();
+		musicMap.put("mpeg", "mp3");
+		musicMap.put("basic","au");
+		musicMap.put("midi","mid");
+		musicMap.put("x-aiff","aif");
+		musicMap.put("x-mpegurl","m3u");
+		musicMap.put("x-pn-realaudio","ra");
+		musicMap.put("x-wav","wav");
+		HashMap<String, String> videoMap = new HashMap<String,String>();
+		videoMap.put("mpeg","mpg");
+		videoMap.put("vnd.mpegurl","m4u");
+		videoMap.put("x-msvideo","avi");
+		videoMap.put("x-ms-wmv","wmv");
+		videoMap.put("x-sgi-movie","movie");
+		videoMap.put("basic","au");
+		
+	}
 
 	protected DownloadThread() {
 
@@ -74,11 +95,15 @@ public class DownloadThread extends Thread {
 			connection.setRequestMethod("GET");
 			connection.setDoOutput(true);
 			connection.connect();
-			String contentType = "";
 			String filename = m_name;
-			if (contentType != null) {
-				if (contentType.equals("audio/mpeg")) {
-					filename += ".mp3";
+			String[] contentType = connection.getContentType().split("/");
+			if (contentType.length == 2 && contentType[0] != null && contentType[1] != null) {
+				if (contentType[0].equals("video")) {
+					if (contentType[1].equals("mpeg"))
+						filename += 
+				} else if (contentType[0].equals("audio")) {
+				} else if (contentType[0].equals("image")) {
+
 				}
 			}
 			is = connection.getInputStream();

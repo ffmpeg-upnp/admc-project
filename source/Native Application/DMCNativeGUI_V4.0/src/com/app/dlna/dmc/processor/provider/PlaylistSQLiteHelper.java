@@ -3,7 +3,6 @@ package com.app.dlna.dmc.processor.provider;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class PlaylistSQLiteHelper extends SQLiteOpenHelper {
 
@@ -29,8 +28,8 @@ public class PlaylistSQLiteHelper extends SQLiteOpenHelper {
 			+ " integer not null);";
 
 	private static final String DATABASE_CREATE_PLAYLIST_ITEM = "create table " + TABLE_PLAYLIST_ITEMS + "( " + COL_ID
-			+ " integer primary key autoincrement, " + COL_TITLE + " text not null, " + COL_URL + " text not null, " + COL_TYPE
-			+ " text not null, " + COL_PLAYLIST_ID + " text not null);";
+			+ " integer primary key autoincrement, " + COL_TITLE + " text not null, " + COL_URL + " text not null, "
+			+ COL_TYPE + " text not null, " + COL_PLAYLIST_ID + " text not null);";
 
 	private static final String DATABASE_CREATE_UNSAVEDLIST = "insert into " + TABLE_PLAYLISTS + " (" + COL_NAME + ","
 			+ COL_CURRENT_POSITION + ") values ('" + UNSAVED + "','" + DEFAULT_POS + "');";

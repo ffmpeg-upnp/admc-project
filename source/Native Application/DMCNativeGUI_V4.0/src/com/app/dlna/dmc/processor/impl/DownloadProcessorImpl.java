@@ -53,7 +53,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 	public DownloadProcessorImpl(Activity activity) {
 		m_activity = activity;
 		// TODO: must change app_name here
-		m_sdRoot = new File("/mnt/sdcard/DMCProject");
+		m_sdRoot = new File("/mnt/sdcard/Media2Share");
 		m_sdRoot.mkdir();
 		m_listDownloads = new ArrayList<DownloadThread>();
 		// m_notificationManager = (NotificationManager)

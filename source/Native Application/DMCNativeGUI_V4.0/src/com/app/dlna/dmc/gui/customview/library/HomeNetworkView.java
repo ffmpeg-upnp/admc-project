@@ -54,7 +54,8 @@ public class HomeNetworkView extends DMRListenerView {
 	public HomeNetworkView(Context context) {
 		super(context);
 		m_isBrowsing = false;
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork,
+				this);
 		m_listView = (ListView) findViewById(R.id.lv_mediasource_browsing);
 		m_adapter = new CustomArrayAdapter(context, 0);
 		m_listView.setAdapter(m_adapter);
@@ -92,8 +93,8 @@ public class HomeNetworkView extends DMRListenerView {
 						&& !m_progressDlg.isShowing()
 						&& firstVisibleItem + visibleItemCount == totalItemCount
 						&& m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData() instanceof DIDLObject
-						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId().equals(
-								"-1")) {
+						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId()
+								.equals("-1")) {
 					doLoadMoreItems();
 				}
 			} catch (Exception ex) {
@@ -139,7 +140,7 @@ public class HomeNetworkView extends DMRListenerView {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean onItemLongClick(AdapterView<?> adapter, final View view, final int position, final long id) {
-			Object object = m_adapter.getItem(position).getData();
+			final Object object = m_adapter.getItem(position).getData();
 			if (object instanceof Device) {
 				new DeviceDetailsDialog(getContext(), (Device) object, new DeviceDetailsListener() {
 
@@ -153,8 +154,22 @@ public class HomeNetworkView extends DMRListenerView {
 						m_listView.performItemClick(view, position, id);
 					}
 				}).show();
-			} else if (object instanceof DIDLObject) {
-				// TODO: show context menu
+			} else if (object instanceof Item) {
+				new AlertDialog.Builder(getContext()).setTitle("Select Action")
+						.setItems(new String[] { "Download" }, new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								switch (which) {
+								case 0:
+									MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload((Item) object);
+									break;
+								default:
+									break;
+								}
+								dialog.dismiss();
+							}
+						}).create().show();
 			}
 
 			return true;

@@ -45,7 +45,7 @@ public class DownloadThread extends Thread {
 		videoMap.put("x-msvideo","avi");
 		videoMap.put("x-ms-wmv","wmv");
 		videoMap.put("x-sgi-movie","movie");
-		videoMap.put("basic","au");
+		videoMap.put("basic","video/x-flv");
 		
 	}
 

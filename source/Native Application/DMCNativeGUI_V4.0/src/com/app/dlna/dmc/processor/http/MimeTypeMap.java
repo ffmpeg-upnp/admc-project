@@ -300,6 +300,7 @@ public class MimeTypeMap {
 				put("class", MIME_APPLICATION_OCTET_STREAM);
 				put("jar", MIME_APPLICATION_JAVA_ARCHIVE);
 				put("flv", MIME_VIDEO_FLV);
+				put("mp4", MIME_VIDEO_MP4);
 			}
 		};
 	}

@@ -12,8 +12,8 @@
         android:layout_centerVertical="true"
         android:contentDescription="@string/app_name"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_download" />
-
+        android:src="@android:drawable/ic_menu_save" />
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="64dp"
@@ -29,27 +29,35 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_margin="3dp" />
-
-        <TextView
-            android:id="@+id/contentName"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignRight="@+id/downloadProgress"
-            android:layout_below="@id/downloadProgress"
-            android:layout_margin="3dp"
-            android:lines="1"
-            android:text="@string/contentName" />
-
-        <TextView
-            android:id="@+id/downloaded"
-            android:layout_width="60dp"
-            android:layout_margin="3dp"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/contentName"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/downloadProgress" />
+            android:layout_below="@+id/downloadProgress"
+            android:orientation="horizontal"
+            android:weightSum="10" >
 
+            <TextView
+                android:id="@+id/contentName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="8"
+                android:lines="1"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/downloaded"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:lines="1"
+                android:textSize="14sp" />
+        </LinearLayout>
     </RelativeLayout>
 
 </RelativeLayout>

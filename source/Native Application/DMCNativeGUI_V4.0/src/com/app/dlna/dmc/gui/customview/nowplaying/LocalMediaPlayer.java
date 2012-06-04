@@ -1,7 +1,6 @@
 package com.app.dlna.dmc.gui.customview.nowplaying;
 
 import android.media.MediaPlayer;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class LocalMediaPlayer extends MediaPlayer {

@@ -28,47 +28,66 @@ public class DownloadThread extends Thread {
 	protected String m_name;
 	protected String m_url;
 	protected long m_maxsize;
-	public static HashMap<String,HashMap<String,String>> contentTypeMap;
+	public static HashMap<String, String> contentTypeMap;
 	static {
-		contentTypeMap = new HashMap<String, HashMap<String,String>>();
-		HashMap<String, String> musicMap = new HashMap<String, String>();
-		musicMap.put("mpeg", "mp3");
-		musicMap.put("basic","au");
-		musicMap.put("midi","mid");
-		musicMap.put("x-aiff","aif");
-		musicMap.put("x-mpegurl","m3u");
-		musicMap.put("x-pn-realaudio","ra");
-		musicMap.put("x-wav","wav");
-		HashMap<String, String> videoMap = new HashMap<String,String>();
-		videoMap.put("mpeg","mpg");
-		videoMap.put("vnd.mpegurl","m4u");
-		videoMap.put("x-msvideo","avi");
-		videoMap.put("x-ms-wmv","wmv");
-		videoMap.put("x-sgi-movie","movie");
-		videoMap.put("basic","video/x-flv");
-		
+		contentTypeMap = new HashMap<String, String>();
+		contentTypeMap.put("audio/mpeg", "mp3");
+		contentTypeMap.put("audio/basic", "au");
+		contentTypeMap.put("audio/midi", "mid");
+		contentTypeMap.put("audio/x-aiff", "aif");
+		contentTypeMap.put("audio/x-mpegurl", "m3u");
+		contentTypeMap.put("audio/x-pn-realaudio", "ra");
+		contentTypeMap.put("audio/x-wav", "wav");
+		contentTypeMap.put("audio/x-ms-wma", "wma");
+
+		contentTypeMap.put("video/mpeg", "mpg");
+		contentTypeMap.put("video/vnd.mpegurl", "m4u");
+		contentTypeMap.put("video/x-msvideo", "avi");
+		contentTypeMap.put("video/x-ms-wmv", "wmv");
+		contentTypeMap.put("video/x-sgi-movie", "movie");
+		contentTypeMap.put("video/x-flv", "flv");
+		contentTypeMap.put("video/mp4", "mp4");
+		contentTypeMap.put("video/MP4V-ES", "mp4");
+
+		contentTypeMap.put("image/bmp", "bmp");
+		contentTypeMap.put("image/gif", "gif");
+		contentTypeMap.put("image/jpeg", "jpeg");
+		contentTypeMap.put("image/png", "png");
+		contentTypeMap.put("image/x-icon", "ico");
+		contentTypeMap.put("image/x-rgb", "rgb");
 	}
 
-	protected DownloadThread() {
-
+	protected DownloadThread(Context context) {
+		m_context = context;
+		m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 	public void startDownload() {
-		m_isRunning = true;
-		m_notification = new Notification(R.drawable.ic_download, "Downloading content", System.currentTimeMillis());
-		PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
-		m_notification.setLatestEventInfo(m_context, "Download content", "Downloading content", contentIntent);
-		m_notification.flags = Notification.FLAG_NO_CLEAR;
-		RemoteViews contentView = new RemoteViews(m_context.getPackageName(), R.layout.download_notification);
-		contentView.setTextViewText(R.id.contentName, m_name);
-		m_notification.contentView = contentView;
-		if (m_maxsize > 0) {
-			contentView.setProgressBar(R.id.downloadProgress, 0, 0, false);
+		if (m_name == null) {
+			m_notification = new Notification(android.R.drawable.ic_dialog_alert, "Sorry, this item cannot be downloaded",
+					System.currentTimeMillis());
+			PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
+			m_notification.setLatestEventInfo(m_context, "Download fail", "Sorry, this item cannot be downloaded", contentIntent);
+			m_notificationManager.notify(0, m_notification);
+			if (m_listener != null)
+				m_listener.onDownloadFail(this, new RuntimeException("Item cannot be downloaded"));
 		} else {
-			contentView.setProgressBar(R.id.downloadProgress, 0, 0, true);
+			m_isRunning = true;
+			m_notification = new Notification(android.R.drawable.ic_menu_save, "Download file", System.currentTimeMillis());
+			PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
+			m_notification.setLatestEventInfo(m_context, "Download content", "Downloading content", contentIntent);
+			m_notification.flags = Notification.FLAG_NO_CLEAR;
+			RemoteViews contentView = new RemoteViews(m_context.getPackageName(), R.layout.download_notification);
+			contentView.setTextViewText(R.id.contentName, m_name);
+			m_notification.contentView = contentView;
+			if (m_maxsize > 0) {
+				contentView.setProgressBar(R.id.downloadProgress, 0, 0, false);
+			} else {
+				contentView.setProgressBar(R.id.downloadProgress, 0, 0, true);
+			}
+			m_notificationManager.notify(m_downloadID, m_notification);
+			this.start();
 		}
-		m_notificationManager.notify(m_downloadID, m_notification);
-		this.start();
 	}
 
 	public void stopDownload() {
@@ -90,22 +109,15 @@ public class DownloadThread extends Thread {
 		InputStream is = null;
 		HttpURLConnection connection = null;
 		try {
-			URL u = new URL(m_url);
-			connection = (HttpURLConnection) u.openConnection();
+			connection = (HttpURLConnection) new URL(m_url).openConnection();
+			connection.setConnectTimeout(3000);
 			connection.setRequestMethod("GET");
-			connection.setDoOutput(true);
 			connection.connect();
 			String filename = m_name;
-			String[] contentType = connection.getContentType().split("/");
-			if (contentType.length == 2 && contentType[0] != null && contentType[1] != null) {
-				if (contentType[0].equals("video")) {
-					if (contentType[1].equals("mpeg"))
-						filename += 
-				} else if (contentType[0].equals("audio")) {
-				} else if (contentType[0].equals("image")) {
-
-				}
-			}
+			String contentType = connection.getContentType();
+			String ext = contentTypeMap.get(contentType);
+			if (ext != null)
+				filename += "." + ext;
 			is = connection.getInputStream();
 			File newFile = new File(m_parent, filename);
 			os = new FileOutputStream(newFile);
@@ -124,7 +136,7 @@ public class DownloadThread extends Thread {
 						int percent = (int) (size * 100 / m_maxsize);
 						second = newSecond;
 						m_notification.contentView.setProgressBar(R.id.downloadProgress, 100, percent, false);
-						m_notification.contentView.setTextViewText(R.id.downloaded, size + "/" + m_maxsize);
+						m_notification.contentView.setTextViewText(R.id.downloaded, percent + " % ");
 						m_notificationManager.notify(m_downloadID, m_notification);
 					}
 				} else {

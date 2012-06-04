@@ -7,6 +7,7 @@ import android.content.Context;
 
 public class DownloadURLThread extends DownloadThread {
 	public DownloadURLThread(String name, String url, File parrent, DownloadListener listener, int downloadID, Context context) {
+		super(context);
 		m_name = name;
 		m_url = url;
 		m_maxsize = -1;
@@ -14,7 +15,6 @@ public class DownloadURLThread extends DownloadThread {
 		m_listener = listener;
 		m_downloadID = downloadID;
 		m_context = context;
-		m_notificationManager = (NotificationManager) m_context.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 }

@@ -9,11 +9,13 @@ import org.teleal.cling.support.model.DIDLObject;
 import android.app.Activity;
 import android.widget.Toast;
 
-import com.app.dlna.dmc.processor.download.DownloadItemThread;
+import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.download.DownloadThread;
 import com.app.dlna.dmc.processor.download.DownloadThread.DownloadListener;
-import com.app.dlna.dmc.processor.download.DownloadURLThread;
 import com.app.dlna.dmc.processor.interfaces.DownloadProcessor;
+import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor.IYoutubeProcessorListener;
+import com.app.dlna.dmc.processor.playlist.PlaylistItem;
+import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 
 public class DownloadProcessorImpl implements DownloadProcessor {
 
@@ -41,14 +43,12 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			m_activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(), Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(),
+							Toast.LENGTH_SHORT).show();
 				}
 			});
 		}
 	};
-
-	// private NotificationManager m_notificationManager;
 
 	public DownloadProcessorImpl(Activity activity) {
 		m_activity = activity;
@@ -56,8 +56,6 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 		m_sdRoot = new File("/mnt/sdcard/Media2Share");
 		m_sdRoot.mkdir();
 		m_listDownloads = new ArrayList<DownloadThread>();
-		// m_notificationManager = (NotificationManager)
-		// activity.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 	@Override
@@ -66,13 +64,14 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 		synchronized (m_listDownloads) {
 			size = m_listDownloads.size();
 		}
+		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(),
+				m_sdRoot, m_downloadListener, ++size, m_activity);
 
-		DownloadItemThread downloadThread = new DownloadItemThread(item, m_sdRoot, m_downloadListener, size + 1, m_activity);
 		synchronized (m_listDownloads) {
 			m_listDownloads.add(downloadThread);
 			downloadThread.startDownload();
 		}
-		return 0;
+		return size;
 	}
 
 	@Override
@@ -97,11 +96,80 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			size = m_listDownloads.size();
 		}
 
-		DownloadURLThread downloadThread = new DownloadURLThread(name, url, m_sdRoot, m_downloadListener, size + 1, m_activity);
+		DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, size + 1,
+				m_activity);
 		synchronized (m_listDownloads) {
 			m_listDownloads.add(downloadThread);
 			downloadThread.startDownload();
 		}
+		return size;
+	}
+
+	@Override
+	public int startDownload(final YoutubeItem item) {
+		new YoutubeProcessorImpl().getDirectLinkAsync(item, new IYoutubeProcessorListener() {
+			@Override
+			public void onStartPorcess() {
+				MainActivity.INSTANCE.showLoadingMessage("Contacting to youtube server");
+			}
+
+			@Override
+			public void onSearchComplete(List<YoutubeItem> result) {
+
+			}
+
+			@Override
+			public void onGetLinkComplete(YoutubeItem result) {
+				if (MainActivity.INSTANCE.dissmissLoadingMessage()) {
+					startDownload(item.getTitle(), result.getDirectLink());
+					MainActivity.INSTANCE.showToast("Starting download...");
+				} else {
+					MainActivity.INSTANCE.showToast("Action canceled...");
+				}
+			}
+
+			@Override
+			public void onFail(Exception ex) {
+				MainActivity.INSTANCE.showToast("Download file failed. Try again later.");
+			}
+		});
 		return 0;
+	}
+
+	@Override
+	public int startDownload(PlaylistItem item) {
+		switch (item.getType()) {
+		case YOUTUBE:
+			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()),
+					new IYoutubeProcessorListener() {
+
+						@Override
+						public void onStartPorcess() {
+							MainActivity.INSTANCE.showLoadingMessage("Contacting to youtube server");
+						}
+
+						@Override
+						public void onSearchComplete(List<YoutubeItem> result) {
+						}
+
+						@Override
+						public void onGetLinkComplete(YoutubeItem result) {
+							if (MainActivity.INSTANCE.dissmissLoadingMessage()) {
+								startDownload(result.getTitle(), result.getDirectLink());
+								MainActivity.INSTANCE.showToast("Starting download...");
+							} else {
+								MainActivity.INSTANCE.showToast("Action canceled...");
+							}
+						}
+
+						@Override
+						public void onFail(Exception ex) {
+							MainActivity.INSTANCE.showToast("Download file failed. Try again later.");
+						}
+					});
+			return 0;
+		default:
+			return startDownload(item.getTitle(), item.getUrl());
+		}
 	}
 }

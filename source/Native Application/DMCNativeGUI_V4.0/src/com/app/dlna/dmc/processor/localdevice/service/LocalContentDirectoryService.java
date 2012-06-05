@@ -2,7 +2,9 @@ package com.app.dlna.dmc.processor.localdevice.service;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.teleal.cling.support.contentdirectory.AbstractContentDirectoryService;
 import org.teleal.cling.support.contentdirectory.ContentDirectoryException;
@@ -26,11 +28,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
+import android.webkit.MimeTypeMap;
 
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.resource.ResourceManager;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
-import com.app.dlna.dmc.processor.http.MimeTypeMap;
 import com.app.dlna.dmc.utility.Utility;
 
 public class LocalContentDirectoryService extends AbstractContentDirectoryService {
@@ -42,6 +44,7 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	private static List<String> m_musicMap = null;
 	private static List<String> m_videoMap = null;
 	private static List<String> m_imageMap = null;
+	private static Map<String, String> m_mineMap = null;
 	private static boolean IS_SCANNING;
 
 	public static void scanMedia(final Context context) {
@@ -56,6 +59,8 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 		notification.flags = Notification.FLAG_NO_CLEAR;
 
 		// TODO: more MIME-Type adding here
+		m_mineMap = new HashMap<String, String>();
+		m_mineMap.put("flv", "video/x-flv");
 
 		m_listMusic = new ArrayList<MusicTrack>();
 		m_listVideo = new ArrayList<VideoItem>();
@@ -149,7 +154,10 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 		if (fileExtension != null) {
 			fileExtension = fileExtension.toLowerCase().replace(".", "");
 		}
-		String mimeType = MimeTypeMap.getMimeType(fileExtension);
+		String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+		if (mimeType == null) {
+			mimeType = m_mineMap.get(fileExtension);
+		}
 
 		if (mimeType != null) {
 			if (fileExtension != null) {

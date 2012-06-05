@@ -32,7 +32,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -72,6 +71,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 	private static final int DEFAULT_TAB_INDEX = 0;
 	private ProgressDialog m_routerProgressDialog;
 	private ProgressDialog m_nfcProgressDialog;
+	private ProgressDialog m_loadingDialog;
+	private Toast m_infoToast;
 	public static MainActivity INSTANCE;
 	private BroadcastReceiver m_mountedReceiver = new SDCardReceiver();
 	// NFC
@@ -88,8 +89,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 	private static final int SIZE = 2;
 	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
-	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
-			new RejectedExecutionHandler() {
+	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
+			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
 
 				@Override
 				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -146,6 +147,50 @@ public class MainActivity extends TabActivity implements SystemListener {
 		PlaylistManager.RESOLVER = getContentResolver();
 		AppPreference.PREF = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
+		m_loadingDialog = new ProgressDialog(MainActivity.this);
+		m_loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		m_loadingDialog.setCancelable(true);
+		m_loadingDialog.setCanceledOnTouchOutside(false);
+
+		m_infoToast = Toast.makeText(MainActivity.this, "Toast", Toast.LENGTH_LONG);
+	}
+
+	public void showToast(final String message) {
+		MainActivity.this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				m_infoToast.setText(message);
+				m_infoToast.show();
+			}
+		});
+
+	}
+
+	public boolean showLoadingMessage(final String message) {
+		if (!m_loadingDialog.isShowing()) {
+			MainActivity.this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					m_loadingDialog.setTitle(message);
+					m_loadingDialog.show();
+				}
+			});
+			return true;
+		} else
+			return false;
+	}
+
+	public boolean dissmissLoadingMessage() {
+		boolean result = m_loadingDialog.isShowing();
+		MainActivity.this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				m_loadingDialog.dismiss();
+			}
+		});
+		return result;
 	}
 
 	private OnTabChangeListener changeListener = new OnTabChangeListener() {
@@ -231,8 +276,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				libraryActivity.getHomeNetworkView().updateListView();
 				libraryActivity.getPlaylistView().updateListView();
 			}
-			MainActivity.UPNP_PROCESSOR.getDMRProcessor()
-					.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setPlaylistProcessor(
+					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 		}
 
 		@Override
@@ -366,8 +411,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void run() {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
-				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause).setCancelable(false)
-						.setPositiveButton("OK", new OnClickListener() {
+				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause)
+						.setCancelable(false).setPositiveButton("OK", new OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -478,8 +523,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 						String textEncoding = (buffer[0] & 0200) == 0 ? "UTF-8" : "UTF-16";
 						int languageCodeLength = buffer[0] & 0077;
 						try {
-							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength - 1,
-									textEncoding);
+							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength
+									- 1, textEncoding);
 							String deviceUDN = "";
 							if (text.startsWith("uuid:"))
 								deviceUDN = text.substring(5);
@@ -543,8 +588,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_waitToWriteTAG = true;
 			m_nfcProgressDialog.show();
 		} else {
-			new AlertDialog.Builder(MainActivity.this).setTitle("NFC").setMessage("Please enable NFC on you device first")
-					.setPositiveButton("OK", null).create().show();
+			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
+					.setMessage("Please enable NFC on you device first").setPositiveButton("OK", null).create().show();
 		}
 	}
 
@@ -567,7 +612,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (m_btn_toggleRendererView != null)
-					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
+					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(
+							R.drawable.ic_btn_navigate_down));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -593,7 +639,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void onAnimationEnd(Animation animation) {
 				m_rendererCompactView.setVisibility(View.GONE);
 				if (m_btn_toggleRendererView != null)
-					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
+					m_btn_toggleRendererView
+							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);

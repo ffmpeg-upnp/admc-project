@@ -4,6 +4,7 @@ import android.app.TabActivity;
 
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.SystemListener;
 
+@SuppressWarnings("deprecation")
 public class UpnpListenerTabActivity extends TabActivity implements SystemListener {
 
 	@Override

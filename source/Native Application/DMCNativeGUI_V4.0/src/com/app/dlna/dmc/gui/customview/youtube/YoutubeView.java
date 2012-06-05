@@ -2,9 +2,10 @@ package com.app.dlna.dmc.gui.customview.youtube;
 
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.util.Log;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -90,8 +91,24 @@ public class YoutubeView extends LinearLayout {
 	private OnItemLongClickListener m_itemLongClick = new OnItemLongClickListener() {
 
 		@Override
-		public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long arg3) {
-			return false;
+		public boolean onItemLongClick(AdapterView<?> adapter, View view, final int position, long arg3) {
+			new AlertDialog.Builder(getContext()).setTitle("Select Action")
+					.setItems(new String[] { "Download" }, new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							switch (which) {
+							case 0:
+								MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(
+										m_adapter.getItem(position));
+								break;
+							default:
+								break;
+							}
+							dialog.dismiss();
+						}
+					}).create().show();
+			return true;
 		}
 	};
 

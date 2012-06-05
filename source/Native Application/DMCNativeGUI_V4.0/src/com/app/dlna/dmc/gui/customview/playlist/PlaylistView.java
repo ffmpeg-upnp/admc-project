@@ -2,12 +2,15 @@ package com.app.dlna.dmc.gui.customview.playlist;
 
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
@@ -58,13 +61,44 @@ public class PlaylistView extends DMRListenerView {
 		}
 	};
 
+	private OnItemLongClickListener m_playlistItemLongClick = new OnItemLongClickListener() {
+
+		@Override
+		public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
+
+			if (m_adapter.getItem(position).getData() instanceof PlaylistItem) {
+				new AlertDialog.Builder(getContext()).setTitle("Select Action")
+						.setItems(new String[] { "Download" }, new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								switch (which) {
+								case 0:
+									PlaylistItem playlistItem = (PlaylistItem) m_adapter.getItem(position).getData();
+									MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(playlistItem);
+									break;
+								default:
+									break;
+								}
+								dialog.dismiss();
+							}
+						}).create().show();
+				return true;
+			}
+
+			return false;
+		}
+	};
+
 	public PlaylistView(Context context) {
 		super(context);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_playlist_allitem, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+				R.layout.cv_playlist_allitem, this);
 		m_listView = (ListView) findViewById(R.id.lv_playlist);
 		m_adapter = new CustomArrayAdapter(getContext(), 0);
 		m_listView.setAdapter(m_adapter);
 		m_listView.setOnItemClickListener(m_playlistItemClick);
+		m_listView.setOnItemLongClickListener(m_playlistItemLongClick);
 
 		m_playlistToolbar = (PlaylistToolbar) findViewById(R.id.botToolbar);
 		m_playlistToolbar.setPlaylistView(this);
@@ -78,7 +112,8 @@ public class PlaylistView extends DMRListenerView {
 			MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().addListener(m_playlistListener);
 		switch (m_viewMode) {
 		case VM_DETAILS:
-			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null || m_currentPlaylist.getData().getName() == null) {
+			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null
+					|| m_currentPlaylist.getData().getName() == null) {
 				m_viewMode = VM_LIST;
 				preparePlaylist();
 				return;
@@ -138,14 +173,7 @@ public class PlaylistView extends DMRListenerView {
 					}
 
 					protected void onPostExecute(PlaylistProcessor playlistProcessor) {
-						// MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(playlistProcessor);
 						m_currentPlaylist = playlistProcessor;
-						// DMRProcessor dmrProcessor =
-						// MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-						// if (dmrProcessor != null) {
-						// dmrProcessor.setPlaylistProcessor(playlistProcessor);
-						// dmrProcessor.setSeftAutoNext(true);
-						// }
 						m_viewMode = VM_DETAILS;
 						preparePlaylist();
 						super.onPostExecute(playlistProcessor);

@@ -18,16 +18,16 @@ import android.widget.RemoteViews;
 import app.dlna.controller.v4.R;
 
 public class DownloadThread extends Thread {
-	protected File m_parent;
-	protected DownloadListener m_listener;
-	protected int m_downloadID;
-	protected Context m_context;
-	protected NotificationManager m_notificationManager;
-	protected Notification m_notification;
-	protected boolean m_isRunning;
-	protected String m_name;
-	protected String m_url;
-	protected long m_maxsize;
+	private File m_parent;
+	private DownloadListener m_listener;
+	private int m_downloadID;
+	private Context m_context;
+	private static NotificationManager NOTIFICATION_MANAGER;
+	private Notification m_notification;
+	private boolean m_isRunning;
+	private String m_name;
+	private String m_url;
+	private long m_maxsize;
 	public static HashMap<String, String> contentTypeMap;
 	static {
 		contentTypeMap = new HashMap<String, String>();
@@ -57,23 +57,34 @@ public class DownloadThread extends Thread {
 		contentTypeMap.put("image/x-rgb", "rgb");
 	}
 
-	protected DownloadThread(Context context) {
+	public DownloadThread(String name, String url, File parrent, DownloadListener listener, int downloadID,
+			Context context) {
+		m_name = name;
+		m_url = url;
 		m_context = context;
-		m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		m_maxsize = -1;
+		m_parent = parrent;
+		m_listener = listener;
+		m_downloadID = downloadID;
+		m_context = context;
+		if (NOTIFICATION_MANAGER == null)
+			NOTIFICATION_MANAGER = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 	}
 
 	public void startDownload() {
 		if (m_name == null) {
-			m_notification = new Notification(android.R.drawable.ic_dialog_alert, "Sorry, this item cannot be downloaded",
-					System.currentTimeMillis());
+			m_notification = new Notification(android.R.drawable.ic_dialog_alert,
+					"Sorry, this item cannot be downloaded", System.currentTimeMillis());
 			PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
-			m_notification.setLatestEventInfo(m_context, "Download fail", "Sorry, this item cannot be downloaded", contentIntent);
-			m_notificationManager.notify(0, m_notification);
+			m_notification.setLatestEventInfo(m_context, "Download fail", "Sorry, this item cannot be downloaded",
+					contentIntent);
+			NOTIFICATION_MANAGER.notify(0, m_notification);
 			if (m_listener != null)
 				m_listener.onDownloadFail(this, new RuntimeException("Item cannot be downloaded"));
 		} else {
 			m_isRunning = true;
-			m_notification = new Notification(android.R.drawable.ic_menu_save, "Download file", System.currentTimeMillis());
+			m_notification = new Notification(android.R.drawable.ic_menu_save, "Download file",
+					System.currentTimeMillis());
 			PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
 			m_notification.setLatestEventInfo(m_context, "Download content", "Downloading content", contentIntent);
 			m_notification.flags = Notification.FLAG_NO_CLEAR;
@@ -85,7 +96,7 @@ public class DownloadThread extends Thread {
 			} else {
 				contentView.setProgressBar(R.id.downloadProgress, 0, 0, true);
 			}
-			m_notificationManager.notify(m_downloadID, m_notification);
+			NOTIFICATION_MANAGER.notify(m_downloadID, m_notification);
 			this.start();
 		}
 	}
@@ -93,7 +104,7 @@ public class DownloadThread extends Thread {
 	public void stopDownload() {
 		m_isRunning = false;
 		this.interrupt();
-		m_notificationManager.cancel(m_downloadID);
+		NOTIFICATION_MANAGER.cancel(m_downloadID);
 	}
 
 	public interface DownloadListener {
@@ -137,20 +148,28 @@ public class DownloadThread extends Thread {
 						second = newSecond;
 						m_notification.contentView.setProgressBar(R.id.downloadProgress, 100, percent, false);
 						m_notification.contentView.setTextViewText(R.id.downloaded, percent + " % ");
-						m_notificationManager.notify(m_downloadID, m_notification);
+						NOTIFICATION_MANAGER.notify(m_downloadID, m_notification);
 					}
 				} else {
 					m_notification.contentView.setProgressBar(R.id.downloadProgress, 0, 0, true);
 				}
 
 			}
-			if (size == m_maxsize) {
+			if (m_listener != null && size == m_maxsize) {
 				m_listener.onDownloadComplete(this);
 			}
+			m_notification.contentView.setProgressBar(R.id.downloadProgress, 100, 100, false);
+			m_notification.contentView.setTextViewText(R.id.downloaded, "Completed");
+			m_notification.flags = Notification.FLAG_AUTO_CANCEL;
+			NOTIFICATION_MANAGER.notify(m_downloadID, m_notification);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			if (m_listener != null)
 				m_listener.onDownloadFail(this, ex);
+			m_notification.contentView.setProgressBar(R.id.downloadProgress, 100, 100, false);
+			m_notification.contentView.setTextViewText(R.id.downloaded, "Failed");
+			m_notification.flags = Notification.FLAG_AUTO_CANCEL;
+			NOTIFICATION_MANAGER.notify(m_downloadID, m_notification);
 		} finally {
 			if (os != null)
 				try {
@@ -167,7 +186,6 @@ public class DownloadThread extends Thread {
 			if (connection != null)
 				connection.disconnect();
 		}
-		m_notificationManager.cancel(m_downloadID);
 	}
 
 	public String getItemName() {

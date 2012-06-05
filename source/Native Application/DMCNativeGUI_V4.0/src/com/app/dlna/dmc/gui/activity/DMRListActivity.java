@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -154,7 +153,8 @@ public class DMRListActivity extends Activity implements SystemListener {
 					if (intent.getType().equals("text/plain")) {
 						// Link from Youtube App or Browser
 						m_isYoutubeItem = true;
-						m_playToURI = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString()).getQueryParameter("v");
+						m_playToURI = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString())
+								.getQueryParameter("v");
 						if (null == m_playToURI || m_playToURI.isEmpty()) {
 							String fragment = Uri.parse(intent.getExtras().get(Intent.EXTRA_TEXT).toString())
 									.getEncodedFragment();

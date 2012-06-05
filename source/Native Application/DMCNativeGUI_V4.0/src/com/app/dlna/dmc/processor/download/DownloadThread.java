@@ -46,6 +46,7 @@ public class DownloadThread extends Thread {
 		contentTypeMap.put("video/x-ms-wmv", "wmv");
 		contentTypeMap.put("video/x-sgi-movie", "movie");
 		contentTypeMap.put("video/x-flv", "flv");
+		contentTypeMap.put("video/flv", "flv");
 		contentTypeMap.put("video/mp4", "mp4");
 		contentTypeMap.put("video/MP4V-ES", "mp4");
 

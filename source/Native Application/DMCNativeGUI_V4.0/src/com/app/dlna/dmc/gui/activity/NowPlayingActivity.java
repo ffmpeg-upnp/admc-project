@@ -116,12 +116,6 @@ public class NowPlayingActivity extends Activity {
 		m_adapter.setDropDownMode(true);
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 		if (playlistProcessor != null) {
-			// List<PlaylistItem> items =
-			// playlistProcessor.getAllItemsByViewMode();
-			// for (int i = 0; i < items.size(); ++i) {
-			// PlaylistItem item = items.get(i);
-			// m_adapter.add(new AdapterItem(item));
-			// }
 			for (PlaylistItem item : playlistProcessor.getAllItemsByViewMode())
 				m_adapter.add(new AdapterItem(item));
 			PlaylistItem current = playlistProcessor.getCurrentItem();

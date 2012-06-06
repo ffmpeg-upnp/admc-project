@@ -181,7 +181,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 			return false;
 	}
 
-	public boolean dissmissLoadingMessage() {
+	public boolean dismissLoadingDialog() {
 		boolean result = m_loadingDialog.isShowing();
 		MainActivity.this.runOnUiThread(new Runnable() {
 

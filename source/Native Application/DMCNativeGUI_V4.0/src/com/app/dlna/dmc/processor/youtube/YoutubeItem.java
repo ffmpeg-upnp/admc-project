@@ -17,6 +17,11 @@ public class YoutubeItem {
 		this.id = id;
 	}
 
+	public YoutubeItem(String id, String title) {
+		this.id = id;
+		this.title = title;
+	}
+
 	public String getTitle() {
 		return title;
 	}

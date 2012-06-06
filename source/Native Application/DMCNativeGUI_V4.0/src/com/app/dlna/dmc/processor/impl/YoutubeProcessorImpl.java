@@ -14,6 +14,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import android.util.Log;
+
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor;
@@ -81,40 +84,6 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 			}
 
 		}).start();
-		//
-		// @Override
-		// public void onStartPorcess() {
-		//
-		// }
-		//
-		// @Override
-		// public void onFail(Exception ex) {
-		//
-		// }
-		//
-		// @Override
-		// public void onGetDirectLinkComplete(String result) {
-		// String disget = Utility.getMD5(result);
-		// String disgetLink = "/" + disget.substring(0, disget.length() - 1) +
-		// ".mp4";
-		// try {
-		// HTTPLinkManager.LINK_MAP.put(disgetLink, result);
-		// Log.d(TAG, "DirectLink = " + result);
-		// Log.d(TAG, "DisgetLink = " + disgetLink);
-		// callback.onGetDirectLinkComplete(disgetLink);
-		// } catch (Exception ex) {
-		// ex.printStackTrace();
-		// callback.onFail(ex);
-		// }
-		//
-		// }
-		//
-		// @Override
-		// public void onSearchComplete(List<YoutubeItem> result) {
-		//
-		// }
-		// });
-
 	}
 
 	@Override
@@ -177,6 +146,7 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 				HttpClient client = new DefaultHttpClient();
 				HttpResponse response = client.execute(httpGet);
 				String html = IOUtils.toString(response.getEntity().getContent());
+				Log.e("YOUTUBE", "html = " + html);
 				Pattern pattern = Pattern.compile(REGEX);
 				Matcher matcher = pattern.matcher(html);
 				while (matcher.find()) {
@@ -223,6 +193,7 @@ public class YoutubeProcessorImpl implements YoutubeProcessor {
 			}
 		} catch (Exception e) {
 			directLink = "";
+			e.printStackTrace();
 		}
 		return directLink;
 	}

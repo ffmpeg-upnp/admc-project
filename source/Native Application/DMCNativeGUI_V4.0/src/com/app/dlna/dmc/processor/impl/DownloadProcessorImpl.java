@@ -43,8 +43,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			m_activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(),
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(), Toast.LENGTH_SHORT)
+							.show();
 				}
 			});
 		}
@@ -64,8 +64,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 		synchronized (m_listDownloads) {
 			size = m_listDownloads.size();
 		}
-		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(),
-				m_sdRoot, m_downloadListener, ++size, m_activity);
+		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(), m_sdRoot,
+				m_downloadListener, ++size, m_activity);
 
 		synchronized (m_listDownloads) {
 			m_listDownloads.add(downloadThread);
@@ -96,8 +96,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			size = m_listDownloads.size();
 		}
 
-		DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, size + 1,
-				m_activity);
+		DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, size + 1, m_activity);
 		synchronized (m_listDownloads) {
 			m_listDownloads.add(downloadThread);
 			downloadThread.startDownload();
@@ -120,7 +119,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 
 			@Override
 			public void onGetLinkComplete(YoutubeItem result) {
-				if (MainActivity.INSTANCE.dissmissLoadingMessage()) {
+				if (MainActivity.INSTANCE.dismissLoadingDialog()) {
 					startDownload(item.getTitle(), result.getDirectLink());
 					MainActivity.INSTANCE.showToast("Starting download...");
 				} else {
@@ -140,7 +139,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 	public int startDownload(PlaylistItem item) {
 		switch (item.getType()) {
 		case YOUTUBE:
-			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()),
+			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl(), item.getTitle()),
 					new IYoutubeProcessorListener() {
 
 						@Override
@@ -154,7 +153,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 
 						@Override
 						public void onGetLinkComplete(YoutubeItem result) {
-							if (MainActivity.INSTANCE.dissmissLoadingMessage()) {
+							if (MainActivity.INSTANCE.dismissLoadingDialog()) {
 								startDownload(result.getTitle(), result.getDirectLink());
 								MainActivity.INSTANCE.showToast("Starting download...");
 							} else {
@@ -165,6 +164,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 						@Override
 						public void onFail(Exception ex) {
 							MainActivity.INSTANCE.showToast("Download file failed. Try again later.");
+							MainActivity.INSTANCE.dismissLoadingDialog();
 						}
 					});
 			return 0;

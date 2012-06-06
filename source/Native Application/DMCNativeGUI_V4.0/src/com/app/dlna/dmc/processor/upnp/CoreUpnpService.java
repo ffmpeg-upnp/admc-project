@@ -68,19 +68,19 @@ import com.app.dlna.dmc.processor.receiver.NetworkStateReceiver.RouterStateListe
 import com.app.dlna.dmc.utility.Utility;
 
 public class CoreUpnpService extends Service {
-	public static final int NOTIFICATION = 1500;
-	private MainHttpProcessor m_httpThread;
-	private UpnpService m_upnpService;
-	private CoreUpnpServiceBinder binder = new CoreUpnpServiceBinder();
 	@SuppressWarnings("rawtypes")
 	private Device m_currentDMS;
 	@SuppressWarnings("rawtypes")
 	private Device m_currentDMR;
+	public static final int NOTIFICATION = 1500;
+	private MainHttpProcessor m_httpThread;
+	private UpnpService m_upnpService;
+	private CoreUpnpServiceBinder binder = new CoreUpnpServiceBinder();
 	private PlaylistProcessor m_playlistProcessor;
 	private NotificationManager m_notificationManager;
 	private DMSProcessor m_dmsProcessor;
 	private DMRProcessor m_dmrProcessor;
-	private CoreUpnpServiceListener m_upnpProcessor;
+	private CoreUpnpServiceListener m_upnpServiceListener;
 	private WifiLock m_wifiLock;
 	private WifiManager m_wifiManager;
 	private ConnectivityManager m_connectivityManager;
@@ -105,33 +105,33 @@ public class CoreUpnpService extends Service {
 			m_upnpService = new UpnpServiceImpl(createConfiguration(m_wifiManager)) {
 				@Override
 				protected Router createRouter(ProtocolFactory protocolFactory, Registry registry) {
-					AndroidWifiSwitchableRouter router = CoreUpnpService.this.createRouter(getConfiguration(),
-							protocolFactory, m_wifiManager, m_connectivityManager);
+					AndroidWifiSwitchableRouter router = CoreUpnpService.this.createRouter(getConfiguration(), protocolFactory,
+							m_wifiManager, m_connectivityManager);
 					m_networkReceiver = new NetworkStateReceiver(router, new RouterStateListener() {
 
 						@Override
 						public void onRouterError(String cause) {
-							if (m_upnpProcessor != null)
-								m_upnpProcessor.onRouterError("No network found");
+							if (m_upnpServiceListener != null)
+								m_upnpServiceListener.onRouterError("No network found");
 						}
 
 						@Override
 						public void onNetworkChanged(NetworkInterface ni) {
-							if (m_upnpProcessor != null) {
-								m_upnpProcessor.onNetworkChanged(ni);
+							if (m_upnpServiceListener != null) {
+								m_upnpServiceListener.onNetworkChanged(ni);
 							}
 						}
 
 						@Override
 						public void onRouterEnabled() {
-							if (m_upnpProcessor != null)
-								m_upnpProcessor.onRouterEnabled();
+							if (m_upnpServiceListener != null)
+								m_upnpServiceListener.onRouterEnabled();
 						}
 
 						@Override
 						public void onRouterDisabled() {
-							if (m_upnpProcessor != null)
-								m_upnpProcessor.onRouterDisabled();
+							if (m_upnpServiceListener != null)
+								m_upnpServiceListener.onRouterDisabled();
 						}
 					});
 					if (!ModelUtil.ANDROID_EMULATOR) {
@@ -182,8 +182,8 @@ public class CoreUpnpService extends Service {
 		};
 	}
 
-	protected AndroidWifiSwitchableRouter createRouter(UpnpServiceConfiguration configuration,
-			ProtocolFactory protocolFactory, WifiManager wifiManager, ConnectivityManager connectivityManager) {
+	protected AndroidWifiSwitchableRouter createRouter(UpnpServiceConfiguration configuration, ProtocolFactory protocolFactory,
+			WifiManager wifiManager, ConnectivityManager connectivityManager) {
 		return new AndroidWifiSwitchableRouter(configuration, protocolFactory, wifiManager, connectivityManager);
 	}
 
@@ -324,8 +324,8 @@ public class CoreUpnpService extends Service {
 			return m_upnpService != null ? m_upnpService.getControlPoint() : null;
 		}
 
-		public void setProcessor(CoreUpnpServiceListener upnpProcessor) {
-			m_upnpProcessor = upnpProcessor;
+		public void setProcessor(CoreUpnpServiceListener upnpServiceListener) {
+			m_upnpServiceListener = upnpServiceListener;
 		}
 
 		public void setPlaylistProcessor(PlaylistProcessor playlistProcessor) {
@@ -354,8 +354,8 @@ public class CoreUpnpService extends Service {
 			// MACAddress);
 			String hashUDN = Utility.getMD5(deviceName + "-" + MACAddress + "-LocalDMS");
 			// Log.i(TAG, "Hash UDN = " + hashUDN);
-			String uDNString = hashUDN.substring(0, 8) + "-" + hashUDN.substring(8, 12) + "-"
-					+ hashUDN.substring(12, 16) + "-" + hashUDN.substring(16, 20) + "-" + hashUDN.substring(20);
+			String uDNString = hashUDN.substring(0, 8) + "-" + hashUDN.substring(8, 12) + "-" + hashUDN.substring(12, 16) + "-"
+					+ hashUDN.substring(16, 20) + "-" + hashUDN.substring(20);
 			LocalService<LocalContentDirectoryService> contentDirectory = new AnnotationLocalServiceBinder()
 					.read(LocalContentDirectoryService.class);
 			contentDirectory.setManager(new DefaultServiceManager<LocalContentDirectoryService>(contentDirectory,
@@ -372,10 +372,10 @@ public class CoreUpnpService extends Service {
 			DeviceType type = new DeviceType("schemas-upnp-org", "MediaServer");
 			DeviceDetails details = new DeviceDetails(deviceName, new ManufacturerDetails("Media2Share Local Server"),
 					new ModelDetails("v1.0"), "", "");
-			Icon icon = new Icon("image/png", 48, 48, 8, URI.create(""), IOUtils.toByteArray(getResources()
-					.openRawResource(R.raw.ic_launcher)));
-			LocalDevice localDevice = new LocalDevice(identity, type, details, icon, new LocalService[] {
-					contentDirectory, connectionManager });
+			Icon icon = new Icon("image/png", 48, 48, 8, URI.create(""), IOUtils.toByteArray(getResources().openRawResource(
+					R.raw.ic_launcher)));
+			LocalDevice localDevice = new LocalDevice(identity, type, details, icon, new LocalService[] { contentDirectory,
+					connectionManager });
 			m_upnpService.getRegistry().addDevice(localDevice);
 			// Log.d(TAG, "Create Local Device complete");
 		} catch (Exception ex) {
@@ -389,13 +389,13 @@ public class CoreUpnpService extends Service {
 			String deviceName = Build.MODEL.toUpperCase() + " " + Build.DEVICE.toUpperCase() + " - DMR";
 			String MACAddress = m_wifiManager.getConnectionInfo().getMacAddress();
 			String hashUDN = Utility.getMD5(deviceName + "-" + MACAddress + "-LocalDMR");
-			String uDNString = hashUDN.substring(0, 8) + "-" + hashUDN.substring(8, 12) + "-"
-					+ hashUDN.substring(12, 16) + "-" + hashUDN.substring(16, 20) + "-" + hashUDN.substring(20);
+			String uDNString = hashUDN.substring(0, 8) + "-" + hashUDN.substring(8, 12) + "-" + hashUDN.substring(12, 16) + "-"
+					+ hashUDN.substring(16, 20) + "-" + hashUDN.substring(20);
 			m_localDMR_UDN = new UDN(uDNString);
 			DeviceIdentity identity = new DeviceIdentity(m_localDMR_UDN);
 			DeviceType type = new DeviceType("schemas-upnp-org", "MediaRenderer");
-			DeviceDetails details = new DeviceDetails(deviceName,
-					new ManufacturerDetails("Android Digital Controller"), new ModelDetails("v1.0"), "", "");
+			DeviceDetails details = new DeviceDetails(deviceName, new ManufacturerDetails("Android Digital Controller"),
+					new ModelDetails("v1.0"), "", "");
 
 			LocalDevice localDevice = new LocalDevice(identity, type, details, new LocalService[0]);
 
@@ -409,8 +409,7 @@ public class CoreUpnpService extends Service {
 		Notification notification = new Notification(R.drawable.ic_launcher, "CoreUpnpService started",
 				System.currentTimeMillis());
 
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(CoreUpnpService.this,
-				MainActivity.class), 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(CoreUpnpService.this, MainActivity.class), 0);
 
 		notification.setLatestEventInfo(this, "CoreUpnpService", "Service is running", contentIntent);
 		notification.flags = Notification.FLAG_ONGOING_EVENT;

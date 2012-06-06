@@ -21,8 +21,10 @@ import org.teleal.cling.support.model.container.Container;
 import org.teleal.cling.support.model.item.Item;
 
 import com.app.dlna.dmc.gui.activity.AppPreference;
+import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
+import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 
@@ -245,6 +247,10 @@ public class DMSProcessorImpl implements DMSProcessor {
 									}
 								}
 								actionListener.onActionComplete(String.valueOf(count) + " items removed");
+							}
+							if (playlistProcessor.getData().getId() == MainActivity.UPNP_PROCESSOR.getPlaylistProcessor()
+									.getData().getId()) {
+								MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().updateItemList();
 							}
 						}
 

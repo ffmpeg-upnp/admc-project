@@ -432,8 +432,12 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void run() {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
-				m_routerProgressDialog = ProgressDialog.show(MainActivity.this, "Router disabled",
-						"Router disabled, try to enabled router");
+				try {
+					m_routerProgressDialog = ProgressDialog.show(MainActivity.this, "Router disabled",
+							"Router disabled, try to enabled router");
+				} catch (Exception ex) {
+
+				}
 			}
 		});
 
@@ -445,6 +449,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 			@Override
 			public void run() {
+
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
 			}

@@ -288,14 +288,11 @@ public class NowPlayingActivity extends Activity {
 		switch (item.getType()) {
 		case AUDIO_LOCAL:
 		case AUDIO_REMOTE: {
-			// m_image.setVisibility(View.VISIBLE);
-			// m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-			// R.drawable.ic_didlobject_audio_large));
-			// m_image.setMaxZoom(1f);
-			// m_image.setOnTouchListener(m_swipeDetector);
 			m_image.setVisibility(View.GONE);
 			m_surface.setVisibility(View.GONE);
 			m_playlistView.setVisibility(View.VISIBLE);
+			m_rendererControl.setVisibility(View.VISIBLE);
+			m_viewFlipper.setVisibility(View.VISIBLE);
 			m_lastInfoState = true;
 			break;
 		}
@@ -306,14 +303,12 @@ public class NowPlayingActivity extends Activity {
 			if (dmrProcessor instanceof LocalDMRProcessorImpl) {
 				m_surface.setVisibility(View.VISIBLE);
 				m_playlistView.setVisibility(View.GONE);
-
+				m_rendererControl.setVisibility(View.GONE);
+				m_viewFlipper.setVisibility(View.GONE);
 			} else {
-				// m_image.setVisibility(View.VISIBLE);
-				// m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(),
-				// R.drawable.ic_didlobject_video_large));
-				// m_image.setMaxZoom(1f);
-				// m_image.setOnTouchListener(m_swipeDetector);
 				m_playlistView.setVisibility(View.VISIBLE);
+				m_rendererControl.setVisibility(View.VISIBLE);
+				m_viewFlipper.setVisibility(View.VISIBLE);
 				m_surface.setVisibility(View.GONE);
 				m_lastInfoState = true;
 			}
@@ -494,9 +489,13 @@ public class NowPlayingActivity extends Activity {
 	public void toggleItemInfo() {
 		if (m_viewFlipper != null && m_rendererControl != null)
 			if (m_viewFlipper.isShown()) {
-				m_viewFlipper.setVisibility(View.GONE);
-				m_rendererControl.setVisibility(View.GONE);
-				m_lastInfoState = false;
+				if (m_playlistView.getVisibility() != View.VISIBLE) {
+					m_viewFlipper.setVisibility(View.GONE);
+					m_rendererControl.setVisibility(View.GONE);
+					m_lastInfoState = false;
+				} else {
+					m_lastInfoState = true;
+				}
 			} else {
 				m_viewFlipper.setVisibility(View.VISIBLE);
 				m_rendererControl.setVisibility(View.VISIBLE);

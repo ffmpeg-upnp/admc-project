@@ -62,8 +62,7 @@ public class DownloadThread extends Thread {
 		contentTypeMap.put("image/x-rgb", "rgb");
 	}
 
-	public DownloadThread(String name, String url, File parrent, DownloadListener listener, int downloadID,
-			Context context) {
+	public DownloadThread(String name, String url, File parrent, DownloadListener listener, int downloadID, Context context) {
 		m_name = name;
 		m_url = url;
 		m_context = context;
@@ -78,18 +77,16 @@ public class DownloadThread extends Thread {
 
 	public void startDownload() {
 		if (m_name == null) {
-			m_notification = new Notification(android.R.drawable.ic_dialog_alert,
-					"Sorry, this item cannot be downloaded", System.currentTimeMillis());
+			m_notification = new Notification(android.R.drawable.ic_dialog_alert, "Sorry, this item cannot be downloaded",
+					System.currentTimeMillis());
 			PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
-			m_notification.setLatestEventInfo(m_context, "Download fail", "Sorry, this item cannot be downloaded",
-					contentIntent);
+			m_notification.setLatestEventInfo(m_context, "Download fail", "Sorry, this item cannot be downloaded", contentIntent);
 			NOTIFICATION_MANAGER.notify(0, m_notification);
 			if (m_listener != null)
 				m_listener.onDownloadFail(this, new RuntimeException("Item cannot be downloaded"));
 		} else {
 			m_isRunning = true;
-			m_notification = new Notification(android.R.drawable.ic_menu_save, "Download file",
-					System.currentTimeMillis());
+			m_notification = new Notification(android.R.drawable.ic_menu_save, "Download file", System.currentTimeMillis());
 			PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
 			m_notification.setLatestEventInfo(m_context, "Download content", "Downloading content", contentIntent);
 			m_notification.flags = Notification.FLAG_NO_CLEAR;
@@ -97,9 +94,8 @@ public class DownloadThread extends Thread {
 			contentView.setTextViewText(R.id.contentName, m_name);
 			m_notification.contentView = contentView;
 			Intent cancelIntent = new Intent(m_context, MainActivity.class);
-			cancelIntent.setAction(MainActivity.ACTION_CANCEL_DOWNLOAD);
-			cancelIntent.putExtra(MainActivity.EXTRA_DOWNLOAD_ID, m_downloadID);
-			Log.i("Download Thread", "new download id = " + m_downloadID);
+			cancelIntent.setAction(MainActivity.ACTION_CANCEL_DOWNLOAD + "_" + m_downloadID);
+			Log.i("DownloadThread", "new download id = " + m_downloadID);
 			PendingIntent cancelPendingIntent = PendingIntent.getActivity(m_context, 0, cancelIntent, 0);
 			contentView.setOnClickPendingIntent(R.id.cancel, cancelPendingIntent);
 			if (m_maxsize > 0) {
@@ -167,21 +163,31 @@ public class DownloadThread extends Thread {
 				}
 
 			}
-			if (m_listener != null && size == m_maxsize) {
-				m_listener.onDownloadComplete(this);
+			if (size == m_maxsize) {
+				if (m_listener != null && size == m_maxsize) {
+					m_listener.onDownloadComplete(this);
+				}
+				Notification notification = new Notification(android.R.drawable.ic_menu_save, "Download complete",
+						System.currentTimeMillis());
+				notification.flags = Notification.FLAG_AUTO_CANCEL;
+				PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
+				notification.setLatestEventInfo(m_context, "Download complete", newFile.getAbsolutePath(), contentIntent);
+				NOTIFICATION_MANAGER.cancel(m_downloadID);
+				NOTIFICATION_MANAGER.notify(m_downloadID + 5000, notification);
+			} else {
+				NOTIFICATION_MANAGER.cancel(m_downloadID);
 			}
-			m_notification.contentView.setProgressBar(R.id.downloadProgress, 100, 100, false);
-			m_notification.contentView.setTextViewText(R.id.downloaded, "Completed");
-			m_notification.flags = Notification.FLAG_AUTO_CANCEL;
-			NOTIFICATION_MANAGER.notify(m_downloadID, m_notification);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			if (m_listener != null)
 				m_listener.onDownloadFail(this, ex);
-			m_notification.contentView.setProgressBar(R.id.downloadProgress, 100, 100, false);
-			m_notification.contentView.setTextViewText(R.id.downloaded, "Failed");
-			m_notification.flags = Notification.FLAG_AUTO_CANCEL;
-			NOTIFICATION_MANAGER.notify(m_downloadID, m_notification);
+			Notification notification = new Notification(android.R.drawable.ic_menu_save, "Download fail",
+					System.currentTimeMillis());
+			notification.flags = Notification.FLAG_AUTO_CANCEL;
+			PendingIntent contentIntent = PendingIntent.getActivity(m_context, 0, new Intent(), 0);
+			notification.setLatestEventInfo(m_context, "Download fail", "Cannot download item : " + m_name, contentIntent);
+			NOTIFICATION_MANAGER.cancel(m_downloadID);
+			NOTIFICATION_MANAGER.notify(m_downloadID + 5000, notification);
 		} finally {
 			if (os != null)
 				try {
@@ -202,5 +208,9 @@ public class DownloadThread extends Thread {
 
 	public String getItemName() {
 		return m_name;
+	}
+
+	public int getDownloadId() {
+		return m_downloadID;
 	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.teleal.cling.support.model.DIDLObject;
 
 import android.app.Activity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.app.dlna.dmc.gui.activity.MainActivity;
@@ -19,6 +20,7 @@ import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 
 public class DownloadProcessorImpl implements DownloadProcessor {
 
+	private static final String TAG = DownloadProcessorImpl.class.getSimpleName();
 	private Activity m_activity;
 	private File m_sdRoot;
 	private List<DownloadThread> m_listDownloads;
@@ -43,8 +45,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			m_activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(),
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(), Toast.LENGTH_SHORT)
+							.show();
 				}
 			});
 		}
@@ -64,8 +66,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 		synchronized (m_listDownloads) {
 			size = m_listDownloads.size();
 		}
-		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(),
-				m_sdRoot, m_downloadListener, ++size, m_activity);
+		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(), m_sdRoot,
+				m_downloadListener, ++size, m_activity);
 
 		synchronized (m_listDownloads) {
 			m_listDownloads.add(downloadThread);
@@ -76,9 +78,10 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 
 	@Override
 	public void stopDownload(int id) {
+		Log.w(TAG, "cancel download, id = " + id);
 		synchronized (m_listDownloads) {
 			for (DownloadThread downloadThread : m_listDownloads) {
-				if (downloadThread != null && downloadThread.getId() == id) {
+				if (downloadThread != null && downloadThread.getDownloadId() == id) {
 					downloadThread.stopDownload();
 					break;
 				}
@@ -102,9 +105,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 		synchronized (m_listDownloads) {
 			size = m_listDownloads.size();
 		}
-
-		DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, ++size, m_activity);
 		synchronized (m_listDownloads) {
+			DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, size + 6000, m_activity);
 			m_listDownloads.add(downloadThread);
 			downloadThread.startDownload();
 		}

@@ -111,7 +111,7 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		if (m_currentItemIdx == -1) {
 			return null;
 		}
-		
+
 		if (m_playlistItems.size() > 0 && m_currentItemIdx < m_playlistItems.size()) {
 			return m_playlistItems.get(m_currentItemIdx);
 		}
@@ -138,11 +138,6 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 			if (m_playlistItems.contains(item))
 				return item;
 			if (m_playlistItems.size() >= m_maxSize) {
-				// // remove last item
-				// PlaylistItem lastItem =
-				// m_playlistItems.get(m_playlistItems.size() - 1);
-				// PlaylistManager.deletePlaylistItem(lastItem.getId());
-				// m_playlistItems.remove(lastItem);
 				return null;
 			}
 			if (!PlaylistManager.createPlaylistItem(item, m_data.getId()))

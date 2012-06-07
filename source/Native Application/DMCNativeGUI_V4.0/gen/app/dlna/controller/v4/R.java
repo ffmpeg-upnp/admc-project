@@ -166,8 +166,8 @@ public final class R {
         public static final int ic_youtube=0x7f020070;
     }
     public static final class id {
-        public static final int action=0x7f0d003b;
-        public static final int author=0x7f0d003e;
+        public static final int action=0x7f0d003c;
+        public static final int author=0x7f0d003f;
         public static final int botToolbar=0x7f0d0010;
         public static final int btn_back=0x7f0d0015;
         public static final int btn_clear=0x7f0d0027;
@@ -186,10 +186,11 @@ public final class R {
         public static final int btn_toggleShowHide=0x7f0d0003;
         public static final int btn_viewmode=0x7f0d001c;
         public static final int btn_writeToTag=0x7f0d0033;
+        public static final int cancel=0x7f0d0039;
         public static final int content=0x7f0d0009;
         public static final int contentName=0x7f0d0037;
         public static final int cv_compact_dmr=0x7f0d0005;
-        public static final int desc=0x7f0d003c;
+        public static final int desc=0x7f0d003d;
         public static final int deviceName=0x7f0d002c;
         public static final int deviceType=0x7f0d002e;
         public static final int deviceUDN=0x7f0d0030;
@@ -198,7 +199,7 @@ public final class R {
         public static final int downloaded=0x7f0d0038;
         public static final int ed_query=0x7f0d002a;
         public static final int gridView_renderer=0x7f0d0013;
-        public static final int icon=0x7f0d0039;
+        public static final int icon=0x7f0d003a;
         public static final int image=0x7f0d000a;
         public static final int linearLayout1=0x7f0d0031;
         public static final int listView=0x7f0d0000;
@@ -208,12 +209,11 @@ public final class R {
         public static final int loading_icon=0x7f0d000c;
         public static final int lv_mediasource_browsing=0x7f0d0011;
         public static final int lv_playlist=0x7f0d0012;
-        public static final int menu_about=0x7f0d0042;
-        public static final int menu_refresh_devices=0x7f0d003f;
-        public static final int menu_rescan_sdcard=0x7f0d0040;
-        public static final int menu_settings=0x7f0d0041;
-        public static final int name=0x7f0d003a;
-        public static final int playing=0x7f0d003d;
+        public static final int menu_refresh_devices=0x7f0d0040;
+        public static final int menu_rescan_sdcard=0x7f0d0041;
+        public static final int menu_settings=0x7f0d0042;
+        public static final int name=0x7f0d003b;
+        public static final int playing=0x7f0d003e;
         public static final int playlist=0x7f0d000d;
         public static final int playlistItem=0x7f0d001e;
         public static final int rendererControlView=0x7f0d000e;

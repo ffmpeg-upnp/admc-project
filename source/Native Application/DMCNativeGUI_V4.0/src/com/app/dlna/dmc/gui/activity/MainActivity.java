@@ -93,8 +93,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
 	public static final String ACTION_CANCEL_DOWNLOAD = "CANCEL_DOWNLOAD";
 	public static final String EXTRA_DOWNLOAD_ID = "download_id";
-	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
-			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
+	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+			new RejectedExecutionHandler() {
 
 				@Override
 				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -257,8 +257,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				libraryActivity.getHomeNetworkView().updateListView();
 				libraryActivity.getPlaylistView().updateListView();
 			}
-			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setPlaylistProcessor(
-					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor()
+					.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 		}
 
 		@Override
@@ -392,8 +392,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void run() {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
-				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause)
-						.setCancelable(false).setPositiveButton("OK", new OnClickListener() {
+				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause).setCancelable(false)
+						.setPositiveButton("OK", new OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -492,6 +492,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 	@SuppressWarnings("rawtypes")
 	protected void onNewIntent(Intent intent) {
+		if (intent.getAction() == null)
+			return;
 		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
 			if (m_waitToWriteTAG && m_messageToWrite != null) {
 				// write message to TAG
@@ -506,8 +508,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 						String textEncoding = (buffer[0] & 0200) == 0 ? "UTF-8" : "UTF-16";
 						int languageCodeLength = buffer[0] & 0077;
 						try {
-							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength
-									- 1, textEncoding);
+							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength - 1,
+									textEncoding);
 							String deviceUDN = "";
 							if (text.startsWith("uuid:"))
 								deviceUDN = text.substring(5);
@@ -546,12 +548,12 @@ public class MainActivity extends TabActivity implements SystemListener {
 			}
 		} else if (MainActivity.ACTION_PLAYTO.equals(intent.getAction())) {
 			m_tabHost.setCurrentTab(NOWPLAYING);
-		} else if (MainActivity.ACTION_CANCEL_DOWNLOAD.equals(intent.getAction())) {
-			int download_id = intent.getIntExtra(EXTRA_DOWNLOAD_ID, -1);
-			Log.i("MainActivity","download_id = " + download_id);
+		} else if (intent.getAction().startsWith(ACTION_CANCEL_DOWNLOAD)) {
+			int download_id = Integer.valueOf(intent.getAction().split("_")[2]);
+			Log.i("MainActivity", "download_id = " + download_id);
 			Toast.makeText(MainActivity.this, "Cancel download request " + download_id, Toast.LENGTH_SHORT).show();
 			if (UPNP_PROCESSOR != null) {
-				UPNP_PROCESSOR.getDownloadProcessor().stopDownload(Integer.valueOf(download_id));
+				UPNP_PROCESSOR.getDownloadProcessor().stopDownload(download_id);
 			}
 		}
 	}
@@ -578,8 +580,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_waitToWriteTAG = true;
 			m_nfcProgressDialog.show();
 		} else {
-			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
-					.setMessage("Please enable NFC on you device first").setPositiveButton("OK", null).create().show();
+			new AlertDialog.Builder(MainActivity.this).setTitle("NFC").setMessage("Please enable NFC on you device first")
+					.setPositiveButton("OK", null).create().show();
 		}
 	}
 
@@ -602,8 +604,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (m_btn_toggleRendererView != null)
-					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(
-							R.drawable.ic_btn_navigate_down));
+					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -629,8 +630,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void onAnimationEnd(Animation animation) {
 				m_rendererCompactView.setVisibility(View.GONE);
 				if (m_btn_toggleRendererView != null)
-					m_btn_toggleRendererView
-							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
+					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);

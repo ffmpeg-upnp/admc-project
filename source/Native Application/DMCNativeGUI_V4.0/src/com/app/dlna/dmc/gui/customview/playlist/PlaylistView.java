@@ -42,6 +42,8 @@ public class PlaylistView extends DMRListenerView {
 
 		@Override
 		public void onPrev() {
+			if (MainActivity.UPNP_PROCESSOR == null || MainActivity.UPNP_PROCESSOR.getPlaylistProcessor() == null)
+				return;
 			final PlaylistItem item = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getCurrentItem();
 			if (item != null) {
 				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
@@ -52,6 +54,8 @@ public class PlaylistView extends DMRListenerView {
 
 		@Override
 		public void onNext() {
+			if (MainActivity.UPNP_PROCESSOR == null || MainActivity.UPNP_PROCESSOR.getPlaylistProcessor() == null)
+				return;
 			final PlaylistItem item = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getCurrentItem();
 			if (item != null) {
 				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
@@ -92,8 +96,7 @@ public class PlaylistView extends DMRListenerView {
 
 	public PlaylistView(Context context) {
 		super(context);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-				R.layout.cv_playlist_allitem, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_playlist_allitem, this);
 		m_listView = (ListView) findViewById(R.id.lv_playlist);
 		m_adapter = new CustomArrayAdapter(getContext(), 0);
 		m_listView.setAdapter(m_adapter);
@@ -112,8 +115,7 @@ public class PlaylistView extends DMRListenerView {
 			MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().addListener(m_playlistListener);
 		switch (m_viewMode) {
 		case VM_DETAILS:
-			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null
-					|| m_currentPlaylist.getData().getName() == null) {
+			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null || m_currentPlaylist.getData().getName() == null) {
 				m_viewMode = VM_LIST;
 				preparePlaylist();
 				return;

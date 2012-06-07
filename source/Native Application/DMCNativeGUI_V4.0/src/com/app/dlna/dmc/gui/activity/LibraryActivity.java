@@ -67,8 +67,8 @@ public class LibraryActivity extends Activity {
 
 		@Override
 		public void onPageScrollStateChanged(int state) {
-			((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(m_youtubeView.getWindowToken(),
-					0);
+			((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
+					m_youtubeView.getWindowToken(), 0);
 			if (state == 0)
 				switch (m_pager.getCurrentItem()) {
 				case 0:
@@ -116,7 +116,11 @@ public class LibraryActivity extends Activity {
 
 		@Override
 		public CharSequence getPageTitle(int position) {
-			return m_pagerTitle[position];
+			try {
+				return m_pagerTitle[position];
+			} catch (Exception e) {
+				return "";
+			}
 		}
 
 		@Override

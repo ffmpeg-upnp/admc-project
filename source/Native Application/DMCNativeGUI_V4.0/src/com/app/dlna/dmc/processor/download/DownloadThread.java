@@ -9,11 +9,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
+import com.app.dlna.dmc.gui.activity.MainActivity;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 import app.dlna.controller.v4.R;
 
@@ -39,6 +42,7 @@ public class DownloadThread extends Thread {
 		contentTypeMap.put("audio/x-pn-realaudio", "ra");
 		contentTypeMap.put("audio/x-wav", "wav");
 		contentTypeMap.put("audio/x-ms-wma", "wma");
+		contentTypeMap.put("audio/wma", "wma");
 
 		contentTypeMap.put("video/mpeg", "mpg");
 		contentTypeMap.put("video/vnd.mpegurl", "m4u");
@@ -92,6 +96,12 @@ public class DownloadThread extends Thread {
 			RemoteViews contentView = new RemoteViews(m_context.getPackageName(), R.layout.download_notification);
 			contentView.setTextViewText(R.id.contentName, m_name);
 			m_notification.contentView = contentView;
+			Intent cancelIntent = new Intent(m_context, MainActivity.class);
+			cancelIntent.setAction(MainActivity.ACTION_CANCEL_DOWNLOAD);
+			cancelIntent.putExtra(MainActivity.EXTRA_DOWNLOAD_ID, m_downloadID);
+			Log.i("Download Thread", "new download id = " + m_downloadID);
+			PendingIntent cancelPendingIntent = PendingIntent.getActivity(m_context, 0, cancelIntent, 0);
+			contentView.setOnClickPendingIntent(R.id.cancel, cancelPendingIntent);
 			if (m_maxsize > 0) {
 				contentView.setProgressBar(R.id.downloadProgress, 0, 0, false);
 			} else {
@@ -103,6 +113,7 @@ public class DownloadThread extends Thread {
 	}
 
 	public void stopDownload() {
+		Log.i("DownloadThread", "Stop requested");
 		m_isRunning = false;
 		this.interrupt();
 		NOTIFICATION_MANAGER.cancel(m_downloadID);

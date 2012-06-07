@@ -43,8 +43,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			m_activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(), Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(),
+							Toast.LENGTH_SHORT).show();
 				}
 			});
 		}
@@ -64,8 +64,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 		synchronized (m_listDownloads) {
 			size = m_listDownloads.size();
 		}
-		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(), m_sdRoot,
-				m_downloadListener, ++size, m_activity);
+		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(),
+				m_sdRoot, m_downloadListener, ++size, m_activity);
 
 		synchronized (m_listDownloads) {
 			m_listDownloads.add(downloadThread);
@@ -76,7 +76,14 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 
 	@Override
 	public void stopDownload(int id) {
-
+		synchronized (m_listDownloads) {
+			for (DownloadThread downloadThread : m_listDownloads) {
+				if (downloadThread != null && downloadThread.getId() == id) {
+					downloadThread.stopDownload();
+					break;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -96,7 +103,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			size = m_listDownloads.size();
 		}
 
-		DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, size + 1, m_activity);
+		DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, ++size, m_activity);
 		synchronized (m_listDownloads) {
 			m_listDownloads.add(downloadThread);
 			downloadThread.startDownload();

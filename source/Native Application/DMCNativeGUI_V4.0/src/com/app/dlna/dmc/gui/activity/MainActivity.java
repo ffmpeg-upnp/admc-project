@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.teleal.cling.model.meta.Device;
 import org.teleal.cling.model.types.UDN;
+import org.teleal.cling.support.model.DIDLObject.Property.UPNP;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,6 +33,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,8 +91,10 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 	private static final int SIZE = 2;
 	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
-	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
-			new RejectedExecutionHandler() {
+	public static final String ACTION_CANCEL_DOWNLOAD = "CANCEL_DOWNLOAD";
+	public static final String EXTRA_DOWNLOAD_ID = "download_id";
+	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
+			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
 
 				@Override
 				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -172,7 +176,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 			MainActivity.this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					m_loadingDialog.setTitle(message);
+					m_loadingDialog.setMessage(message);
 					m_loadingDialog.show();
 				}
 			});
@@ -207,7 +211,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 		super.onResume();
 		if (m_nfcAdapter != null)
 			m_nfcAdapter.enableForegroundDispatch(this, m_pendingIntent, m_filters, m_techLists);
-		updateToggleButtonForOrientation();
 		if (UPNP_PROCESSOR != null)
 			UPNP_PROCESSOR.setDMSExproted(AppPreference.getDMSExported());
 	};
@@ -237,28 +240,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 		if (intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_PLAYTO)) {
 			switchToNowPlaying();
 		}
-		updateToggleButtonForOrientation();
-	}
-
-	private void updateToggleButtonForOrientation() {
-		// if (btn_toggleRendererView == null || btn_toggleRendererView_Land ==
-		// null)
-		// return;
-		// int rotation = getWindowManager().getDefaultDisplay().getRotation();
-		// switch (rotation) {
-		// case Surface.ROTATION_0:
-		// case Surface.ROTATION_180:
-		// btn_toggleRendererView_Land.setVisibility(View.GONE);
-		// btn_toggleRendererView.setVisibility(View.VISIBLE);
-		// current_toogleRendererView = btn_toggleRendererView;
-		// break;
-		// case Surface.ROTATION_90:
-		// case Surface.ROTATION_270:
-		// btn_toggleRendererView_Land.setVisibility(View.VISIBLE);
-		// btn_toggleRendererView.setVisibility(View.GONE);
-		// current_toogleRendererView = btn_toggleRendererView_Land;
-		// break;
-		// }
 	}
 
 	private OnDMRChangeListener m_onDMRChanged = new OnDMRChangeListener() {
@@ -276,8 +257,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				libraryActivity.getHomeNetworkView().updateListView();
 				libraryActivity.getPlaylistView().updateListView();
 			}
-			MainActivity.UPNP_PROCESSOR.getDMRProcessor()
-					.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setPlaylistProcessor(
+					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 		}
 
 		@Override
@@ -411,8 +392,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void run() {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
-				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause).setCancelable(false)
-						.setPositiveButton("OK", new OnClickListener() {
+				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause)
+						.setCancelable(false).setPositiveButton("OK", new OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -470,9 +451,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.menu_about:
-			Toast.makeText(MainActivity.this, "Show about dialog", Toast.LENGTH_SHORT).show();
-			break;
 		case R.id.menu_rescan_sdcard:
 			Toast.makeText(MainActivity.this, "Rescan sdcard", Toast.LENGTH_SHORT).show();
 			if (!LocalContentDirectoryService.isScanning())
@@ -528,8 +506,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 						String textEncoding = (buffer[0] & 0200) == 0 ? "UTF-8" : "UTF-16";
 						int languageCodeLength = buffer[0] & 0077;
 						try {
-							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength - 1,
-									textEncoding);
+							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength
+									- 1, textEncoding);
 							String deviceUDN = "";
 							if (text.startsWith("uuid:"))
 								deviceUDN = text.substring(5);
@@ -568,6 +546,13 @@ public class MainActivity extends TabActivity implements SystemListener {
 			}
 		} else if (MainActivity.ACTION_PLAYTO.equals(intent.getAction())) {
 			m_tabHost.setCurrentTab(NOWPLAYING);
+		} else if (MainActivity.ACTION_CANCEL_DOWNLOAD.equals(intent.getAction())) {
+			int download_id = intent.getIntExtra(EXTRA_DOWNLOAD_ID, -1);
+			Log.i("MainActivity","download_id = " + download_id);
+			Toast.makeText(MainActivity.this, "Cancel download request " + download_id, Toast.LENGTH_SHORT).show();
+			if (UPNP_PROCESSOR != null) {
+				UPNP_PROCESSOR.getDownloadProcessor().stopDownload(Integer.valueOf(download_id));
+			}
 		}
 	}
 
@@ -593,8 +578,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_waitToWriteTAG = true;
 			m_nfcProgressDialog.show();
 		} else {
-			new AlertDialog.Builder(MainActivity.this).setTitle("NFC").setMessage("Please enable NFC on you device first")
-					.setPositiveButton("OK", null).create().show();
+			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
+					.setMessage("Please enable NFC on you device first").setPositiveButton("OK", null).create().show();
 		}
 	}
 
@@ -617,7 +602,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (m_btn_toggleRendererView != null)
-					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
+					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(
+							R.drawable.ic_btn_navigate_down));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -643,7 +629,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void onAnimationEnd(Animation animation) {
 				m_rendererCompactView.setVisibility(View.GONE);
 				if (m_btn_toggleRendererView != null)
-					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
+					m_btn_toggleRendererView
+							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -671,6 +658,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+		if (m_ll_tabwidgets == null || m_btn_toggleRendererView == null)
+			return;
 		Activity activity = getLocalActivityManager().getActivity(m_tabHost.getCurrentTabTag());
 		if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 			m_ll_tabwidgets.setVisibility(View.VISIBLE);
@@ -692,6 +681,5 @@ public class MainActivity extends TabActivity implements SystemListener {
 		m_rendererCompactView.setVisibility(View.GONE);
 		if (m_btn_toggleRendererView != null)
 			m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
-		updateToggleButtonForOrientation();
 	}
 }

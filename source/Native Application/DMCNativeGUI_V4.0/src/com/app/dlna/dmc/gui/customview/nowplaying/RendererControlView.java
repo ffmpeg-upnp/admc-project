@@ -139,8 +139,8 @@ public class RendererControlView extends LinearLayout {
 						m_playlistAdapter.add(new AdapterItem(playlist));
 					}
 
-					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView).setNegativeButton("Close", null)
-							.create();
+					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView)
+							.setNegativeButton("Close", null).create();
 					m_alertDialog.show();
 				};
 
@@ -154,14 +154,16 @@ public class RendererControlView extends LinearLayout {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, final int position, long arg3) {
 			PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-			if (playlistProcessor != null && m_playlistAdapter.getItem(position).getData().equals(playlistProcessor.getData()))
+			if (playlistProcessor != null
+					&& m_playlistAdapter.getItem(position).getData().equals(playlistProcessor.getData()))
 				dismissSelectDialog();
 			else
 				new AsyncTaskWithProgressDialog<Void, Void, PlaylistProcessor>("Loading playlist") {
 
 					@Override
 					protected PlaylistProcessor doInBackground(Void... params) {
-						return PlaylistManager.getPlaylistProcessor((Playlist) m_playlistAdapter.getItem(position).getData());
+						return PlaylistManager.getPlaylistProcessor((Playlist) m_playlistAdapter.getItem(position)
+								.getData());
 					}
 
 					protected void onPostExecute(PlaylistProcessor result) {
@@ -234,8 +236,8 @@ public class RendererControlView extends LinearLayout {
 						m_playlistItemAdapter.add(new AdapterItem(playlistItem));
 					}
 
-					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView).setNegativeButton("Close", null)
-							.create();
+					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView)
+							.setNegativeButton("Close", null).create();
 					m_alertDialog.show();
 				};
 
@@ -364,7 +366,8 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_play));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
+							R.drawable.ic_btn_media_play));
 					m_sb_duration.setProgress(0);
 				}
 			});
@@ -377,7 +380,8 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_pause));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
+							R.drawable.ic_btn_media_pause));
 				}
 			});
 
@@ -390,7 +394,8 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_play));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
+							R.drawable.ic_btn_media_play));
 				}
 			});
 

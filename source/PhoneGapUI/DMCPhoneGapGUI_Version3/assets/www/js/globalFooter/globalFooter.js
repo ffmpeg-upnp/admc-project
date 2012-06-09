@@ -21,8 +21,9 @@ function initGlobalFooter (){
 
 function getFooterHeight (dmrContentVisible){
 	var result =  dmrRemoteControler.height();
-	if (dmrContentVisible)
+	if (dmrContentVisible){
 		result += dmrController.height();
+	}
 	return result;
 }
 

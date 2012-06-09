@@ -4,6 +4,7 @@ var homenetworkContentControler_visible = false;
 
 var currentPadding_homenetwork;
 var preScrollPosition_homenetwork;
+var waitingForNextLoading = false;
 
 var btn_back_homenetwork;
 var btn_selectAll;
@@ -24,7 +25,7 @@ function initHomenetworkSubtab() {
 		onTap_Back_Homenetwork($(this));
 	});
 
-	btn_selectAll = $('#img_btn_selectall');
+	/*btn_selectAll = $('#img_btn_selectall');
 	btn_selectAll.bind('tap', function() {
 		onTap_SelectAll($(this));
 	});
@@ -32,7 +33,7 @@ function initHomenetworkSubtab() {
 	btn_deselectAll = $('#img_btn_deselectall');
 	btn_deselectAll.bind('tap', function() {
 		onTap_DeselectAll($(this));
-	});
+	});*/
 
 	preScrollPosition_homenetwork = 0;
 	$(window)
@@ -41,24 +42,30 @@ function initHomenetworkSubtab() {
 					function() {
 						if (currentTab_TabsControl == "library"
 								&& currentSubTab == "homenetwork") {
-							var currentScrollPosition = $(document).scrollTop();
-							if (currentScrollPosition <= preScrollPosition_homenetwork) {
+							if (!waitingForNextLoading){
+								var currentScrollPosition = $(document).scrollTop();
+								if (currentScrollPosition <= preScrollPosition_homenetwork) {
+									preScrollPosition_homenetwork = currentScrollPosition;
+									return;
+								}
+	
 								preScrollPosition_homenetwork = currentScrollPosition;
-								return;
-							}
-
-							preScrollPosition_homenetwork = currentScrollPosition;
-							var documentHeight = homeNetworkSubTab.height()
-									+ currentPadding_homenetwork
-									+ $(window).height() * 0.18;
-
-							if (documentHeight > $(window).height()) {
-								var currentWindowPosition = currentScrollPosition
-										+ $(window).height() + 15;// 15px is a
-								// tolerance-value
-
-								if (currentWindowPosition >= documentHeight) {
-									onScrollToEndOfPage_HomenetworkContent();
+								var documentHeight = homeNetworkSubTab.height()
+										+ currentPadding_homenetwork
+										+ $(window).height() * 0.18;
+	
+								if (documentHeight > $(window).height()) {
+									var currentWindowPosition = currentScrollPosition
+											+ $(window).height() + 15;// 15px is a
+																	  // tolerance-value
+	
+									if (currentWindowPosition >= documentHeight) {
+										waitingForNextLoading = true;
+										onScrollToEndOfPage_HomenetworkContent();
+										setTimeout (function(){
+											waitingForNextLoading = false;
+										}, 2000);
+									}
 								}
 							}
 						}
@@ -133,13 +140,13 @@ function onTap_Back_Homenetwork(sender) {
 	window.plugins.LibraryPlugin.back();
 }
 
-function onTap_SelectAll(sender) {
+/*function onTap_SelectAll(sender) {
 	window.plugins.LibraryPlugin.selectAll();
 }
 
 function onTap_DeselectAll(sender) {
 	window.plugins.LibraryPlugin.deselectAll();
-}
+}*/
 
 function onScrollToEndOfPage_HomenetworkContent() {
 	window.plugins.LibraryPlugin.loadMore();

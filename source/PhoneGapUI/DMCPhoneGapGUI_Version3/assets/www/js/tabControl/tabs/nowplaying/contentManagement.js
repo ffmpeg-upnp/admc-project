@@ -160,8 +160,8 @@ function addNewContentItem (contentType, contentTitle, contentPerformanceUrl, co
 
 */
 
-/*---------------------------------------------NEW CODE------------------------------------*/
-var content_handler;
+/*---------------------------------------------VERSION 2------------------------------------*/
+/*var content_handler;
 var content_slider;
 var content_lenght;
 var content_currentLeft;
@@ -249,28 +249,6 @@ function selectContentItem (item){
 	}
 }
 // -----------------------------PUBLIC FUNCTION--------------
-/*function addNewContentItem(imageUrl, deviceUdn, deviceName) {
-	if (imageUrl == null) {
-		imageUrl = "img/ic_device_unknow_player.png";
-	}
-	var containerWidth = content_slider.width();
-	containerWidth += content_itemWidth;
-	content_slider.css('width', containerWidth + 'px');
-	content_slider
-			.append('<div class="div_dmr_item" data-selected="false" align="center" data-url="'
-					+ deviceUdn
-					+ '">'
-					+ '<img class ="img_dmr_item" src="'
-					+ imageUrl
-					+ '">'
-					+ '</div>');
-	resetCSS_ContentItems();
-	content_lenght++;
-	if (content_lenght - 1 >= content_currentLeft + content_numberToPresent ){
-		btn_contentGoNext.show();
-	}
-}*/
-
 function addNewContentItem (contentType, contentTitle, contentPerformanceUrl, contentUrl){
 	if (contentPerformanceUrl == null){
 		switch (contentType) {
@@ -360,5 +338,62 @@ function onTap_ContenTmoveRightButton (sender){
 			showGoPreviousButton_CM();
 		}
 	}
+}*/
+
+
+/*-----------------------------------------VERSION 3------------------------------*/
+var padding_maxsize;
+var padding_minsize;
+
+function init_contentManagement() {
+	content_renderer = $("#div_content_info_nowplaying > div");
+	var fontHeight_contentManagement = $(window).height() * 0.062;
+	fontHeight_contentManagement = Math.round(fontHeight_contentManagement);
+	content_renderer.css("fontSize", fontHeight_contentManagement + "px");
+	
+	padding_maxsize = getFooterHeight(true) + $('#div_content_controler_nowplaying').height();
+	padding_minsize = getFooterHeight(false) + $('#div_content_controler_nowplaying').height();
+	repadding_content_nowplaying ();
 }
+
+function animateDown_contentManagement (){
+	//just repadding the content div
+}
+
+function animateUp_contentManagement (){
+	//just repadding the content div
+}
+
+function repadding_content_nowplaying (){
+	if (dmrControllerVisible_GlobalFooter)
+		$('#div_content_perform_nowplaying').css('paddingBottom', padding_maxsize + 'px');
+	else
+		$('#div_content_perform_nowplaying').css('paddingBottom', padding_minsize + 'px');
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -190,7 +190,8 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 		holder.desc.setText("");
 		holder.icon.setImageResource(R.drawable.ic_playlist);
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-		if (playlistProcessor != null && playlistProcessor.getData() != null && playlistProcessor.getData().equals(data)) {
+		if (playlistProcessor != null && playlistProcessor.getData() != null
+				&& playlistProcessor.getData().equals(data)) {
 			holder.playing.setVisibility(View.VISIBLE);
 		} else {
 			holder.playing.setVisibility(View.GONE);
@@ -242,7 +243,8 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 					final RemoteDevice remoteDevice = (RemoteDevice) device;
 
 					String urlString = remoteDevice.getIdentity().getDescriptorURL().getProtocol() + "://"
-							+ remoteDevice.getIdentity().getDescriptorURL().getAuthority() + icons[0].getUri().toString();
+							+ remoteDevice.getIdentity().getDescriptorURL().getAuthority()
+							+ icons[0].getUri().toString();
 					URL url = new URL(urlString);
 					final Bitmap icon = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 					m_cacheDMSIcon.put(udn, icon);
@@ -282,7 +284,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 			holder.icon.setImageResource(R.drawable.ic_didlobject_container);
 			holder.action.setVisibility(View.GONE);
 			holder.playing.setVisibility(View.GONE);
-			holder.desc.setText("Container");
+			holder.desc.setText("");
 		} else {
 			String objectUrl = object.getResources().get(0).getValue();
 			if (object instanceof MusicTrack) {
@@ -290,11 +292,6 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 			} else if (object instanceof VideoItem) {
 				holder.icon.setImageBitmap(BM_VIDEO);
 			} else if (object instanceof ImageItem) {
-				// holder.icon.setImageResource(R.drawable.ic_didlobject_image);
-				// Utility.loadImageItemThumbnail(holder.icon,
-				// object.getResources().get(0).getValue(),
-				// Cache.getBitmapCache(),
-				// MAX_SIZE);
 				HashMap<String, Bitmap> cache = Cache.getBitmapCache();
 				holder.icon.setTag(objectUrl);
 				if (cache.containsKey(objectUrl) && cache.get(objectUrl) != null) {
@@ -317,7 +314,8 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 					LibraryActivity activity = (LibraryActivity) getContext();
 					PlaylistProcessor playlistProcessor = activity.getPlaylistView().getCurrentPlaylistProcessor();
 					if (playlistProcessor.containsUrl(objectUrl)) {
-						holder.action.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_remove));
+						holder.action.setImageDrawable(getContext().getResources()
+								.getDrawable(R.drawable.ic_btn_remove));
 					} else {
 						holder.action.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_add));
 					}

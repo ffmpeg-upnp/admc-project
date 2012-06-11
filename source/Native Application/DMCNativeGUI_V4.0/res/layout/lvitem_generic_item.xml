@@ -28,7 +28,7 @@
 
         <ImageView
             android:id="@+id/action"
-            android:layout_width="40dp"
+            android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"

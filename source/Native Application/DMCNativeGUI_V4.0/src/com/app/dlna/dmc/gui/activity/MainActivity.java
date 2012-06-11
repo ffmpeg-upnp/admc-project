@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.teleal.cling.model.meta.Device;
 import org.teleal.cling.model.types.UDN;
-import org.teleal.cling.support.model.DIDLObject.Property.UPNP;
 
 import android.app.Activity;
 import android.app.AlertDialog;

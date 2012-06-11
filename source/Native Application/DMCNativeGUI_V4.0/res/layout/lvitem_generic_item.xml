@@ -37,8 +37,8 @@
             android:clickable="true"
             android:focusable="false"
             android:padding="0dp"
-            android:src="@drawable/ic_btn_add" 
-            android:scaleType="centerInside"/>
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_btn_add" />
 
         <TextView
             android:id="@+id/name"

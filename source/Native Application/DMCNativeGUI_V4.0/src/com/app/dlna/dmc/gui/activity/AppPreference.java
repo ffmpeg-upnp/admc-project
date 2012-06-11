@@ -67,12 +67,16 @@ public class AppPreference {
 		}
 		return imageExtension.split(";");
 	}
-	
-	public static boolean getKillProcessStatus(){
+
+	public static boolean getKillProcessStatus() {
 		return PREF != null ? PREF.getBoolean("kill_process", false) : false;
 	}
 
 	public static boolean getProxyMode() {
 		return PREF != null ? PREF.getBoolean("proxy_mode", false) : false;
+	}
+
+	public static boolean stopDMR() {
+		return PREF != null ? PREF.getBoolean("stop_dmr", true) : true;
 	}
 }

@@ -51,7 +51,12 @@
     <PreferenceCategory
         android:summary="Media Renderer"
         android:title="Media Renderer" >
-        <ListPreference
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="stop_dmr"
+            android:summary="Stop DMR when switching to another or close application"
+            android:title="Stop DMR when leave" />
+        <ListPreference
             android:defaultValue="512"
             android:entries="@array/imageQuality"
             android:entryValues="@array/imageQualityValues"

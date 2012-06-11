@@ -13,6 +13,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
+import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.customview.nowplaying.LocalMediaPlayer;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
@@ -124,45 +125,46 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		setRunning(true);
 		switch (m_currentItem.getType()) {
 		case YOUTUBE:
-			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()), new IYoutubeProcessorListener() {
+			new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()),
+					new IYoutubeProcessorListener() {
 
-				@Override
-				public void onStartPorcess() {
-				}
-
-				@Override
-				public void onSearchComplete(List<YoutubeItem> result) {
-				}
-
-				@Override
-				public void onGetLinkComplete(YoutubeItem result) {
-					stop();
-					m_player = new LocalMediaPlayer();
-					m_player.setDisplay(m_holder);
-					m_player.setOnPreparedListener(m_preparedListener);
-					m_player.setOnCompletionListener(m_completeListener);
-					m_player.setOnErrorListener(m_onErrorListener);
-					m_player.setScreenOnWhilePlaying(true);
-					if (result.getId().equals(m_currentItem.getUrl()))
-						synchronized (m_currentItem) {
-							try {
-								m_player.setDataSource(result.getDirectLink());
-								m_player.prepareAsync();
-							} catch (IllegalArgumentException e) {
-								e.printStackTrace();
-							} catch (IllegalStateException e) {
-								e.printStackTrace();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+						@Override
+						public void onStartPorcess() {
 						}
-				}
 
-				@Override
-				public void onFail(Exception ex) {
-					ex.printStackTrace();
-				}
-			});
+						@Override
+						public void onSearchComplete(List<YoutubeItem> result) {
+						}
+
+						@Override
+						public void onGetLinkComplete(YoutubeItem result) {
+							stop();
+							m_player = new LocalMediaPlayer();
+							m_player.setDisplay(m_holder);
+							m_player.setOnPreparedListener(m_preparedListener);
+							m_player.setOnCompletionListener(m_completeListener);
+							m_player.setOnErrorListener(m_onErrorListener);
+							m_player.setScreenOnWhilePlaying(true);
+							if (result.getId().equals(m_currentItem.getUrl()))
+								synchronized (m_currentItem) {
+									try {
+										m_player.setDataSource(result.getDirectLink());
+										m_player.prepareAsync();
+									} catch (IllegalArgumentException e) {
+										e.printStackTrace();
+									} catch (IllegalStateException e) {
+										e.printStackTrace();
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
+						}
+
+						@Override
+						public void onFail(Exception ex) {
+							ex.printStackTrace();
+						}
+					});
 			break;
 		case IMAGE_LOCAL:
 		case IMAGE_REMOTE:
@@ -339,7 +341,8 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	@Override
 	public void dispose() {
 		m_listeners.clear();
-		stop();
+		if (AppPreference.stopDMR())
+			stop();
 		if (m_updateThread != null) {
 			m_updateThread.stopThread();
 		}

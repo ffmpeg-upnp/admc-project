@@ -357,7 +357,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void dispose() {
-		stop();
+		if (AppPreference.stopDMR())
+			stop();
 		if (m_updateThread != null)
 			m_updateThread.stopThread();
 		synchronized (m_listeners) {

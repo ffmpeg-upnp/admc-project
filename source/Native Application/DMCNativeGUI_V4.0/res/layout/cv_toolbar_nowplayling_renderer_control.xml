@@ -89,7 +89,8 @@
         android:id="@+id/ll_seekControl"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:visibility="gone" >
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -144,8 +145,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="3dp"
                     android:layout_marginRight="3dp"
-                    android:layout_toLeftOf="@+id/volume"
-                    android:layout_toRightOf="@id/volume" />
+                    android:layout_toLeftOf="@+id/volume" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

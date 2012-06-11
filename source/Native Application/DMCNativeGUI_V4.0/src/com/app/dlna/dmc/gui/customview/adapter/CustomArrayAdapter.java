@@ -282,15 +282,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 			holder.icon.setImageResource(R.drawable.ic_didlobject_container);
 			holder.action.setVisibility(View.GONE);
 			holder.playing.setVisibility(View.GONE);
-			int childCount = ((Container) object).getChildCount() != null ? ((Container) object).getChildCount() : 1;
-			String childCountStr = "";
-			if (childCount == 0)
-				childCountStr = "empty";
-			else if (childCount == 1)
-				childCountStr = "1 child";
-			else
-				childCountStr = childCount + " items";
-			holder.desc.setText(childCountStr);
+			holder.desc.setText("Container");
 		} else {
 			String objectUrl = object.getResources().get(0).getValue();
 			if (object instanceof MusicTrack) {

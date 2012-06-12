@@ -125,8 +125,20 @@
 	padding: 0px;
 	margin: 0px;
 	height: 70%;
-	top: 16%;
+	top: 8%;
 	width: auto;
+	display: block;
+}
+
+.p_dmr_info{
+	position: relative;
+	padding: 0px;
+	padding-top: 8px;
+	margin: 0px;
+	width: 100%;
+	display: inline;
+	color: white;
+	font-size: 8px;
 }
 
 /* .div_dmr_info{

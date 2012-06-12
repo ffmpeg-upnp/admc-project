@@ -16,6 +16,7 @@ function initTabs (){
 }
 
 function switchingLibrarytab (){
+	//addNewDMRitem("img/ic_device_unknow_player.png", "Local player", "Local player");
 	if (currentTab_TabsControl != "library"){
 		hide_NowplayingTab();
 		show_LibraryTab();

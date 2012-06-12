@@ -87,6 +87,9 @@ function addNewDMRitem(imageUrl, deviceUdn, deviceName) {
 					+ '<img class ="img_dmr_item" src="'
 					+ imageUrl
 					+ '">'
+					+ '<p class ="p_dmr_info">'
+					+ deviceName
+					+ '</p>'
 					+ '</div>');
 	resetCSS_dmrItems();
 	dmr_lenght++;

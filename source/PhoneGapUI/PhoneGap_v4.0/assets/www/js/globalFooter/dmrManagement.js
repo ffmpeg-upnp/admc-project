@@ -53,6 +53,10 @@ function init_DMRManagement() {
 		dmr_taphold = true;
 		onTapHold_dmrItem($(this));
 	});
+	
+	$('#div_dmr_play > div > img').bind('tap', function(){
+		onTap_playButton ($(this));
+	});
 }
 
 function resetCSS_dmrItems() {
@@ -96,6 +100,22 @@ function addNewDMRitem(imageUrl, deviceUdn, deviceName) {
 	dmr_lenght++;
 	if (dmr_lenght - 1 >= dmr_currentLeft + dmr_numberToPresent) {
 		btn_dmrGoNext.show();
+	}
+}
+
+function setSelectedDMR (udn){
+	if (dmr_selectedItem != null) {
+		dmr_selectedItem.attr("data-selected", "false");
+		dmr_selectedItem.find("img").css("-webkit-border-radius", "0px");
+		dmr_selectedItem.find("img").css("border", "0px");
+	}
+	var selectedItem = $(".div_dmr_item[data-url='" + udn + "']");
+	alert(selectedItem);
+	if (selectedItem != null){
+		dmr_selectedItem = selectedItem;
+		dmr_selectedItem.attr("data-selected", "true");
+		dmr_selectedItem.find("img").css("-webkit-border-radius", "5px");
+		dmr_selectedItem.find("img").css("border", "solid 2px #33B5E5");
 	}
 }
 
@@ -174,7 +194,6 @@ function onTapHold_dmrItem(sender) {
 }
 
 function onTap_playButton(sender) {
-
 }
 
 function onTap_DMRmoveLeftButton(sender) {

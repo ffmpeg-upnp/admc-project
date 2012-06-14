@@ -18,7 +18,7 @@ function init_DMRManagement() {
 	dmr_currentLeft = 0;
 	dmr_numberToPresent = 3;
 	dmr_selectedItem = null;
-	dmr_slider =  $('#div_dmr_list_container');
+	dmr_slider = $('#div_dmr_list_container');
 	dmr_slider = $('#div_dmr_list_container');
 	dmr_handler = $('#div_dmr_handler');
 
@@ -53,9 +53,9 @@ function init_DMRManagement() {
 		dmr_taphold = true;
 		onTapHold_dmrItem($(this));
 	});
-	
-	$('#div_dmr_play > div > img').bind('tap', function(){
-		onTap_playButton ($(this));
+
+	$('#div_dmr_play > div > img').bind('tap', function() {
+		onTap_playButton($(this));
 	});
 }
 
@@ -85,17 +85,8 @@ function addNewDMRitem(imageUrl, deviceUdn, deviceName) {
 	var containerWidth = dmr_slider.width();
 	containerWidth += dmr_itemWidth;
 	dmr_slider.css('width', containerWidth + 'px');
-	dmr_slider
-			.append('<div class="div_dmr_item" data-selected="false" align="center" data-url="'
-					+ deviceUdn
-					+ '">'
-					+ '<img class ="img_dmr_item" src="'
-					+ imageUrl
-					+ '">'
-					+ '<p class ="p_dmr_info">'
-					+ deviceName
-					+ '</p>'
-					+ '</div>');
+	dmr_slider.append('<div class="div_dmr_item" data-selected="false" align="center" data-url="' + deviceUdn + '">'
+			+ '<img class ="img_dmr_item" src="' + imageUrl + '">' + '<p class ="p_dmr_info">' + deviceName + '</p>' + '</div>');
 	resetCSS_dmrItems();
 	dmr_lenght++;
 	if (dmr_lenght - 1 >= dmr_currentLeft + dmr_numberToPresent) {
@@ -103,15 +94,15 @@ function addNewDMRitem(imageUrl, deviceUdn, deviceName) {
 	}
 }
 
-function setSelectedDMR (udn){
+function setSelectedDMR(udn) {
+	alert(udn);
 	if (dmr_selectedItem != null) {
 		dmr_selectedItem.attr("data-selected", "false");
 		dmr_selectedItem.find("img").css("-webkit-border-radius", "0px");
 		dmr_selectedItem.find("img").css("border", "0px");
 	}
 	var selectedItem = $(".div_dmr_item[data-url='" + udn + "']");
-	alert(selectedItem);
-	if (selectedItem != null){
+	if (selectedItem != null) {
 		dmr_selectedItem = selectedItem;
 		dmr_selectedItem.attr("data-selected", "true");
 		dmr_selectedItem.find("img").css("-webkit-border-radius", "5px");
@@ -121,8 +112,7 @@ function setSelectedDMR (udn){
 
 function removeDMRitem(deviceUdn) {
 	console.log("remove : " + deviceUdn);
-	var removedItem = $("#div_dmr_list_container div.div_dmr_item[data-url='"
-			+ deviceUdn + "']");
+	var removedItem = $("#div_dmr_list_container div.div_dmr_item[data-url='" + deviceUdn + "']");
 	if (removedItem.html() == null)
 		return;
 
@@ -186,7 +176,7 @@ function removeDMRitem(deviceUdn) {
 // ------------------------------EVENT FUNCTION---------------------------
 function onTap_dmrItem(sender) {
 	selectDMRitem(sender.parent());
-	choseDMR(sender.attr("data-url"));
+	choseDMR(sender.parent().attr("data-url"));
 }
 
 function onTapHold_dmrItem(sender) {

@@ -16,6 +16,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSAddRemoveContainerListener;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSProcessorListner;
@@ -74,9 +75,8 @@ public class LibraryPlugin extends Plugin {
 			MainActivity.INSTANCE.showLoadingDialog();
 			MainActivity.UPNP_PROCESSOR.getDMSProcessor().nextPage(m_lisListner);
 		} else if (ACTION_ADDTOPLAYLIST.equals(action)) {
-			Log.e(TAG,"Add all to playlist");
-			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(
-					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(), new DMSAddRemoveContainerListener() {
+			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(),
+					new DMSAddRemoveContainerListener() {
 
 						@Override
 						public void onActionFail(Exception ex) {
@@ -93,10 +93,17 @@ public class LibraryPlugin extends Plugin {
 								e.printStackTrace();
 							}
 							if (!objectID.isEmpty()) {
-								MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().setCurrentItem(
-										Integer.valueOf(objectID));
-								Log.e(TAG, "Current item idx = "
-										+ MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getCurrentItemIndex());
+								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+								DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+								playlistProcessor.setCurrentItem(Integer.valueOf(objectID));
+								if (dmrProcessor == null) {
+									MainActivity.INSTANCE.showLongToast("You must select a Renderer to play this content");
+								} else {
+									dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
+									sendJavascript("setSelectedDMR('"
+											+ MainActivity.UPNP_PROCESSOR.getCurrentDMS().getIdentity().getUdn()
+													.getIdentifierString() + "');");
+								}
 							}
 						}
 

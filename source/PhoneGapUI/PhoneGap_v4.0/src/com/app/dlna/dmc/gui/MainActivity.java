@@ -20,7 +20,9 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.app.dlna.dmc.phonegap.R;
 import com.app.dlna.dmc.phonegap.plugin.DevicesPlugin;
@@ -40,8 +42,8 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 	private BroadcastReceiver m_mountedReceiver = new SDCardReceiver();
 
 	private static final int SIZE = 2;
-	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
-			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
+	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
+			new RejectedExecutionHandler() {
 
 				@Override
 				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -49,6 +51,8 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 				}
 			});
 	private DevicesPlugin devicesPlugin;
+	private Toast m_longToast;
+	private Toast m_shortToast;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +73,12 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 		m_loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		m_loadingDialog.setMessage("Loading...");
 		m_loadingDialog.setCancelable(true);
+
+		m_longToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG);
+		m_longToast.setGravity(Gravity.CENTER, 0, 0);
+
+		m_shortToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
+		m_shortToast.setGravity(Gravity.CENTER, 0, 0);
 	}
 
 	protected void onResume() {
@@ -162,8 +172,8 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 			public void run() {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
-				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause)
-						.setCancelable(false).setPositiveButton("OK", new OnClickListener() {
+				new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause).setCancelable(false)
+						.setPositiveButton("OK", new OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -256,5 +266,27 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 
 	public boolean isLoading() {
 		return m_loadingDialog.isShowing();
+	}
+
+	public void showShortToast(final String message) {
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				m_shortToast.setText(message);
+				m_shortToast.show();
+			}
+		});
+	}
+
+	public void showLongToast(final String message) {
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				m_longToast.setText(message);
+				m_longToast.show();
+			}
+		});
 	}
 }

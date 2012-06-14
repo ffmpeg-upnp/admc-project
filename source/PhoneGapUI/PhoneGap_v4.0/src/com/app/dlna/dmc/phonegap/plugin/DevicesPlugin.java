@@ -92,7 +92,7 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 
 	@SuppressWarnings("rawtypes")
 	private void setDMR(String udn) {
-		Log.i(TAG, "Set dmr, udn = " + udn);
+		MainActivity.INSTANCE.showLongToast(udn);
 		MainActivity.UPNP_PROCESSOR.setCurrentDMR(new UDN(udn));
 		Device device = MainActivity.UPNP_PROCESSOR.getCurrentDMR();
 		if (device != null) {

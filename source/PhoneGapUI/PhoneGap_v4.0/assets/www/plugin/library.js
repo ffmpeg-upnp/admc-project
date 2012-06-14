@@ -32,7 +32,6 @@ function loadBrowseResult(e) {
 		addItemToListView(obj, i);
 	}
 	listview_homenetwork.listview('refresh');
-	showContentController_HomeNetworkSubtab();
 	window.plugins.ApplicationPlugin.showLoadComplete();
 }
 

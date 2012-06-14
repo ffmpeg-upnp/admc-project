@@ -48,7 +48,6 @@ var add_device = function(element, type) {
 var clearDMSList = function() {
 	listview_homenetwork.html('');
 	listview_homenetwork.listview('refresh');
-	window.plugins.ApplicationPlugin.showLoadComplete();
 };
 
 var clearDMRList = function() {
@@ -68,6 +67,7 @@ var onDeviceClick = function(e) {
 	var type = e.getAttribute('type');
 	var udn = e.getAttribute('udn');
 	if (type == 'dms') {
+		showContentController_HomeNetworkSubtab();
 		choseDMS(udn);
 		homenetwork_browsestate = 1;// browse content of dms
 	} else if (type == 'dmr') {

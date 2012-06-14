@@ -36,6 +36,7 @@ import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor.IYoutubeProcessorListener;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
+import com.app.dlna.dmc.processor.playlist.PlaylistItem.Type;
 import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 import com.app.dlna.dmc.utility.Utility;
 import com.app.dlna.dmc.utility.Utility.CheckResult;
@@ -491,7 +492,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				public void onGetLinkComplete(YoutubeItem result) {
 					if (result.getId().equals(m_currentItem.getUrl()))
 						synchronized (m_currentItem) {
-							setUriAndPlay(result.getDirectLink());
+							setUriAndPlay(result.getDirectLink(),
+									Utility.createMetaData(result.getTitle(), Type.YOUTUBE));
 						}
 				}
 
@@ -521,7 +523,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 					CheckResult result = Utility.checkItemURL(item);
 					if (result.getItem().equals(m_currentItem)) {
 						if (result.isReachable())
-							setUriAndPlay(url);
+							setUriAndPlay(url, item.getMetaData());
 						else {
 						}
 					}
@@ -533,7 +535,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void setUriAndPlay(final String url) {
+	private void setUriAndPlay(final String url, final String metaData) {
 		synchronized (m_currentItem) {
 			m_controlPoint.execute(new GetMediaInfo(m_avtransportService) {
 
@@ -578,7 +580,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 								fireUpdatePositionEvent(0, 0);
 								m_isBusy = false;
 								// m_state = STOP;
-								m_controlPoint.execute(new SetAVTransportURI(m_avtransportService, url, null) {
+								m_controlPoint.execute(new SetAVTransportURI(m_avtransportService, url, metaData) {
 									@Override
 									public void success(ActionInvocation invocation) {
 										super.success(invocation);

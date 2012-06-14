@@ -10,6 +10,7 @@ import org.teleal.cling.support.model.item.VideoItem;
 import android.net.Uri;
 
 import com.app.dlna.dmc.processor.http.HTTPServerData;
+import com.app.dlna.dmc.utility.Utility;
 
 public class PlaylistItem {
 	public enum Type {
@@ -70,6 +71,10 @@ public class PlaylistItem {
 
 	public void setType(Type type) {
 		this.m_type = type;
+	}
+	
+	public String getMetaData(){
+		return Utility.createMetaData(m_title, m_type);
 	}
 
 	@Override

@@ -58,7 +58,6 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 		notification.setLatestEventInfo(context, "Scan content on sdcard", "Scanning", contentIntent);
 		notification.flags = Notification.FLAG_NO_CLEAR;
 
-		// TODO: more MIME-Type adding here
 		m_mineMap = new HashMap<String, String>();
 		m_mineMap.put("flv", "video/x-flv");
 
@@ -119,18 +118,6 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			m_listVideo.clear();
 		}
 	}
-
-	// private Thread m_scaningThread = new Thread(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// try {
-	// scanFile(Environment.getExternalStorageDirectory().getAbsolutePath());
-	// } catch (Exception ex) {
-	// ex.printStackTrace();
-	// }
-	// }
-	// });
 
 	private static void scanFile(String path) {
 		try {

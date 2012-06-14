@@ -14,10 +14,7 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
-import java.sql.Date;
 import java.util.List;
-
-import org.teleal.cling.support.messagebox.model.DateTime;
 
 public class HTTPHelper {
 

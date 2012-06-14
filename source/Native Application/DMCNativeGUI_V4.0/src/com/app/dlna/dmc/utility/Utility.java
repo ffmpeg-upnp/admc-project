@@ -15,6 +15,13 @@ import java.text.DecimalFormat;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.teleal.cling.support.contentdirectory.DIDLParser;
+import org.teleal.cling.support.model.DIDLContent;
+import org.teleal.cling.support.model.Res;
+import org.teleal.cling.support.model.item.AudioItem;
+import org.teleal.cling.support.model.item.ImageItem;
+import org.teleal.cling.support.model.item.Item;
+import org.teleal.cling.support.model.item.VideoItem;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -192,22 +199,44 @@ public class Utility {
 			connection.setConnectTimeout(3000);
 			connection.setRequestMethod("HEAD");
 			result.setReachable(connection.getResponseCode() == HttpURLConnection.HTTP_OK);
-			// Map<String, List<String>> resultHeaders = new HashMap<String,
-			// List<String>>();
-			// resultHeaders = connection.getHeaderFields();
-			// Log.e(TAG, "Begin::::::::::::::::::::::::::::::::::::::::");
-			// for (String key : resultHeaders.keySet()) {
-			// // Log.e(TAG, "Header = " + key + " : ");
-			// for (String value : resultHeaders.get(key)) {
-			// Log.e(TAG, "Header = " + key + "  ;  value = " + value);
-			// }
-			// }
-			// Log.e(TAG, "End::::::::::::::::::::::::::::::::::::::::");
 		} catch (Exception ex) {
 			Log.w(TAG, "check fail, url = " + item.getUrl());
 		}
 
 		return result;
+	}
+
+	public static String createMetaData(String title, PlaylistItem.Type type) {
+		Item item = null;
+		switch (type) {
+		case AUDIO_LOCAL:
+		case AUDIO_REMOTE:
+			item = new AudioItem("", "", title, "", null);
+			break;
+		case YOUTUBE:
+		case VIDEO_LOCAL:
+		case VIDEO_REMOTE:
+			item = new VideoItem("", "", title, "", null);
+			break;
+		case IMAGE_LOCAL:
+		case IMAGE_REMOTE:
+			item = new ImageItem("", "", title, "", null);
+			break;
+		default:
+			break;
+		}
+		if (item != null) {
+			DIDLParser ps = new DIDLParser();
+			DIDLContent ct = new DIDLContent();
+			ct.addItem(item);
+			try {
+				return ps.generate(ct);
+			} catch (Exception e) {
+				return "";
+			}
+		} else {
+			return "";
+		}
 	}
 
 	public static class CheckResult {

@@ -6,6 +6,7 @@ public class Playlist {
 	private long m_id;
 	private String m_name;
 	private int m_currentIdx;
+	private String m_metadata;
 
 	public Playlist() {
 		m_id = -1;
@@ -44,6 +45,14 @@ public class Playlist {
 
 	public void setCurrentIdx(int currentIdx) {
 		this.m_currentIdx = currentIdx;
+	}
+
+	public String getMetaData() {
+		return m_metadata;
+	}
+
+	public void setMetaData(String metaData) {
+		this.m_metadata = metaData;
 	}
 
 	public enum ViewMode {

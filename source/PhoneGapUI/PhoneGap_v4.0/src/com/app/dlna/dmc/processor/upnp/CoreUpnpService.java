@@ -1,28 +1,16 @@
 package com.app.dlna.dmc.processor.upnp;
 
 import java.net.NetworkInterface;
-import java.net.URI;
 
-import org.apache.commons.io.IOUtils;
 import org.teleal.cling.UpnpService;
 import org.teleal.cling.UpnpServiceConfiguration;
 import org.teleal.cling.UpnpServiceImpl;
 import org.teleal.cling.android.AndroidUpnpService;
 import org.teleal.cling.android.AndroidUpnpServiceConfiguration;
 import org.teleal.cling.android.AndroidWifiSwitchableRouter;
-import org.teleal.cling.binding.annotations.AnnotationLocalServiceBinder;
 import org.teleal.cling.controlpoint.ControlPoint;
-import org.teleal.cling.model.DefaultServiceManager;
 import org.teleal.cling.model.ModelUtil;
 import org.teleal.cling.model.meta.Device;
-import org.teleal.cling.model.meta.DeviceDetails;
-import org.teleal.cling.model.meta.DeviceIdentity;
-import org.teleal.cling.model.meta.Icon;
-import org.teleal.cling.model.meta.LocalDevice;
-import org.teleal.cling.model.meta.LocalService;
-import org.teleal.cling.model.meta.ManufacturerDetails;
-import org.teleal.cling.model.meta.ModelDetails;
-import org.teleal.cling.model.types.DeviceType;
 import org.teleal.cling.model.types.ServiceType;
 import org.teleal.cling.model.types.UDAServiceType;
 import org.teleal.cling.model.types.UDN;
@@ -42,7 +30,6 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -54,14 +41,11 @@ import com.app.dlna.dmc.phonegap.R;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.http.MainHttpProcessor;
 import com.app.dlna.dmc.processor.impl.DMSProcessorImpl;
-import com.app.dlna.dmc.processor.impl.LocalDMRProcessorImpl;
 import com.app.dlna.dmc.processor.impl.PlaylistProcessorImpl;
 import com.app.dlna.dmc.processor.impl.RemoteDMRProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
-import com.app.dlna.dmc.processor.localdevice.service.LocalConnectionManagerService;
-import com.app.dlna.dmc.processor.localdevice.service.LocalContentDirectoryService;
 import com.app.dlna.dmc.processor.receiver.NetworkStateReceiver;
 import com.app.dlna.dmc.processor.receiver.NetworkStateReceiver.RouterStateListener;
 import com.app.dlna.dmc.utility.Utility;
@@ -85,8 +69,6 @@ public class CoreUpnpService extends Service {
 	private ConnectivityManager m_connectivityManager;
 	private boolean m_isInitialized;
 	private NetworkStateReceiver m_networkReceiver;
-	private UDN m_localDMS_UDN = null;
-	private UDN m_localDMR_UDN = null;
 	private RegistryListener m_registryListener;
 	private WakeLock m_serviceWakeLock;
 
@@ -104,8 +86,8 @@ public class CoreUpnpService extends Service {
 			m_upnpService = new UpnpServiceImpl(createConfiguration(m_wifiManager)) {
 				@Override
 				protected Router createRouter(ProtocolFactory protocolFactory, Registry registry) {
-					AndroidWifiSwitchableRouter router = CoreUpnpService.this.createRouter(getConfiguration(),
-							protocolFactory, m_wifiManager, m_connectivityManager);
+					AndroidWifiSwitchableRouter router = CoreUpnpService.this.createRouter(getConfiguration(), protocolFactory,
+							m_wifiManager, m_connectivityManager);
 					m_networkReceiver = new NetworkStateReceiver(router, new RouterStateListener() {
 
 						@Override
@@ -164,10 +146,7 @@ public class CoreUpnpService extends Service {
 			m_httpThread = new MainHttpProcessor();
 			m_httpThread.start();
 			m_playlistProcessor = new PlaylistProcessorImpl();
-			LocalContentDirectoryService.scanMedia(CoreUpnpService.this);
 			showNotification();
-			startLocalDMS();
-			startLocalDMR();
 		}
 	}
 
@@ -181,8 +160,8 @@ public class CoreUpnpService extends Service {
 		};
 	}
 
-	protected AndroidWifiSwitchableRouter createRouter(UpnpServiceConfiguration configuration,
-			ProtocolFactory protocolFactory, WifiManager wifiManager, ConnectivityManager connectivityManager) {
+	protected AndroidWifiSwitchableRouter createRouter(UpnpServiceConfiguration configuration, ProtocolFactory protocolFactory,
+			WifiManager wifiManager, ConnectivityManager connectivityManager) {
 		return new AndroidWifiSwitchableRouter(configuration, protocolFactory, wifiManager, connectivityManager);
 	}
 
@@ -283,10 +262,7 @@ public class CoreUpnpService extends Service {
 			m_dmrProcessor = null;
 			m_currentDMR = m_upnpService.getRegistry().getDevice(uDN, true);
 			if (m_currentDMR != null) {
-				if (m_currentDMR instanceof LocalDevice)
-					m_dmrProcessor = new LocalDMRProcessorImpl(CoreUpnpService.this);
-				else
-					m_dmrProcessor = new RemoteDMRProcessorImpl(m_currentDMR, getControlPoint());
+				m_dmrProcessor = new RemoteDMRProcessorImpl(m_currentDMR, getControlPoint());
 			} else {
 				Toast.makeText(getApplicationContext(), "Set DMR fail. Cannot get DMR info; UDN = " + uDN.toString(),
 						Toast.LENGTH_SHORT).show();
@@ -335,72 +311,11 @@ public class CoreUpnpService extends Service {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void startLocalDMS() {
-		try {
-			String deviceName = Build.MODEL.toUpperCase() + " " + Build.DEVICE.toUpperCase() + " - DMS";
-			String MACAddress = m_wifiManager.getConnectionInfo().getMacAddress();
-			// Log.i(TAG, "Local DMS: Device name = " + deviceName + ";MAC = " +
-			// MACAddress);
-			String hashUDN = Utility.getMD5(deviceName + "-" + MACAddress + "-LocalDMS");
-			// Log.i(TAG, "Hash UDN = " + hashUDN);
-			String uDNString = hashUDN.substring(0, 8) + "-" + hashUDN.substring(8, 12) + "-"
-					+ hashUDN.substring(12, 16) + "-" + hashUDN.substring(16, 20) + "-" + hashUDN.substring(20);
-			LocalService<LocalContentDirectoryService> contentDirectory = new AnnotationLocalServiceBinder()
-					.read(LocalContentDirectoryService.class);
-			contentDirectory.setManager(new DefaultServiceManager<LocalContentDirectoryService>(contentDirectory,
-					LocalContentDirectoryService.class));
-
-			LocalService<LocalConnectionManagerService> connectionManager = new AnnotationLocalServiceBinder()
-					.read(LocalConnectionManagerService.class);
-
-			connectionManager.setManager(new DefaultServiceManager<LocalConnectionManagerService>(connectionManager,
-					LocalConnectionManagerService.class));
-
-			m_localDMS_UDN = new UDN(uDNString);
-			DeviceIdentity identity = new DeviceIdentity(m_localDMS_UDN);
-			DeviceType type = new DeviceType("schemas-upnp-org", "MediaServer");
-			DeviceDetails details = new DeviceDetails(deviceName, new ManufacturerDetails("Media2Share Local Server"),
-					new ModelDetails("v1.0"), "", "");
-			Icon icon = new Icon("image/png", 48, 48, 8, URI.create(""), IOUtils.toByteArray(getResources()
-					.openRawResource(R.raw.ic_launcher)));
-			LocalDevice localDevice = new LocalDevice(identity, type, details, icon, new LocalService[] {
-					contentDirectory, connectionManager });
-			m_upnpService.getRegistry().addDevice(localDevice);
-			// Log.d(TAG, "Create Local Device complete");
-		} catch (Exception ex) {
-			// Log.d(TAG, "Cannot create Local Device");
-			ex.printStackTrace();
-		}
-	}
-
-	private void startLocalDMR() {
-		try {
-			String deviceName = Build.MODEL.toUpperCase() + " " + Build.DEVICE.toUpperCase() + " - DMR";
-			String MACAddress = m_wifiManager.getConnectionInfo().getMacAddress();
-			String hashUDN = Utility.getMD5(deviceName + "-" + MACAddress + "-LocalDMR");
-			String uDNString = hashUDN.substring(0, 8) + "-" + hashUDN.substring(8, 12) + "-"
-					+ hashUDN.substring(12, 16) + "-" + hashUDN.substring(16, 20) + "-" + hashUDN.substring(20);
-			m_localDMR_UDN = new UDN(uDNString);
-			DeviceIdentity identity = new DeviceIdentity(m_localDMR_UDN);
-			DeviceType type = new DeviceType("schemas-upnp-org", "MediaRenderer");
-			DeviceDetails details = new DeviceDetails(deviceName,
-					new ManufacturerDetails("Android Digital Controller"), new ModelDetails("v1.0"), "", "");
-
-			LocalDevice localDevice = new LocalDevice(identity, type, details, new LocalService[0]);
-
-			m_upnpService.getRegistry().addDevice(localDevice);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
 	private void showNotification() {
 		Notification notification = new Notification(R.drawable.ic_launcher, "CoreUpnpService started",
 				System.currentTimeMillis());
 
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(CoreUpnpService.this,
-				MainActivity.class), 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(CoreUpnpService.this, MainActivity.class), 0);
 
 		notification.setLatestEventInfo(this, "CoreUpnpService", "Service is running", contentIntent);
 		notification.flags = Notification.FLAG_ONGOING_EVENT;

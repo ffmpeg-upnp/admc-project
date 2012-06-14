@@ -19,9 +19,17 @@ PlaylistPlugin.prototype.itemClick = function(idx) {
 	PhoneGap.exec(null, null, 'PlaylistPlugin', 'itemClick', [ idx ]);
 };
 
+PlaylistPlugin.prototype.updateCurrentItem = function() {
+	PhoneGap.exec(null, null, 'PlaylistPlugin', 'updateCurrentItem', [ "" ]);
+};
+
 PhoneGap.addConstructor(function() {
 	PhoneGap.addPlugin("PlaylistPlugin", new PlaylistPlugin());
 });
+
+function setCurrentPlaylistItemTitle(title){
+	$('#div_content_info_nowplaying div').html(title);
+}
 
 function loadPlaylistItems(e) {
 	var result = eval(e);

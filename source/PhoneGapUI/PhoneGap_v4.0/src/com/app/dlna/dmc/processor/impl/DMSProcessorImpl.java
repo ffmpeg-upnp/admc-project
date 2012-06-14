@@ -21,7 +21,6 @@ import org.teleal.cling.support.model.container.Container;
 import org.teleal.cling.support.model.item.Item;
 
 import com.app.dlna.dmc.gui.AppPreference;
-import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;

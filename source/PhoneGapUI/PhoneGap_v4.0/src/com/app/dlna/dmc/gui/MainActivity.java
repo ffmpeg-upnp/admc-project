@@ -11,7 +11,6 @@ import org.json.JSONException;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -20,7 +19,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -28,7 +26,6 @@ import com.app.dlna.dmc.phonegap.R;
 import com.app.dlna.dmc.phonegap.plugin.DevicesPlugin;
 import com.app.dlna.dmc.processor.impl.UpnpProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
-import com.app.dlna.dmc.processor.receiver.SDCardReceiver;
 import com.app.dlna.dmc.processor.systemservice.RestartService;
 import com.app.dlna.dmc.processor.upnp.CoreUpnpService;
 
@@ -38,8 +35,6 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 	private ProgressDialog m_routerProgressDialog;
 	private ProgressDialog m_loadingDialog;
 	public static MainActivity INSTANCE;
-	// SD Card
-	private BroadcastReceiver m_mountedReceiver = new SDCardReceiver();
 
 	private static final int SIZE = 2;
 	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
@@ -65,7 +60,6 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 		filter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
 		filter.addDataScheme("file");
 
-		registerReceiver(m_mountedReceiver, filter);
 		INSTANCE = this;
 
 		super.loadUrl("file:///android_asset/www/index.html");
@@ -73,12 +67,10 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 		m_loadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		m_loadingDialog.setMessage("Loading...");
 		m_loadingDialog.setCancelable(true);
+		m_loadingDialog.setCanceledOnTouchOutside(false);
 
 		m_longToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_LONG);
-		m_longToast.setGravity(Gravity.CENTER, 0, 0);
-
 		m_shortToast = Toast.makeText(MainActivity.this, "", Toast.LENGTH_SHORT);
-		m_shortToast.setGravity(Gravity.CENTER, 0, 0);
 	}
 
 	protected void onResume() {
@@ -96,7 +88,6 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 		Log.e(TAG, "onDestroy");
 		super.onDestroy();
 		UPNP_PROCESSOR.unbindUpnpService();
-		unregisterReceiver(m_mountedReceiver);
 	};
 
 	@Override

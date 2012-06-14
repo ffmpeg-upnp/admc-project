@@ -104,3 +104,19 @@ function onChange_DurationBar (sender){
 function onChange_VolumeBar (sender){
 	console.log('VOLUME: Onchange');
 }
+
+//--------------------------------------SLIDER FUNCTION----------------------------------
+//Parameter note: sender is seekbar (slider) that you want to set it values
+//This method for init-time(if needed) or to update current value of slider bar (seekBar or volumeBar)
+//By default (in html file):
+//duration-seekbar: currentValue = 0, maxValue = 300
+//volume-seekbar: currentValue = 25, maxValue = 50
+function setValueForSeekBar(sender, currentValue, maxValue) {
+	if (sender.attr('data-seeking') == 'false') {
+		$(sender).attr('max', maxValue);
+		$(sender).attr('value', currentValue);
+		$(sender).slider("refresh");
+	}
+}
+
+

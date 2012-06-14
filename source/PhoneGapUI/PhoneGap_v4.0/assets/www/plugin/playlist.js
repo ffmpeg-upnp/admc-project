@@ -29,8 +29,7 @@ function loadPlaylistItems(e) {
 		var obj = result[i];
 		addPlaylistItem(obj);
 	}
-	hideLoadingIcon();
-	playlist_listview.listview('refresh');
+	listview_mediacontent.listview('refresh');
 }
 
 function addPlaylistItem(item) {
@@ -44,14 +43,10 @@ function addPlaylistItem(item) {
 
 	html += "onclick='onPlaylistItemClick(\"" + item.idx + "\");'>";
 
-	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='"
-			+ item.icon
-			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>"
-			+ item.name
-			+ "</h3><p>"
-			+ (item.childCount != null ? (item.childCount.toString() + " childs")
-					: " ") + "</p></a></li>";
-	playlist_listview.append(html);
+	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='" + item.icon
+			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>" + item.name + "</h3><p>"
+			+ (item.childCount != null ? (item.childCount.toString() + " childs") : " ") + "</p></a></li>";
+	listview_mediacontent.append(html);
 }
 
 function onPlaylistItemClick(e) {
@@ -59,8 +54,8 @@ function onPlaylistItemClick(e) {
 }
 
 function clearPlaylist() {
-	playlist_listview.html("");
-	playlist_listview.listview("refresh");
+	listview_mediacontent.html("");
+	listview_mediacontent.listview("refresh");
 }
 
 function playlist_onStop() {

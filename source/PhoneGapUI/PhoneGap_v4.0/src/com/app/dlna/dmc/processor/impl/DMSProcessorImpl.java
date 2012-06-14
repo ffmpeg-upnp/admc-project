@@ -33,7 +33,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 	private ControlPoint m_controlPoint;
 	private List<String> m_traceID;
 	private int m_currentPageIndex;
-	private String m_currentObjectId;
+	private String m_currentObjectId = "";
 	private List<DIDLObject> m_DIDLObjectList;
 	private int m_startIndex;
 
@@ -71,8 +71,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 			actionInvocation.setInput("BrowseFlag", "BrowseDirectChildren");
 			actionInvocation.setInput("Filter", "*");
 			actionInvocation.setInput("StartingIndex", new UnsignedIntegerFourBytes(m_startIndex));
-			actionInvocation.setInput("RequestedCount", new UnsignedIntegerFourBytes(
-					AppPreference.getMaxItemPerLoad() + 1));
+			actionInvocation.setInput("RequestedCount", new UnsignedIntegerFourBytes(AppPreference.getMaxItemPerLoad() + 1));
 			actionInvocation.setInput("SortCriteria", null);
 			ActionCallback actionCallback = new ActionCallback(actionInvocation) {
 
@@ -156,14 +155,12 @@ public class DMSProcessorImpl implements DMSProcessor {
 	}
 
 	@Override
-	public void removeCurrentItemsFromPlaylist(PlaylistProcessor playlistProcessor,
-			DMSAddRemoveContainerListener actionListener) {
+	public void removeCurrentItemsFromPlaylist(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener) {
 		modifyCurrentItems(playlistProcessor, actionListener, ACTION_REMOVE);
 	}
 
 	@Override
-	public void addCurrentItemsToPlaylist(PlaylistProcessor playlistProcessor,
-			DMSAddRemoveContainerListener actionListener) {
+	public void addCurrentItemsToPlaylist(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener) {
 		modifyCurrentItems(playlistProcessor, actionListener, ACTION_ADD);
 	}
 
@@ -187,8 +184,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 	}
 
 	@Override
-	public void addAllToPlaylist(final PlaylistProcessor playlistProcessor,
-			final DMSAddRemoveContainerListener actionListener) {
+	public void addAllToPlaylist(final PlaylistProcessor playlistProcessor, final DMSAddRemoveContainerListener actionListener) {
 		modifyContainerItemsInPlaylist(playlistProcessor, actionListener, ACTION_ADD);
 	}
 
@@ -222,8 +218,9 @@ public class DMSProcessorImpl implements DMSProcessor {
 						if (playlistProcessor == null) {
 							actionListener.onActionFail(new RuntimeException("Playlist processor is null"));
 						} else {
-							
+
 							if (actionType.equals(ACTION_ADD)) {
+								playlistProcessor.getAllItems().clear();
 								for (Item item : items) {
 									PlaylistItem playlistItem = PlaylistItem.createFromDLDIObject(item);
 									if (!playlistProcessor.getAllItems().contains(playlistItem)) {
@@ -234,7 +231,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 								actionListener.onActionComplete("");
 							} else if (actionType.equals(ACTION_REMOVE)) {
 								playlistProcessor.setContainerId("");
-								MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getAllItems().clear();
+								playlistProcessor.getAllItems().clear();
 								actionListener.onActionComplete("");
 							}
 						}
@@ -253,13 +250,17 @@ public class DMSProcessorImpl implements DMSProcessor {
 		}
 	}
 
-	private PlaylistItem modifyItem(final PlaylistProcessor playlistProcessor, final String actionType,
-			DIDLObject object) {
+	private PlaylistItem modifyItem(final PlaylistProcessor playlistProcessor, final String actionType, DIDLObject object) {
 		if (actionType.equals(ACTION_ADD))
 			return playlistProcessor.addDIDLObject(object);
 		else if (actionType.equals(ACTION_REMOVE))
 			return playlistProcessor.removeDIDLObject(object);
 		return null;
+	}
+
+	@Override
+	public String getCurrentContainerId() {
+		return m_currentObjectId;
 	}
 
 }

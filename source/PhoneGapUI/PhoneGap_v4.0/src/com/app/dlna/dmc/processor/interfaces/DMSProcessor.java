@@ -10,6 +10,8 @@ public interface DMSProcessor {
 	static final String ACTION_ADD = "Add";
 
 	void browse(String objectID, int pageIndex, DMSProcessorListner listener);
+	
+	String getCurrentContainerId();
 
 	void nextPage(DMSProcessorListner listener);
 

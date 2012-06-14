@@ -80,47 +80,107 @@ public class LibraryPlugin extends Plugin {
 				MainActivity.INSTANCE.showLongToast("Error: cannot modify playlist");
 				return null;
 			}
-			// TODO: check current container ID here
-			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(playlistProcessor,
-					new DMSAddRemoveContainerListener() {
+			DMSProcessor dmsProcessor = MainActivity.UPNP_PROCESSOR.getDMSProcessor();
+			if (dmsProcessor == null) {
+				MainActivity.INSTANCE.showLongToast("Error: cannot get data from server");
+				return null;
+			}
+			if (dmsProcessor.getCurrentContainerId().equals(playlistProcessor.getContainerId())) {
+				String objectID = "";
+				try {
+					objectID = data.getString(0);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+				playlistProcessor.setCurrentItem(Integer.valueOf(objectID));
+				if (dmrProcessor == null) {
+					MainActivity.INSTANCE.showLongToast("You must select a Renderer to play this content");
+				} else {
+					dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
+					// sendJavascript("setSelectedDMR('"
+					// +
+					// MainActivity.UPNP_PROCESSOR.getCurrentDMS().getIdentity().getUdn().getIdentifierString()
+					// + "');");
+					// TODO: high light current DMS here
+				}
+			} else
+				dmsProcessor.addAllToPlaylist(playlistProcessor, new DMSAddRemoveContainerListener() {
 
-						@Override
-						public void onActionFail(Exception ex) {
-							MainActivity.INSTANCE.hideLoadingDialog();
+					@Override
+					public void onActionFail(Exception ex) {
+						MainActivity.INSTANCE.hideLoadingDialog();
+					}
+
+					@Override
+					public void onActionComplete(String message) {
+						String objectID = "";
+						try {
+							objectID = data.getString(0);
+						} catch (JSONException e) {
+							e.printStackTrace();
 						}
-
-						@Override
-						public void onActionComplete(String message) {
-							MainActivity.INSTANCE.hideLoadingDialog();
-							String objectID = "";
-							try {
-								objectID = data.getString(0);
-							} catch (JSONException e) {
-								e.printStackTrace();
+						if (!objectID.isEmpty()) {
+							DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+							playlistProcessor.setCurrentItem(Integer.valueOf(objectID));
+							if (dmrProcessor == null) {
+								MainActivity.INSTANCE.showLongToast("You must select a Renderer to play this content");
+							} else {
+								dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
+								sendJavascript("setSelectedDMR('"
+										+ MainActivity.UPNP_PROCESSOR.getCurrentDMS().getIdentity().getUdn()
+												.getIdentifierString() + "');");
 							}
-							if (!objectID.isEmpty()) {
-								DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-								playlistProcessor.setCurrentItem(Integer.valueOf(objectID));
-								if (dmrProcessor == null) {
-									MainActivity.INSTANCE
-											.showLongToast("You must select a Renderer to play this content");
-								} else {
-									dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
-									sendJavascript("setSelectedDMR('"
-											+ MainActivity.UPNP_PROCESSOR.getCurrentDMS().getIdentity().getUdn()
-													.getIdentifierString() + "');");
-								}
+						}
+						PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+						sendJavascript("clearPlaylist();");
+						if (playlistProcessor != null) {
+							JSONArray array = new JSONArray();
+							List<PlaylistItem> items = playlistProcessor.getAllItems();
+							for (int i = 0; i < items.size(); ++i) {
+								array.put(getJSONFromPlaylistItem(items.get(i), i));
 							}
+							sendJavascript("loadPlaylistItems('" + array.toString().replace("'", "\\'") + "');");
 						}
+						MainActivity.INSTANCE.hideLoadingDialog();
+					}
 
-						@Override
-						public void onActionStart(String action) {
-							MainActivity.INSTANCE.showLoadingDialog();
-						}
-					});
+					@Override
+					public void onActionStart(String action) {
+						MainActivity.INSTANCE.showLoadingDialog();
+					}
+				});
 
 		}
 		return null;
+	}
+
+	private JSONObject getJSONFromPlaylistItem(PlaylistItem item, int idx) {
+		JSONObject result = new JSONObject();
+		try {
+			result.put("name", item.getTitle().trim().replace("\"", "\\\""));
+			result.put("idx", idx);
+			switch (item.getType()) {
+			case AUDIO_LOCAL:
+			case AUDIO_REMOTE:
+				result.put("icon", "img/ic_didlobject_audio.png");
+				break;
+			case VIDEO_LOCAL:
+			case VIDEO_REMOTE:
+			case YOUTUBE:
+				result.put("icon", "img/ic_didlobject_video.png");
+				break;
+			case IMAGE_REMOTE:
+			case IMAGE_LOCAL:
+				result.put("icon", "img/ic_didlobject_image.png");
+				break;
+			default:
+				break;
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	protected void addToPlaylist(DIDLObject object) {

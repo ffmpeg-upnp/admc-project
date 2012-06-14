@@ -5,7 +5,7 @@ function initTabs() {
 
 	init_LibraryTab();
 	init_NowplayingTab();
-	init_SettingField();
+	//init_SettingField();
 
 	$('#div_navbar_1').bind('tap', function() {
 		switchingLibrarytab();

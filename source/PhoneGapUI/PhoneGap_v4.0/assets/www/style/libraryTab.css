@@ -1,4 +1,4 @@
-#div_global_library_toolbar{
+/* #div_global_library_toolbar{
 	position: fixed;
 	display: block;
 	height: 7.2%;
@@ -11,13 +11,14 @@
 	background: -webkit-gradient(radial, center center, 0, center center, 460, from(#000000), to(#C8C8C8));
 	border-bottom: solid 1px #3C3C3C;
 	-webkit-border-radius: 5px;
-}
+} */
 
 .content_library{
 	position: relative;
 	padding: 0px;
 	margin: 0px;
-	top: 18%;
+	/* top: 18%; */
+	top: 10%;
 	width: 100%;
 	background-color: black;
 	background: black;
@@ -91,17 +92,17 @@
 }
 
 /* Playlist */
-#div_content_playlist{
+/* #div_content_playlist{
 	background-color: black;
-}
+} */
 
 /* Internet */
-#div_content_internet{
+/* #div_content_internet{
 	top: 26%;
 	background-color: black;
-}
+} */
 
-#div_content_internet_searchbar{
+/* #div_content_internet_searchbar{
 	position: fixed;
 	display: block;
 	height: 8%;
@@ -156,4 +157,4 @@
 	height: 80%;
 	top: 10%;
 	left: 12%;
-}
+} */

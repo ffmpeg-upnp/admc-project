@@ -82,7 +82,7 @@ function getPadding_HomeNetworkSubtab(dmrContentVisible,
 }
 
 function showContentController_HomeNetworkSubtab() {
-	if (currentSubTab == "homenetwork" && currentTab_TabsControl == "library") {
+	/*if (currentSubTab == "homenetwork" && currentTab_TabsControl == "library") {
 		homenetworkContentControler_visible = true;
 		if (dmrControllerVisible_GlobalFooter) {
 			var paddingValue = getPadding_HomeNetworkSubtab(true, true);
@@ -92,7 +92,16 @@ function showContentController_HomeNetworkSubtab() {
 			homeNetworkSubTab.css('paddingBottom', paddingValue + 'px');
 		}
 		homenetworkContentControler.fadeIn("fast");
+	}*/
+	homenetworkContentControler_visible = true;
+	if (dmrControllerVisible_GlobalFooter) {
+		var paddingValue = getPadding_HomeNetworkSubtab(true, true);
+		homeNetworkSubTab.css('paddingBottom', paddingValue + 'px');
+	} else {
+		var paddingValue = getPadding_HomeNetworkSubtab(false, true);
+		homeNetworkSubTab.css('paddingBottom', paddingValue + 'px');
 	}
+	homenetworkContentControler.fadeIn("fast");
 }
 
 function hideContentController_HomeNetworkSubtab() {

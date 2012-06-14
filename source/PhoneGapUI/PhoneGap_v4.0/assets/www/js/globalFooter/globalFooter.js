@@ -32,7 +32,7 @@ function close_GlobalFooter (){
 	
 	repadding_HomeNetworkSubtab ();
 	//repadding_PlaylistSubtab ();
-	repadding_InternetSubtab();
+	//repadding_InternetSubtab();
 	
 	dmrController.animate({height: '0%'}, "fast", function (){
 		dmrController.hide();
@@ -54,7 +54,7 @@ function open_GlobalFooter (){
 	dmrRemoteControler.animate({bottom: '14%'}, "fast", function(){
 		repadding_HomeNetworkSubtab();
 		//repadding_PlaylistSubtab();
-		repadding_InternetSubtab();
+		//repadding_InternetSubtab();
 		
 	});
 }

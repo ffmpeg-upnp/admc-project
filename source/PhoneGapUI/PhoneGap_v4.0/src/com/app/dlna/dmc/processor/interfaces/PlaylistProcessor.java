@@ -30,6 +30,10 @@ public interface PlaylistProcessor {
 	PlaylistItem getItemAt(int idx);
 
 	boolean containsUrl(String url);
+	
+	String getContainerId();
+	
+	void setContainerId(String id);
 
 	boolean isFull();
 

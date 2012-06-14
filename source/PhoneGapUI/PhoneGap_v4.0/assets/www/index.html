@@ -117,7 +117,7 @@
 						data-enable="true"
 						data-highlight-image="img/ic_btn_container_selectall_pressed.png"
 						data-normal-image="img/ic_btn_container_selectall_normal.png"> -->
-						<img id="img_btn_back_homenetwork" src="img/ic_btn_back_normal.png"
+					<img id="img_btn_back_homenetwork" src="img/ic_btn_back_normal.png"
 						class="img_normal" data-enable="true"
 						data-highlight-image="img/ic_btn_back_pressed.png"
 						data-normal-image="img/ic_btn_back_normal.png">
@@ -137,38 +137,6 @@
 			<ul id="listview_homenetwork" data-role="listview" data-theme="a">
 			</ul>
 		</div>
-
-		<!-- Playlist tabs -->
-		<!-- <div id="div_content_playlist_controler"
-			class="content_controler library_tab"
-			ontouchmove="preventTouchMove(event);">
-			<div class="content_controler_list_item">
-				<div class="content_controler_item">
-					<img id="img_btn_back_playlist" src="img/ic_btn_back_normal.png"
-						class="img_normal" data-enable="true"
-						data-highlight-image="img/ic_btn_back_pressed.png"
-						data-normal-image="img/ic_btn_back_normal.png">
-				</div>
-
-				<div class="content_controler_item">
-					<img id="img_btn_save" src="img/ic_btn_save_normal.png"
-						class="img_normal" data-enable="true"
-						data-highlight-image="img/ic_btn_save_pressed.png"
-						data-normal-image="img/ic_btn_save_normal.png">
-				</div>
-
-				<div class="content_controler_item">
-					<img id="img_btn_clear" src="img/ic_btn_clear_normal.png"
-						class="img_normal" data-enable="true"
-						data-highlight-image="img/ic_btn_clear_pressed.png"
-						data-normal-image="img/ic_btn_clear_normal.png">
-				</div>
-			</div>
-		</div>
-
-		<div id="div_content_playlist" class="content_library library_tab">
-		
-		</div> -->
 
 		<!-- Internet tab -->
 		<div id="div_content_internet_searchbar" class="library_tab"
@@ -191,35 +159,12 @@
 		<div id="div_content_info_nowplaying" class="nowplaying_tab">
 			<div>Nothing to show</div>
 		</div>
-		
+
 		<div id="div_content_perform_nowplaying" class="nowplaying_tab">
-			<!-- <div id="div_content_perform_wrapper">
-				<div id="div_content_move_left" class="div_content_perform_controller">
-					<img src="img/ic_btn_dmrcontroller_previous_normal.png"
-						class="img_normal"
-						data-enable="true"
-						data-highlight-image="img/ic_btn_dmrcontroller_previous_pressed.png"
-						data-normal-image="img/ic_btn_dmrcontroller_previous_normal.png">
-				</div>
-				
-				<div id="div_content_perform_handler">
-					<div id="div_content_perform_container">
-					
-					</div>
-				</div>
-				
-				<div id="div_content_move_right" class="div_content_perform_controller">
-					<img src="img/ic_btn_dmrcontroller_next_normal.png"
-						class="img_normal"
-						data-enable="true"
-						data-highlight-image="img/ic_btn_dmrcontroller_next_pressed.png"
-						data-normal-image="img/ic_btn_dmrcontroller_next_normal.png">
-				</div>
-			</div> -->
 			<ul id="listview_mediacontent" data-role="listview" data-theme="a">
 			</ul>
 		</div>
-		
+
 		<div id="div_content_controler_nowplaying" class="nowplaying_tab">
 			<div>
 				<div id="div_nowplaying_media_controlBar">
@@ -274,29 +219,29 @@
 							data-normal-image="img/ic_btn_media_changeplaylist_normal.png">
 					</div> -->
 
-					</div>
-					<div id="div_nowplaying_media_seekBar">
-						<input id="slider_seek_bar" data-seeking="false" type="range"
-							value="50" min="0" max="300" style="display: none;"
-							data-highlight="true" data-theme="a" />
-					</div>
-					<div id="div_nowplaying_media_infoBar">
-						<div id="div_nowplaying_media_durationTime">
-							00:00:00/00:00:00</div>
+				</div>
+				<div id="div_nowplaying_media_seekBar">
+					<input id="slider_seek_bar" data-seeking="false" type="range"
+						value="50" min="0" max="300" style="display: none;"
+						data-highlight="true" data-theme="a" />
+				</div>
+				<div id="div_nowplaying_media_infoBar">
+					<div id="div_nowplaying_media_durationTime">
+						00:00:00/00:00:00</div>
 
-						<div id="div_nowplaying_media_volumeBar">
-							<input id="slider_volume_bar" type="range" value="20" min="0"
-								max="50" style="display: none;" data-highlight="true"
-								data-theme="a" />
-						</div>
+					<div id="div_nowplaying_media_volumeBar">
+						<input id="slider_volume_bar" type="range" value="20" min="0"
+							max="50" style="display: none;" data-highlight="true"
+							data-theme="a" />
+					</div>
 
-						<div id="div_nowplaying_media_volumeImage">
-							<img src="img/ic_volume.png">
-						</div>
+					<div id="div_nowplaying_media_volumeImage">
+						<img src="img/ic_volume.png">
 					</div>
 				</div>
 			</div>
-		
+		</div>
+
 		<!--Footer-->
 		<div id="div_remote_footer_controler"
 			ontouchmove="preventTouchMove(event);">
@@ -314,12 +259,11 @@
 				<div class="div_dmr_container">
 					<div id="div_dmr_move_left" class="dmr_movement_controller">
 						<img src="img/ic_btn_dmrcontroller_previous_normal.png"
-							class="img_normal"
-							data-enable="true"
+							class="img_normal" data-enable="true"
 							data-highlight-image="img/ic_btn_dmrcontroller_previous_pressed.png"
 							data-normal-image="img/ic_btn_dmrcontroller_previous_normal.png">
 					</div>
-					
+
 					<div id="div_dmr_handler">
 						<div id="div_dmr_list_container">
 							<!-- <div class="div_dmr_item" data-selected="true" align="center" data-url="LocalPlayer">
@@ -327,11 +271,10 @@
 							</div> -->
 						</div>
 					</div>
-					
+
 					<div id="div_dmr_move_right" class="dmr_movement_controller">
 						<img src="img/ic_btn_dmrcontroller_next_normal.png"
-							class="img_normal"
-							data-enable="true"
+							class="img_normal" data-enable="true"
 							data-highlight-image="img/ic_btn_dmrcontroller_next_pressed.png"
 							data-normal-image="img/ic_btn_dmrcontroller_next_normal.png">
 					</div>

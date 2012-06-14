@@ -75,7 +75,13 @@ public class LibraryPlugin extends Plugin {
 			MainActivity.INSTANCE.showLoadingDialog();
 			MainActivity.UPNP_PROCESSOR.getDMSProcessor().nextPage(m_lisListner);
 		} else if (ACTION_ADDTOPLAYLIST.equals(action)) {
-			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor(),
+			final PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+			if (playlistProcessor == null) {
+				MainActivity.INSTANCE.showLongToast("Error: cannot modify playlist");
+				return null;
+			}
+			// TODO: check current container ID here
+			MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(playlistProcessor,
 					new DMSAddRemoveContainerListener() {
 
 						@Override
@@ -93,11 +99,11 @@ public class LibraryPlugin extends Plugin {
 								e.printStackTrace();
 							}
 							if (!objectID.isEmpty()) {
-								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 								DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 								playlistProcessor.setCurrentItem(Integer.valueOf(objectID));
 								if (dmrProcessor == null) {
-									MainActivity.INSTANCE.showLongToast("You must select a Renderer to play this content");
+									MainActivity.INSTANCE
+											.showLongToast("You must select a Renderer to play this content");
 								} else {
 									dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
 									sendJavascript("setSelectedDMR('"
@@ -112,6 +118,7 @@ public class LibraryPlugin extends Plugin {
 							MainActivity.INSTANCE.showLoadingDialog();
 						}
 					});
+
 		}
 		return null;
 	}

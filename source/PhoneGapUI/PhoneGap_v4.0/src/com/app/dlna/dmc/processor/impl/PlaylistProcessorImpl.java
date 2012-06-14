@@ -16,6 +16,7 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 	private List<PlaylistItem> m_playlistItems;
 	private int m_currentItemIdx;
 	private List<PlaylistListener> m_listeners;
+	private String m_containerId = "";
 
 	public PlaylistProcessorImpl() {
 		m_playlistItems = new ArrayList<PlaylistItem>();
@@ -180,6 +181,16 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		item.setUrl(object.getId());
 		item.setType(Type.YOUTUBE);
 		return item;
+	}
+
+	@Override
+	public String getContainerId() {
+		return m_containerId;
+	}
+
+	@Override
+	public void setContainerId(String id) {
+		m_containerId = id;
 	}
 
 }

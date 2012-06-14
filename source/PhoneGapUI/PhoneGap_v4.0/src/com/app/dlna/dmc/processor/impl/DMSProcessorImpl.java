@@ -222,6 +222,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 						if (playlistProcessor == null) {
 							actionListener.onActionFail(new RuntimeException("Playlist processor is null"));
 						} else {
+							
 							if (actionType.equals(ACTION_ADD)) {
 								for (Item item : items) {
 									PlaylistItem playlistItem = PlaylistItem.createFromDLDIObject(item);
@@ -229,8 +230,10 @@ public class DMSProcessorImpl implements DMSProcessor {
 										playlistProcessor.getAllItems().add(playlistItem);
 									}
 								}
+								playlistProcessor.setContainerId(m_currentObjectId);
 								actionListener.onActionComplete("");
 							} else if (actionType.equals(ACTION_REMOVE)) {
+								playlistProcessor.setContainerId("");
 								MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getAllItems().clear();
 								actionListener.onActionComplete("");
 							}

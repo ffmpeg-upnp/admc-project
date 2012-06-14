@@ -65,9 +65,9 @@ public class MainHttpProcessor extends Thread {
 							String request = null;
 							String requesttype = null;
 							long range = 0;
-							// Log.e(TAG, "<--START HEADER-->");
+							Log.e(TAG, "<--START HEADER-->");
 							while ((line = br.readLine()) != null && (line.length() != 0)) {
-								// Log.e(TAG, line);
+								Log.e(TAG, line);
 								rawrequest.add(line);
 								if (line.contains("GET")) {
 									requesttype = "GET";
@@ -76,11 +76,12 @@ public class MainHttpProcessor extends Thread {
 									requesttype = "HEAD";
 									request = getRequestFilePath(line);
 								} else if (line.contains("Range")) {
+									Log.e(TAG, "Have range");
 									String strrange = line.substring(13, line.lastIndexOf('-'));
 									range = Long.valueOf(strrange);
 								}
 							}
-							// Log.e(TAG, "<--END HEADER-->");
+							Log.e(TAG, "<--END HEADER-->");
 							String filename = null;
 							if (request != null) {
 								Log.e(TAG, "Request = " + request);

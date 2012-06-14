@@ -40,6 +40,10 @@ public class HTTPHelper {
 		return result;
 	}
 
+	public static String createDLNAHeaderField() {
+		return "contentFeatures.dlna.org: *";
+	}
+
 	public static String makeHttp200Reponse(String filename) {
 		String result = "";
 
@@ -55,37 +59,15 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += createDLNAHeaderField();
 		result += NEWLINE;
-		result += "TransferMode.DLNA.ORG: Streaming";
+		result += "transferMode.dlna.org: Streaming";
 		result += NEWLINE;
-		result += "Date: " + DateTime.getCurrentDate().toString();
+		result += "Cache-Control: no-cache";
 		result += NEWLINE;
-		result += "Last-Modified: " + new Date(f.lastModified()).toString();
-		result += NEWLINE;
-		result += "Connection: close";
-		result += NEWLINE;
-		result += "Server: " + HTTPServerData.HOST;
+		result += "Server: Android, UPnP/1.0 DLNADOC/1.50, Simple DMS";
 		result += NEWLINE;
 		result += NEWLINE;
 
 		return result;
-	}
-
-	// private static String getDLNAType(String mimeType) {
-	// String DLNAMimeType = "*";
-	// // String mimeTypePart[] = mimeType.split("/");
-	// // if (mimeTypePart[0].equals("video")) {
-	// // if (mimeTypePart[1].equals("mp4")){
-	// // }
-	// // } else if (mimeTypePart[0].equals("image")) {
-	// // DLNAMimeType = IMAGE;
-	// // } else if (mimeTypePart[0].equals("audio")) {
-	// // DLNAMimeType = AUDIO;
-	// // }
-	// return DLNAMimeType;
-	// }
-
-	public static String createDLNAHeaderField() {
-		return "contentFeatures.dlna.org: DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000";
 	}
 
 	public static String makeHttp206Reponse(String filename, long range) {
@@ -104,15 +86,11 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += createDLNAHeaderField();
 		result += NEWLINE;
-		result += "TransferMode.DLNA.ORG: Streaming";
+		result += "transferMode.dlna.org: Streaming";
 		result += NEWLINE;
-		result += "Date: " + DateTime.getCurrentDate().toString();
+		result += "Cache-Control: no-cache";
 		result += NEWLINE;
-		result += "Last-Modified: " + new Date(f.lastModified()).toString();
-		result += NEWLINE;
-		result += "Connection: close";
-		result += NEWLINE;
-		result += "Server: " + HTTPServerData.HOST;
+		result += "Server: Android, UPnP/1.0 DLNADOC/1.50, Simple DMS";
 		result += NEWLINE;
 		result += NEWLINE;
 
@@ -171,103 +149,6 @@ public class HTTPHelper {
 	}
 
 	public static void handleProxyDataRequest(Socket client, List<String> rawrequest, String directLink) {
-		// try {
-		// HttpURLConnection connection = (HttpURLConnection) new
-		// URL(directLink).openConnection();
-		// connection.setConnectTimeout(5000);
-		// connection.setRequestProperty("Connection", "Close");
-		// for (String str : rawrequest) {
-		// Log.e(TAG, str);
-		// if (str.contains("HEAD")) {
-		// connection.setRequestMethod("HEAD");
-		// } else if (str.contains("GET")) {
-		// connection.setRequestMethod("GET");
-		// } else if (str.contains("Range")) {
-		// connection.addRequestProperty("Range", str.split(":")[1]);
-		// Log.e(TAG, "Have range request, skip = " + str.split(":")[1]);
-		// }
-		// }
-		// connection.connect();
-		// int responseCode = connection.getResponseCode();
-		// if (responseCode == HttpURLConnection.HTTP_OK || responseCode ==
-		// HttpURLConnection.HTTP_PARTIAL) {
-		// BufferedWriter bw = new BufferedWriter(new
-		// OutputStreamWriter(client.getOutputStream()));
-		// Map<String, List<String>> resultHeaders = new HashMap<String,
-		// List<String>>();
-		// resultHeaders = connection.getHeaderFields();
-		// for (String key : resultHeaders.keySet()) {
-		// if (key == null)
-		// for (String value : resultHeaders.get(key)) {
-		// bw.write(value);
-		// bw.write(NEWLINE);
-		// }
-		// else
-		// for (String value : resultHeaders.get(key)) {
-		// if (key.contains("X-Content-Type-Options") ||
-		// key.contains("X-Android-Sent-Millis")
-		// || key.contains("X-Android-Received-Millis") ||
-		// key.contains("Expires")
-		// || key.contains("Cache-Control"))
-		// continue;
-		// if (key.equals("Server")) {
-		// bw.write("Server : SimpleDMS");
-		// } else {
-		// bw.write(key + " : " + value);
-		// }
-		// Log.e(TAG,"Youtube Response:" + key + " : " + value);
-		// bw.write(NEWLINE);
-		// }
-		// }
-		// bw.write(createDLNAHeaderField());
-		// bw.write(NEWLINE);
-		// bw.write("TransferMode.DLNA.ORG: Streaming");
-		// bw.write(NEWLINE);
-		// bw.write(NEWLINE);
-		// bw.flush();
-		//
-		// if (connection.getRequestMethod().equals("GET")) {
-		// DataInputStream dis = new
-		// DataInputStream(connection.getInputStream());
-		// DataOutputStream dos = new
-		// DataOutputStream(client.getOutputStream());
-		//
-		// byte[] buffer = new byte[65536];
-		// int read = -1;
-		// while ((read = dis.read(buffer)) > 0 && HTTPServerData.RUNNING) {
-		// dos.write(buffer, 0, read);
-		// dos.flush();
-		// }
-		//
-		// try {
-		// dis.close();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// try {
-		// dos.close();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// } else {
-		// try {
-		// bw.close();
-		// } catch (Exception e) {
-		// }
-		// }
-		// connection.disconnect();
-		// }
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// } finally {
-		//
-		// try {
-		// client.close();
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// }
-
 		try {
 			URL youtube = new URL(directLink);
 			Socket socket = new Socket(youtube.getHost(), 80);
@@ -279,8 +160,8 @@ public class HTTPHelper {
 					ps.println(token[0] + " " + youtube.getFile() + " HTTP/1.1");
 				} else if (requestLine.contains("Host")) {
 					ps.println("Host: " + youtube.getAuthority());
-				} else if (requestLine.contains("Connection:")) {
-					ps.println("Connection: Close");
+				} else if (requestLine.contains("Cache-Control:")) {
+					ps.println("Cache-Control: no-cache");
 				} else {
 					ps.println(requestLine);
 				}
@@ -297,7 +178,7 @@ public class HTTPHelper {
 				clientPs.println(line);
 			}
 			clientPs.println(createDLNAHeaderField());
-			clientPs.println("TransferMode.DLNA.ORG: Streaming");
+			clientPs.println("transferMode.dlna.org: Streaming");
 			clientPs.println();
 			clientPs.flush();
 

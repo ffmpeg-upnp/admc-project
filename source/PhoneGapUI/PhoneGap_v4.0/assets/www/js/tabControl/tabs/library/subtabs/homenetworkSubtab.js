@@ -101,7 +101,8 @@ function showContentController_HomeNetworkSubtab() {
 		var paddingValue = getPadding_HomeNetworkSubtab(false, true);
 		homeNetworkSubTab.css('paddingBottom', paddingValue + 'px');
 	}
-	homenetworkContentControler.fadeIn("fast");
+	//homenetworkContentControler.fadeIn("fast");
+	homenetworkContentControler.show();
 }
 
 function hideContentController_HomeNetworkSubtab() {

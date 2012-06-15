@@ -111,11 +111,17 @@ function show_LibraryTab (){
 		break;
 	}
 	*/
-	homeNetworkSubTab.fadeIn("fast", function(){
+	
+	
+	/*homeNetworkSubTab.fadeIn("fast", function(){
 		if (homenetworkContentControler_visible){
 			showContentController_HomeNetworkSubtab();
 		}
-	});
+	});*/
+	homeNetworkSubTab.show();
+	if (homenetworkContentControler_visible){
+		showContentController_HomeNetworkSubtab();
+	}
 }
 
 function hide_LibraryTab (){

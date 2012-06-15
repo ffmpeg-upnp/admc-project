@@ -46,7 +46,8 @@ function init_NowplayingTab() {
 }
 
 function show_NowplayingTab() {
-	$('.nowplaying_tab').fadeIn("fast");
+	//$('.nowplaying_tab').fadeIn("fast");
+	$('.nowplaying_tab').show();
 }
 
 function hide_NowplayingTab() {

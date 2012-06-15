@@ -7,6 +7,8 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.teleal.cling.model.message.UpnpResponse;
+import org.teleal.cling.model.meta.Action;
 import org.teleal.cling.model.meta.Device;
 import org.teleal.cling.model.meta.Icon;
 import org.teleal.cling.model.meta.LocalDevice;
@@ -16,7 +18,10 @@ import org.teleal.cling.model.types.UDN;
 import android.util.Log;
 
 import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.DevicesListener;
+import com.app.dlna.dmc.utility.Utility;
 import com.phonegap.api.PhonegapActivity;
 import com.phonegap.api.Plugin;
 import com.phonegap.api.PluginResult;
@@ -96,7 +101,7 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 		MainActivity.UPNP_PROCESSOR.setCurrentDMR(new UDN(udn));
 		Device device = MainActivity.UPNP_PROCESSOR.getCurrentDMR();
 		if (device != null) {
-			// MainActivity.UPNP_PROCESSOR.getDMRProcessor().addListener(DMRListener);
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor().addListener(dMRListner);
 			sendJavascript("setCurrentDMR('" + device.getIdentity().getUdn().getIdentifierString() + "');");
 			sendJavascript("playlist_updateDMRName('" + device.getDetails().getFriendlyName() + "');");
 		} else {
@@ -105,6 +110,52 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 		}
 
 	}
+
+	DMRProcessorListner dMRListner = new DMRProcessorListner() {
+		PlaylistPlugin playlistPlugin = new PlaylistPlugin(MainActivity.INSTANCE);
+
+		@Override
+		public void onUpdatePosition(long current, long max) {
+			playlistPlugin.sendJavascript("playlist_updateDurationSeekbar(" + current + ", " + max + ");");
+			playlistPlugin.sendJavascript("playlist_updateDurationString('" + Utility.getTimeString(current) + " / "
+					+ Utility.getTimeString(max) + "');");
+		}
+
+		@Override
+		public void onStoped() {
+			playlistPlugin.sendJavascript("playlist_onStop();");
+		}
+
+		@Override
+		public void onPlaying() {
+			playlistPlugin.sendJavascript("playlist_onPlaying();");
+		}
+
+		@Override
+		public void onPaused() {
+			playlistPlugin.sendJavascript("playlist_onPause();");
+		}
+
+		@Override
+		public void onErrorEvent(String error) {
+
+		}
+
+		@Override
+		public void onCheckURLStart() {
+
+		}
+
+		@Override
+		public void onCheckURLEnd() {
+
+		}
+
+		@Override
+		public void onActionFail(Action actionCallback, UpnpResponse response, String cause) {
+
+		}
+	};
 
 	private void setDMS(String udn) {
 		MainActivity.UPNP_PROCESSOR.setCurrentDMS(new UDN(udn));

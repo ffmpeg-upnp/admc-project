@@ -22,12 +22,34 @@ PlaylistPlugin.prototype.itemClick = function(idx) {
 PlaylistPlugin.prototype.updateCurrentItem = function() {
 	PhoneGap.exec(null, null, 'PlaylistPlugin', 'updateCurrentItem', [ "" ]);
 };
+PlaylistPlugin.prototype.play = function() {
+	PhoneGap.exec(null, null, 'PlaylistPlugin', 'play', [ "" ]);
+};
 
+PlaylistPlugin.prototype.pause = function() {
+	PhoneGap.exec(null, null, 'PlaylistPlugin', 'pause', [ "" ]);
+};
+
+PlaylistPlugin.prototype.next = function() {
+	PhoneGap.exec(null, null, 'PlaylistPlugin', 'next', [ "" ]);
+};
+
+PlaylistPlugin.prototype.prev = function() {
+	PhoneGap.exec(null, null, 'PlaylistPlugin', 'prev', [ "" ]);
+};
+
+PlaylistPlugin.prototype.setVolume = function() {
+	PhoneGap.exec(null, null, 'PlaylistPlugin', 'setVolume', [ "" ]);
+};
+
+PlaylistPlugin.prototype.seek = function(seekTo) {
+	PhoneGap.exec(null, null, 'PlaylistPlugin', 'seek', [ seekTo ]);
+};
 PhoneGap.addConstructor(function() {
 	PhoneGap.addPlugin("PlaylistPlugin", new PlaylistPlugin());
 });
 
-function setCurrentPlaylistItemTitle(title){
+function setCurrentPlaylistItemTitle(title) {
 	$('#div_content_info_nowplaying div').html(title);
 }
 
@@ -85,5 +107,43 @@ function playlist_onPause() {
 		playlist_currentState = "PAUSE";
 		playlist_updateMediaButton();
 	}
+}
 
+function changePlayButtonState() {
+	var playButton = $('#img_media_control_play');
+	var stateAImgPath = playButton.attr('data-state-a');
+	var stateBImgPath = playButton.attr('data-state-b');
+	if (playlist_currentState != "PLAY") {
+		$(sender).attr('data-current-path', stateBImgPath);
+	} else {
+		$(sender).attr('data-current-path', stateAImgPath);
+	}
+	changeImagePathWithTimeOut(playButton, playButton.attr('data-current-path'), time_to_swap_image);
+}
+
+function playlist_updateMediaButton() {
+	var playButton = $('#img_btn_media_pause_play');
+
+	var stateAImgPath = $(playButton).attr('data-state-a');
+	var stateBImgPath = $(playButton).attr('data-state-b');
+	if (playlist_currentState == "PLAY") {
+		$(playButton).attr('data-current-path', stateBImgPath);
+		$(playButton).attr('data-my-state', 'true');
+	} else {
+		$(playButton).attr('data-current-path', stateAImgPath);
+		$(playButton).attr('data-my-state', 'false');
+	}
+	changeImagePathWithTimeOut(playButton, $(playButton).attr('data-current-path'), time_to_swap_image);
+}
+
+function playlist_updateDurationSeekbar(current, max) {
+	setValueForSeekBar($('#div_nowplaying_media_seekBar input'), current, max);
+}
+
+function playlist_updateDMRName(name) {
+	$('#div_play_dmr_info').html(name);
+}
+
+function playlist_updateDurationString(timeString) {
+	$('#div_nowplaying_media_durationTime').html(timeString);
 }

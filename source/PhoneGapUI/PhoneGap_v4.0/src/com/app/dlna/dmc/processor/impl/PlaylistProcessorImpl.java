@@ -50,6 +50,7 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 	public void previous() {
 		if (m_playlistItems.size() == 0)
 			return;
+		m_currentItemIdx--;
 		if (m_currentItemIdx < 0)
 			m_currentItemIdx = m_playlistItems.size() - 1;
 		fireOnPrevEvent();

@@ -75,7 +75,7 @@ function onTap_Media_Previous(sender) {
 }
 
 function onTap_Media_Pause_Play(sender) {
-	if (playlist_currentState == "PLAYING")
+	if (playlist_currentState == "PLAY")
 		window.plugins.PlaylistPlugin.pause();
 	else
 		window.plugins.PlaylistPlugin.play();
@@ -92,7 +92,7 @@ function onTap_Media_Next(sender) {
 function onChange_DurationBar(sender) {
 	sender.attr('data-seeking', 'false');
 	// Code onChange here..
-	console.log('DURATION: Onchange');
+	window.plugins.PlaylistPlugin.seek($(sender).attr('value'));
 	//console.log("Current value: " + sender.attr('value'));
 }
 

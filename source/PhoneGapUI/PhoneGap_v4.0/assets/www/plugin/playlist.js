@@ -38,8 +38,8 @@ PlaylistPlugin.prototype.prev = function() {
 	PhoneGap.exec(null, null, 'PlaylistPlugin', 'prev', [ "" ]);
 };
 
-PlaylistPlugin.prototype.setVolume = function() {
-	PhoneGap.exec(null, null, 'PlaylistPlugin', 'setVolume', [ "" ]);
+PlaylistPlugin.prototype.setVolume = function(value) {
+	PhoneGap.exec(null, null, 'PlaylistPlugin', 'setVolume', [ value ]);
 };
 
 PlaylistPlugin.prototype.seek = function(seekTo) {
@@ -73,9 +73,13 @@ function addPlaylistItem(item) {
 
 	html += "onclick='onPlaylistItemClick(\"" + item.idx + "\");'>";
 
-	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='" + item.icon
-			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>" + item.name + "</h3><p>"
-			+ (item.childCount != null ? (item.childCount.toString() + " childs") : " ") + "</p></a></li>";
+	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='"
+			+ item.icon
+			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>"
+			+ item.name
+			+ "</h3><p>"
+			+ (item.childCount != null ? (item.childCount.toString() + " childs")
+					: " ") + "</p></a></li>";
 	listview_mediacontent.append(html);
 }
 
@@ -109,35 +113,32 @@ function playlist_onPause() {
 	}
 }
 
-function changePlayButtonState() {
-	var playButton = $('#img_media_control_play');
-	var stateAImgPath = playButton.attr('data-state-a');
-	var stateBImgPath = playButton.attr('data-state-b');
-	if (playlist_currentState != "PLAY") {
-		$(sender).attr('data-current-path', stateBImgPath);
-	} else {
-		$(sender).attr('data-current-path', stateAImgPath);
-	}
-	changeImagePathWithTimeOut(playButton, playButton.attr('data-current-path'), time_to_swap_image);
-}
-
 function playlist_updateMediaButton() {
 	var playButton = $('#img_btn_media_pause_play');
 
 	var stateAImgPath = $(playButton).attr('data-state-a');
 	var stateBImgPath = $(playButton).attr('data-state-b');
-	if (playlist_currentState == "PLAY") {
+	if (playlist_currentState != "PLAY") {
 		$(playButton).attr('data-current-path', stateBImgPath);
 		$(playButton).attr('data-my-state', 'true');
 	} else {
 		$(playButton).attr('data-current-path', stateAImgPath);
 		$(playButton).attr('data-my-state', 'false');
 	}
-	changeImagePathWithTimeOut(playButton, $(playButton).attr('data-current-path'), time_to_swap_image);
+	changeImagePathWithTimeOut(playButton, $(playButton).attr(
+			'data-current-path'), time_to_swap_image);
 }
 
 function playlist_updateDurationSeekbar(current, max) {
 	setValueForSeekBar($('#div_nowplaying_media_seekBar input'), current, max);
+}
+
+function playlist_updateDurationSeekbar(current, max) {
+	setValueForSeekBar($('#div_nowplaying_media_seekBar input'), current, max);
+}
+
+function playlist_updateVolumeSeekbar(current, max) {
+	setValueForSeekBar($('##div_play_volume_left input'), current, max);
 }
 
 function playlist_updateDMRName(name) {

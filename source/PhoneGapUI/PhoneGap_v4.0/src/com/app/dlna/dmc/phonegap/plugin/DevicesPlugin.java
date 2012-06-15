@@ -18,7 +18,6 @@ import org.teleal.cling.model.types.UDN;
 import android.util.Log;
 
 import com.app.dlna.dmc.gui.MainActivity;
-import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.DevicesListener;
 import com.app.dlna.dmc.utility.Utility;
@@ -119,6 +118,7 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 			playlistPlugin.sendJavascript("playlist_updateDurationSeekbar(" + current + ", " + max + ");");
 			playlistPlugin.sendJavascript("playlist_updateDurationString('" + Utility.getTimeString(current) + " / "
 					+ Utility.getTimeString(max) + "');");
+			playlistPlugin.sendJavascript("playlist_updateVolumeSeekbar(" + current + ", " + max + ");");
 		}
 
 		@Override

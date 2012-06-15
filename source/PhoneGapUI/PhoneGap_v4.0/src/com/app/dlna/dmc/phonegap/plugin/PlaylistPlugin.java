@@ -71,14 +71,20 @@ public class PlaylistPlugin extends Plugin {
 				return new PluginResult(Status.JSON_EXCEPTION);
 			}
 		} else if (ACTION_SET_VOLUME.equals(action)) {
-			doSetVolume();
+			try {
+				doSetVolume(data.getInt(0));
+			} catch (JSONException e) {
+				return new PluginResult(Status.JSON_EXCEPTION);
+			}
 		}
 		return null;
 	}
 
-	private void doSetVolume() {
+	private void doSetVolume(int value) {
 		Log.i(TAG, "SetVolume");
-
+		if (MainActivity.UPNP_PROCESSOR.getDMRProcessor() != null) {
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setVolume(value);
+		}
 	}
 
 	private void doSeek(int seekTo) {

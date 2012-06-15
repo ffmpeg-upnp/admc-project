@@ -28,15 +28,11 @@ import org.teleal.cling.support.renderingcontrol.callback.GetVolume;
 import org.teleal.cling.support.renderingcontrol.callback.SetVolume;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.app.dlna.dmc.gui.AppPreference;
-import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
-import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor.IYoutubeProcessorListener;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
-import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 import com.app.dlna.dmc.utility.Utility;
 import com.app.dlna.dmc.utility.Utility.CheckResult;
 
@@ -475,61 +471,20 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		m_isBusy = true;
 		m_currentItem = item;
 		stop();
-		switch (item.getType()) {
-		case YOUTUBE:
-			IYoutubeProcessorListener youtubeCallback = new IYoutubeProcessorListener() {
+		new Thread(new Runnable() {
 
-				@Override
-				public void onStartPorcess() {
-				}
-
-				@Override
-				public void onSearchComplete(List<YoutubeItem> result) {
-				}
-
-				@Override
-				public void onGetLinkComplete(YoutubeItem result) {
-					if (result.getId().equals(m_currentItem.getUrl()))
-						synchronized (m_currentItem) {
-							setUriAndPlay(result.getDirectLink());
-						}
-				}
-
-				@Override
-				public void onFail(final Exception ex) {
-					MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							Toast.makeText(MainActivity.INSTANCE, ex.getMessage(), Toast.LENGTH_SHORT).show();
-						}
-					});
-
-				}
-			};
-			if (AppPreference.getProxyMode()) {
-				new YoutubeProcessorImpl().registURLAsync(new YoutubeItem(item.getUrl()), youtubeCallback);
-			} else {
-				new YoutubeProcessorImpl().getDirectLinkAsync(new YoutubeItem(item.getUrl()), youtubeCallback);
-			}
-			break;
-		default:
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					CheckResult result = Utility.checkItemURL(item);
-					if (result.getItem().equals(m_currentItem)) {
-						if (result.isReachable())
-							setUriAndPlay(url);
-						else {
-						}
+			@Override
+			public void run() {
+				CheckResult result = Utility.checkItemURL(item);
+				if (result.getItem().equals(m_currentItem)) {
+					if (result.isReachable())
+						setUriAndPlay(url);
+					else {
 					}
 				}
+			}
 
-			}).start();
-			break;
-		}
+		}).start();
 	}
 
 	@SuppressWarnings("rawtypes")

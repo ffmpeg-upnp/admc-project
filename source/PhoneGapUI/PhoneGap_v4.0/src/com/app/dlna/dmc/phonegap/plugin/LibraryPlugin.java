@@ -161,17 +161,13 @@ public class LibraryPlugin extends Plugin {
 			result.put("name", item.getTitle().trim().replace("\"", "\\\""));
 			result.put("idx", idx);
 			switch (item.getType()) {
-			case AUDIO_LOCAL:
-			case AUDIO_REMOTE:
+			case AUDIO:
 				result.put("icon", "img/ic_didlobject_audio.png");
 				break;
-			case VIDEO_LOCAL:
-			case VIDEO_REMOTE:
-			case YOUTUBE:
+			case VIDEO:
 				result.put("icon", "img/ic_didlobject_video.png");
 				break;
-			case IMAGE_REMOTE:
-			case IMAGE_LOCAL:
+			case IMAGE:
 				result.put("icon", "img/ic_didlobject_image.png");
 				break;
 			default:

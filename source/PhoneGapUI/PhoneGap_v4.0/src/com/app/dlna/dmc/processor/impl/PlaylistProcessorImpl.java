@@ -9,8 +9,6 @@ import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
-import com.app.dlna.dmc.processor.playlist.PlaylistItem.Type;
-import com.app.dlna.dmc.processor.youtube.YoutubeItem;
 
 public class PlaylistProcessorImpl implements PlaylistProcessor {
 	private List<PlaylistItem> m_playlistItems;
@@ -171,18 +169,6 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		return m_currentItemIdx;
 	}
 
-	@Override
-	public PlaylistItem addYoutubeItem(YoutubeItem result) {
-		return addItem(createPlaylistItem(result));
-	}
-
-	private PlaylistItem createPlaylistItem(YoutubeItem object) {
-		PlaylistItem item = new PlaylistItem();
-		item.setTitle(object.getTitle());
-		item.setUrl(object.getId());
-		item.setType(Type.YOUTUBE);
-		return item;
-	}
 
 	@Override
 	public String getContainerId() {

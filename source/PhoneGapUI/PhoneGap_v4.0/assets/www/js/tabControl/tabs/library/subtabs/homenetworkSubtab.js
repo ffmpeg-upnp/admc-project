@@ -40,8 +40,7 @@ function initHomenetworkSubtab() {
 			.bind(
 					'scroll',
 					function() {
-						if (currentTab_TabsControl == "library"
-								&& currentSubTab == "homenetwork") {
+						if (currentTab_TabsControl == "library") {
 							if (!waitingForNextLoading){
 								var currentScrollPosition = $(document).scrollTop();
 								if (currentScrollPosition <= preScrollPosition_homenetwork) {
@@ -52,7 +51,7 @@ function initHomenetworkSubtab() {
 								preScrollPosition_homenetwork = currentScrollPosition;
 								var documentHeight = homeNetworkSubTab.height()
 										+ currentPadding_homenetwork
-										+ $(window).height() * 0.18;
+										+ $(window).height() * 0.1;
 	
 								if (documentHeight > $(window).height()) {
 									var currentWindowPosition = currentScrollPosition
@@ -60,6 +59,7 @@ function initHomenetworkSubtab() {
 																	  // tolerance-value
 	
 									if (currentWindowPosition >= documentHeight) {
+										console.log("INSIDE");
 										waitingForNextLoading = true;
 										onScrollToEndOfPage_HomenetworkContent();
 										setTimeout (function(){
@@ -158,5 +158,6 @@ function onTap_DeselectAll(sender) {
 }*/
 
 function onScrollToEndOfPage_HomenetworkContent() {
+	console.log("END TO PAGE");
 	window.plugins.LibraryPlugin.loadMore();
 }

@@ -1,7 +1,7 @@
 var currentSubTab;
 
 function init_LibraryTab (){
-	//currentSubTab = "homenetwork";
+	currentSubTab = "homenetwork";
 	
 	initHomenetworkSubtab();
 	//initPlaylistSubtab();
@@ -18,7 +18,7 @@ function setPaddingBottomCSS (value){
 	$('.content_library').css('paddingBottom', value);
 }
 
-function switchingSubTabInLibraryTab (sender){
+/*function switchingSubTabInLibraryTab (sender){
 	var dataHref = sender.attr('data-href');
 	if (currentSubTab != dataHref){
 		switch (dataHref) {
@@ -26,9 +26,9 @@ function switchingSubTabInLibraryTab (sender){
 			showHomeNetworkSubtab(sender);
 			break;
 			
-		/*case "playlist":
-			showPlaylistSubtab(sender);
-			break;*/
+		//case "playlist":
+		//	showPlaylistSubtab(sender);
+		//	break;
 			
 		case "internet":
 			showInternetSubtab(sender);
@@ -36,7 +36,7 @@ function switchingSubTabInLibraryTab (sender){
 		}
 		currentSubTab = dataHref;
 	}
-}
+}*/
 
 /*function showHomeNetworkSubtab (sender){
 	//playlistSubTab.hide();

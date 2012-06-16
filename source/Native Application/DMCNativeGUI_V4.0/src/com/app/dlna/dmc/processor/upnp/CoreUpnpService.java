@@ -22,6 +22,7 @@ import org.teleal.cling.model.meta.LocalDevice;
 import org.teleal.cling.model.meta.LocalService;
 import org.teleal.cling.model.meta.ManufacturerDetails;
 import org.teleal.cling.model.meta.ModelDetails;
+import org.teleal.cling.model.types.DLNADoc;
 import org.teleal.cling.model.types.DeviceType;
 import org.teleal.cling.model.types.ServiceType;
 import org.teleal.cling.model.types.UDAServiceType;
@@ -370,8 +371,9 @@ public class CoreUpnpService extends Service {
 			m_localDMS_UDN = new UDN(uDNString);
 			DeviceIdentity identity = new DeviceIdentity(m_localDMS_UDN);
 			DeviceType type = new DeviceType("schemas-upnp-org", "MediaServer");
+
 			DeviceDetails details = new DeviceDetails(deviceName, new ManufacturerDetails("Media2Share Local Server"),
-					new ModelDetails("v1.0"), "", "");
+					new ModelDetails("v4.0"), "1234567890", "", new DLNADoc[] { new DLNADoc("DMS", "1.50") }, null);
 			Icon icon = new Icon("image/png", 48, 48, 8, URI.create(""), IOUtils.toByteArray(getResources().openRawResource(
 					R.raw.ic_launcher)));
 			LocalDevice localDevice = new LocalDevice(identity, type, details, icon, new LocalService[] { contentDirectory,

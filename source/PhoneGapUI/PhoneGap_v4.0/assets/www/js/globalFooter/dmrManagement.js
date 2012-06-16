@@ -53,10 +53,6 @@ function init_DMRManagement() {
 		dmr_taphold = true;
 		onTapHold_dmrItem($(this));
 	});
-
-	$('#div_dmr_play > div > img').bind('tap', function() {
-		onTap_playButton($(this));
-	});
 }
 
 function resetCSS_dmrItems() {
@@ -180,9 +176,6 @@ function onTap_dmrItem(sender) {
 
 function onTapHold_dmrItem(sender) {
 
-}
-
-function onTap_playButton(sender) {
 }
 
 function onTap_DMRmoveLeftButton(sender) {

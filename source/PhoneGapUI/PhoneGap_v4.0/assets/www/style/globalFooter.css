@@ -32,21 +32,11 @@
 #div_dmr_list {
 	position: relative;
 	height: 100%;
-	width: 78%;
+	width: 100%;
 	float: left;
 	padding: 0px;
 	margin: 0px;
 	overflow: hidden;
-}
-
-#div_dmr_play {
-	position: relative;
-	height: 100%;
-	width: 22%;
-	float: left;
-	padding: 0px;
-	margin: 0px;
-	background-color: black;
 }
 
 .div_dmr_container {
@@ -58,16 +48,6 @@
 	border: solid 1px #787878;
 	-webkit-border-radius: 5px;
 	background-color: black;
-}
-
-#div_dmr_play div img {
-	position: relative;
-	padding: 0px;
-	margin: 0px;
-	height: 80%;
-	width: 80%;
-	top: 10%;
-	left: 10%;
 }
 
 #div_dmr_handler {

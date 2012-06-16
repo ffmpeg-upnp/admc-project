@@ -23,14 +23,10 @@ var add_device = function(element, type) {
 		return;
 	}
 	var device = eval(element);
-	var html = "<li data-icon='false' type='"
-			+ device.type
-			+ "' udn='"
-			+ device.udn
+	var html = "<li data-icon='false' type='" + device.type + "' udn='" + device.udn
 			+ "'  onclick='onDeviceClick(this);'><a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='"
-			+ device.icon
-			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>"
-			+ device.name + "</h3><p>" + device.address + "</p></a></li>";
+			+ device.icon + "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>" + device.name + "</h3><p>"
+			+ device.address + "</p></a></li>";
 	if (type == 'dms') {
 		listview_homenetwork.append(html);
 		listview_homenetwork.listview('refresh');
@@ -85,4 +81,8 @@ function choseDMR(udn) {
 
 function rescanDMS() {
 	window.plugins.LibraryPlugin.browse("0");
+}
+
+function setCurrentDMR(udn) {
+
 }

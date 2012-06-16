@@ -38,8 +38,6 @@ import android.widget.Toast;
 import com.app.dlna.dmc.gui.AppPreference;
 import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.phonegap.R;
-import com.app.dlna.dmc.processor.http.HTTPServerData;
-import com.app.dlna.dmc.processor.http.MainHttpProcessor;
 import com.app.dlna.dmc.processor.impl.DMSProcessorImpl;
 import com.app.dlna.dmc.processor.impl.PlaylistProcessorImpl;
 import com.app.dlna.dmc.processor.impl.RemoteDMRProcessorImpl;
@@ -48,7 +46,6 @@ import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.receiver.NetworkStateReceiver;
 import com.app.dlna.dmc.processor.receiver.NetworkStateReceiver.RouterStateListener;
-import com.app.dlna.dmc.utility.Utility;
 
 public class CoreUpnpService extends Service {
 	@SuppressWarnings("rawtypes")
@@ -56,7 +53,6 @@ public class CoreUpnpService extends Service {
 	@SuppressWarnings("rawtypes")
 	private Device m_currentDMR;
 	public static final int NOTIFICATION = 1500;
-	private MainHttpProcessor m_httpThread;
 	private UpnpService m_upnpService;
 	private CoreUpnpServiceBinder binder = new CoreUpnpServiceBinder();
 	private PlaylistProcessor m_playlistProcessor;
@@ -134,17 +130,8 @@ public class CoreUpnpService extends Service {
 			m_wifiLock = m_wifiManager.createWifiLock(3, "UpnpWifiLock");
 			m_wifiLock.acquire();
 
-			if (m_wifiManager.isWifiEnabled()
-					&& m_connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
-				HTTPServerData.HOST = Utility.intToIp(m_wifiManager.getDhcpInfo().ipAddress);
-			} else {
-				HTTPServerData.HOST = null;
-			}
-
 			m_notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-			m_httpThread = new MainHttpProcessor();
-			m_httpThread.start();
 			m_playlistProcessor = new PlaylistProcessorImpl();
 			showNotification();
 		}
@@ -185,8 +172,6 @@ public class CoreUpnpService extends Service {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-		if (m_httpThread != null)
-			m_httpThread.stopHttpThread();
 
 		try {
 			MainActivity.INSTANCE.EXEC.shutdownNow();

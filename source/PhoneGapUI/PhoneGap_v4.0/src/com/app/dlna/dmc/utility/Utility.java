@@ -1,13 +1,10 @@
 package com.app.dlna.dmc.utility;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.MessageDigest;
@@ -15,6 +12,13 @@ import java.text.DecimalFormat;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.teleal.cling.support.contentdirectory.DIDLParser;
+import org.teleal.cling.support.model.DIDLContent;
+import org.teleal.cling.support.model.Res;
+import org.teleal.cling.support.model.item.AudioItem;
+import org.teleal.cling.support.model.item.ImageItem;
+import org.teleal.cling.support.model.item.Item;
+import org.teleal.cling.support.model.item.VideoItem;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,7 +29,6 @@ import android.widget.ListView;
 
 import com.app.dlna.dmc.gui.MainActivity;
 import com.app.dlna.dmc.phonegap.R;
-import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 
 public class Utility {
@@ -57,24 +60,26 @@ public class Utility {
 		}
 	}
 
-	public static String createLink(File file) {
-		try {
-			return new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT, file.getAbsolutePath(), null, null)
-					.toString();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static String createLink(String path) {
-		try {
-			return new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT, path, null, null).toString();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+	// public static String createLink(File file) {
+	// try {
+	// return new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT,
+	// file.getAbsolutePath(), null, null)
+	// .toString();
+	// } catch (URISyntaxException e) {
+	// e.printStackTrace();
+	// return null;
+	// }
+	// }
+	//
+	// public static String createLink(String path) {
+	// try {
+	// return new URI("http", HTTPServerData.HOST + ":" + HTTPServerData.PORT,
+	// path, null, null).toString();
+	// } catch (URISyntaxException e) {
+	// e.printStackTrace();
+	// return null;
+	// }
+	// }
 
 	public static String getTimeString(long seconds) {
 		StringBuilder sb = new StringBuilder();
@@ -82,8 +87,7 @@ public class Utility {
 		long hour = seconds / 3600;
 		long minute = (seconds - hour * 3600) / 60;
 		long second = seconds - hour * 3600 - minute * 60;
-		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":"
-				+ String.format("%02d", second));
+		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second));
 
 		return sb.toString();
 	}
@@ -96,8 +100,8 @@ public class Utility {
 		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
-	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl,
-			final Map<String, Bitmap> cache, final int size) {
+	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl, final Map<String, Bitmap> cache,
+			final int size) {
 		MainActivity.INSTANCE.EXEC.execute(new Runnable() {
 
 			@Override
@@ -192,22 +196,40 @@ public class Utility {
 			connection.setConnectTimeout(3000);
 			connection.setRequestMethod("HEAD");
 			result.setReachable(connection.getResponseCode() == HttpURLConnection.HTTP_OK);
-			// Map<String, List<String>> resultHeaders = new HashMap<String,
-			// List<String>>();
-			// resultHeaders = connection.getHeaderFields();
-			// Log.e(TAG, "Begin::::::::::::::::::::::::::::::::::::::::");
-			// for (String key : resultHeaders.keySet()) {
-			// // Log.e(TAG, "Header = " + key + " : ");
-			// for (String value : resultHeaders.get(key)) {
-			// Log.e(TAG, "Header = " + key + "  ;  value = " + value);
-			// }
-			// }
-			// Log.e(TAG, "End::::::::::::::::::::::::::::::::::::::::");
 		} catch (Exception ex) {
 			Log.w(TAG, "check fail, url = " + item.getUrl());
 		}
 
 		return result;
+	}
+
+	public static String createMetaData(String title, PlaylistItem.Type type) {
+		Item item = null;
+		switch (type) {
+		case AUDIO:
+			item = new AudioItem("", "", title, "", new Res[0]);
+			break;
+		case VIDEO:
+			item = new VideoItem("", "", title, "", new Res[0]);
+			break;
+		case IMAGE:
+			item = new ImageItem("", "", title, "", new Res[0]);
+			break;
+		default:
+			break;
+		}
+		if (item != null) {
+			DIDLParser ps = new DIDLParser();
+			DIDLContent ct = new DIDLContent();
+			ct.addItem(item);
+			try {
+				return ps.generate(ct);
+			} catch (Exception e) {
+				return "";
+			}
+		} else {
+			return "";
+		}
 	}
 
 	public static class CheckResult {

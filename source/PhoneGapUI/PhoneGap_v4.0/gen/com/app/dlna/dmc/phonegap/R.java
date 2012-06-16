@@ -26,14 +26,18 @@ public final class R {
         public static final int ic_launcher=0x7f020008;
     }
     public static final class id {
-        public static final int contentName=0x7f080002;
-        public static final int downloadProgress=0x7f080001;
-        public static final int download_icon=0x7f080000;
-        public static final int downloaded=0x7f080003;
+        public static final int contentName=0x7f090002;
+        public static final int downloadProgress=0x7f090001;
+        public static final int download_icon=0x7f090000;
+        public static final int downloaded=0x7f090003;
+        public static final int menu_refresh_devices=0x7f090004;
     }
     public static final class layout {
         public static final int download_notification=0x7f030000;
         public static final int main=0x7f030001;
+    }
+    public static final class menu {
+        public static final int main=0x7f080000;
     }
     public static final class raw {
         public static final int ic_launcher=0x7f050000;

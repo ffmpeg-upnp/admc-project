@@ -35,11 +35,6 @@ import org.teleal.cling.transport.spi.InitializationException;
 import org.teleal.cling.transport.spi.StreamServer;
 import org.teleal.cling.transport.spi.UpnpStream;
 
-import android.util.Log;
-
-import com.app.dlna.dmc.processor.http.HTTPServerData;
-import com.sun.net.httpserver.HttpServer;
-
 /**
  * Implementation based on <a href="http://hc.apache.org/">Apache HTTP
  * Components</a>.
@@ -121,12 +116,13 @@ public class StreamServerImpl implements StreamServer<StreamServerConfigurationI
 				// Block until we have a connection
 				Socket clientSocket = serverSocket.accept();
 				log.fine("Incoming connection from: " + clientSocket.getInetAddress());
-				if (HTTPServerData.HOST != null
-						&& !clientSocket.getInetAddress().getHostAddress().equals(HTTPServerData.HOST)
-						&& !configuration.isExported()) {
-					clientSocket.close();
-					continue;
-				}
+				// if (HTTPServerData.HOST != null
+				// &&
+				// !clientSocket.getInetAddress().getHostAddress().equals(HTTPServerData.HOST)
+				// && !configuration.isExported()) {
+				// clientSocket.close();
+				// continue;
+				// }
 				// We have to force this fantastic library to accept HTTP
 				// methods which are not in the holy RFCs.
 				DefaultHttpServerConnection httpServerConnection = new DefaultHttpServerConnection() {

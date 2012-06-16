@@ -14,33 +14,33 @@ function init_NowplayingTab() {
 	$('#img_btn_media_next').bind('tap', function() {
 		onTap_Media_Next($(this));
 	});
-	
-	/*$('#slider_seek_bar').siblings('.ui-slider').bind ('vmousedown', function (){
-		onSeeking_DurationBar ($('#slider_seek_bar'));
-	});
-	
-	$('#slider_seek_bar').siblings('.ui-slider').bind ('vmouseup', function (){
+
+	/*
+	 * $('#slider_seek_bar').siblings('.ui-slider').bind ('vmousedown', function
+	 * (){ onSeeking_DurationBar ($('#slider_seek_bar')); });
+	 * 
+	 * $('#slider_seek_bar').siblings('.ui-slider').bind ('vmouseup', function
+	 * (){ onChange_DurationBar($('#slider_seek_bar')); });
+	 */
+
+	$('#slider_seek_bar').siblings('.ui-slider').bind('vmousedown', function() {
 		onChange_DurationBar($('#slider_seek_bar'));
-	});*/
-	
-	$('#slider_seek_bar').siblings('.ui-slider').bind ('vmousedown', function (){
-		onChange_DurationBar($('#slider_seek_bar'));
 	});
-	
-	$('#slider_seek_bar').siblings('.ui-slider').bind ('vmousemove', function(){
+
+	$('#slider_seek_bar').siblings('.ui-slider').bind('vmousemove', function() {
 		return false;
 	});
-	
-	
-	/*$('#slider_volume_bar').siblings('.ui-slider').bind ('vmouseup', function (){
-		onChange_VolumeBar($('#slider_volume_bar'));
-	});*/
-	
-	$('#slider_volume_bar').siblings('.ui-slider').bind ('vmousedown', function (){
+
+	/*
+	 * $('#slider_volume_bar').siblings('.ui-slider').bind ('vmouseup', function
+	 * (){ onChange_VolumeBar($('#slider_volume_bar')); });
+	 */
+
+	$('#slider_volume_bar').siblings('.ui-slider').bind('vmousedown', function() {
 		onChange_VolumeBar($('#slider_volume_bar'));
 	});
-	
-	$('#slider_volume_bar').siblings('.ui-slider').bind ('vmousemove', function(){
+
+	$('#slider_volume_bar').siblings('.ui-slider').bind('vmousemove', function() {
 		return false;
 	});
 }
@@ -86,19 +86,19 @@ function onTap_Media_Next(sender) {
 	window.plugins.PlaylistPlugin.next();
 }
 
-/*function onSeeking_DurationBar(sender) {
-	sender.attr('data-seeking', 'true');
-}*/
+/*
+ * function onSeeking_DurationBar(sender) { sender.attr('data-seeking', 'true'); }
+ */
 
 function onChange_DurationBar(sender) {
 	sender.attr('data-seeking', 'false');
 	// Code onChange here..
 	window.plugins.PlaylistPlugin.seek($(sender).attr('value'));
-	//console.log("Current value: " + sender.attr('value'));
+	// console.log("Current value: " + sender.attr('value'));
 }
 
 function onChange_VolumeBar(sender) {
-	console.log('VOLUME: Onchange');
+	window.plugins.PlaylistPlugin.setVolume($(sender).attr('value'));
 }
 
 // --------------------------------------SLIDER

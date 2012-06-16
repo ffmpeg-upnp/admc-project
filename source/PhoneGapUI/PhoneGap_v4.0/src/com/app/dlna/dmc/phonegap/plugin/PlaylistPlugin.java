@@ -81,7 +81,7 @@ public class PlaylistPlugin extends Plugin {
 	}
 
 	private void doSetVolume(int value) {
-		Log.i(TAG, "SetVolume");
+		Log.e(TAG, "SetVolume: value = " + value);
 		if (MainActivity.UPNP_PROCESSOR.getDMRProcessor() != null) {
 			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setVolume(value);
 		}

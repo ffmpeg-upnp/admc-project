@@ -19,6 +19,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -279,5 +281,21 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 				m_longToast.show();
 			}
 		});
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_refresh_devices:
+			UPNP_PROCESSOR.refreshDevicesList();
+			break;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

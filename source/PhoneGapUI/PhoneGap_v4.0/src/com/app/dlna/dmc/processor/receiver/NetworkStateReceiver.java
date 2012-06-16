@@ -15,8 +15,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 
-import com.app.dlna.dmc.processor.http.HTTPServerData;
-
 public class NetworkStateReceiver extends BroadcastReceiver {
 	private SwitchableRouter m_router;
 	private RouterStateListener m_routerStateListener;
@@ -72,7 +70,6 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 			List<InetAddress> inets = Collections.list(ni.getInetAddresses());
 			for (InetAddress inet : inets) {
 				if (inet instanceof Inet4Address) {
-					HTTPServerData.HOST = inet.getHostAddress();
 					break;
 				}
 			}

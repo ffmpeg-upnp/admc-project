@@ -4,9 +4,11 @@ import org.teleal.cling.support.model.DIDLObject;
 import org.teleal.cling.support.model.item.AudioItem;
 import org.teleal.cling.support.model.item.VideoItem;
 
+import com.app.dlna.dmc.utility.Utility;
+
 public class PlaylistItem {
 	public enum Type {
-		AUDIO, VIDEO, IMAGE, UNKNOW,
+		VIDEO, AUDIO, IMAGE, UNKNOW
 	}
 
 	private long m_id;
@@ -53,13 +55,16 @@ public class PlaylistItem {
 		this.m_type = type;
 	}
 
+	public String getMetaData() {
+		return Utility.createMetaData(m_title, m_type);
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof PlaylistItem))
 			return false;
 		PlaylistItem other = (PlaylistItem) o;
-		return other.getUrl().equals(this.getUrl()) && other.m_type.equals(this.m_type)
-				&& other.m_title.equals(this.m_title);
+		return other.getUrl().equals(this.getUrl()) && other.m_type.equals(this.m_type) && other.m_title.equals(this.m_title);
 	}
 
 	public static PlaylistItem createFromDLDIObject(DIDLObject object) {

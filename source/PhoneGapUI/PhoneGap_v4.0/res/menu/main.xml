@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_refresh_devices"
+        android:orderInCategory="0"
+        android:title="Refresh"/>
+
+</menu>

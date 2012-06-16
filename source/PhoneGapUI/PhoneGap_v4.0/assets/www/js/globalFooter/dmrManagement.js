@@ -95,7 +95,6 @@ function addNewDMRitem(imageUrl, deviceUdn, deviceName) {
 }
 
 function setSelectedDMR(udn) {
-	alert(udn);
 	if (dmr_selectedItem != null) {
 		dmr_selectedItem.attr("data-selected", "false");
 		dmr_selectedItem.find("img").css("-webkit-border-radius", "0px");

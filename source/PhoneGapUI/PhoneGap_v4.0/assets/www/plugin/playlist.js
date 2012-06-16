@@ -73,13 +73,9 @@ function addPlaylistItem(item) {
 
 	html += "onclick='onPlaylistItemClick(\"" + item.idx + "\");'>";
 
-	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='"
-			+ item.icon
-			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>"
-			+ item.name
-			+ "</h3><p>"
-			+ (item.childCount != null ? (item.childCount.toString() + " childs")
-					: " ") + "</p></a></li>";
+	html += "<a href='#' style='padding-top: 0px;padding-bottom: 0px' data-icon='delete'><img src='" + item.icon
+			+ "' style='height: 100%; width: height; padding-left: 4%; float: left;'/><h3>" + item.name + "</h3><p>"
+			+ (item.childCount != null ? (item.childCount.toString() + " childs") : " ") + "</p></a></li>";
 	listview_mediacontent.append(html);
 }
 
@@ -125,12 +121,7 @@ function playlist_updateMediaButton() {
 		$(playButton).attr('data-current-path', stateAImgPath);
 		$(playButton).attr('data-my-state', 'false');
 	}
-	changeImagePathWithTimeOut(playButton, $(playButton).attr(
-			'data-current-path'), time_to_swap_image);
-}
-
-function playlist_updateDurationSeekbar(current, max) {
-	setValueForSeekBar($('#div_nowplaying_media_seekBar input'), current, max);
+	changeImagePathWithTimeOut(playButton, $(playButton).attr('data-current-path'), time_to_swap_image);
 }
 
 function playlist_updateDurationSeekbar(current, max) {
@@ -138,11 +129,9 @@ function playlist_updateDurationSeekbar(current, max) {
 }
 
 function playlist_updateVolumeSeekbar(current, max) {
-	setValueForSeekBar($('##div_play_volume_left input'), current, max);
-}
-
-function playlist_updateDMRName(name) {
-	$('#div_play_dmr_info').html(name);
+	console.log("SETVOLUME: " + current);
+	console.log("SETVOLUME MAX: " + max);
+	setValueForSeekBar($('#div_nowplaying_media_volumeBar input'), current, max);
 }
 
 function playlist_updateDurationString(timeString) {

@@ -98,11 +98,8 @@ public class LibraryPlugin extends Plugin {
 					MainActivity.INSTANCE.showLongToast("You must select a Renderer to play this content");
 				} else {
 					dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
-					// sendJavascript("setSelectedDMR('"
-					// +
-					// MainActivity.UPNP_PROCESSOR.getCurrentDMS().getIdentity().getUdn().getIdentifierString()
-					// + "');");
-					// TODO: high light current DMS here
+					sendJavascript("setSelectedDMR('"
+							+ MainActivity.UPNP_PROCESSOR.getCurrentDMR().getIdentity().getUdn().getIdentifierString() + "');");
 				}
 			} else
 				dmsProcessor.addAllToPlaylist(playlistProcessor, new DMSAddRemoveContainerListener() {
@@ -114,6 +111,7 @@ public class LibraryPlugin extends Plugin {
 
 					@Override
 					public void onActionComplete(String message) {
+						String jsCommand = "";
 						String objectID = "";
 						try {
 							objectID = data.getString(0);
@@ -127,9 +125,9 @@ public class LibraryPlugin extends Plugin {
 								MainActivity.INSTANCE.showLongToast("You must select a Renderer to play this content");
 							} else {
 								dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
-								sendJavascript("setSelectedDMR('"
-										+ MainActivity.UPNP_PROCESSOR.getCurrentDMS().getIdentity().getUdn()
-												.getIdentifierString() + "');");
+								jsCommand += "setSelectedDMR('"
+										+ MainActivity.UPNP_PROCESSOR.getCurrentDMR().getIdentity().getUdn()
+												.getIdentifierString() + "');";
 							}
 						}
 						PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
@@ -140,8 +138,9 @@ public class LibraryPlugin extends Plugin {
 							for (int i = 0; i < items.size(); ++i) {
 								array.put(getJSONFromPlaylistItem(items.get(i), i));
 							}
-							sendJavascript("loadPlaylistItems('" + array.toString().replace("'", "\\'") + "');");
+							jsCommand += "loadPlaylistItems('" + array.toString().replace("'", "\\'") + "');";
 						}
+						sendJavascript(jsCommand);
 						MainActivity.INSTANCE.hideLoadingDialog();
 					}
 

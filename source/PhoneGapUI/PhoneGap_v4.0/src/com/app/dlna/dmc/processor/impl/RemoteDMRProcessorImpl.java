@@ -93,8 +93,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 						@SuppressWarnings("rawtypes")
 						@Override
 						public void received(ActionInvocation invocation, PositionInfo positionInfo) {
-							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(),
-									positionInfo.getTrackDurationSeconds());
+							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(), positionInfo.getTrackDurationSeconds());
 
 							if (positionInfo.getTrackDurationSeconds() == 0) {
 								fireOnEndTrackEvent();
@@ -478,7 +477,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				CheckResult result = Utility.checkItemURL(item);
 				if (result.getItem().equals(m_currentItem)) {
 					if (result.isReachable())
-						setUriAndPlay(url);
+						setUriAndPlay(url, item.getMetaData());
 					else {
 					}
 				}
@@ -488,7 +487,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void setUriAndPlay(final String url) {
+	private void setUriAndPlay(final String url, final String metaData) {
 		synchronized (m_currentItem) {
 			m_controlPoint.execute(new GetMediaInfo(m_avtransportService) {
 
@@ -533,7 +532,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 								fireUpdatePositionEvent(0, 0);
 								m_isBusy = false;
 								// m_state = STOP;
-								m_controlPoint.execute(new SetAVTransportURI(m_avtransportService, url, null) {
+								m_controlPoint.execute(new SetAVTransportURI(m_avtransportService, url, metaData) {
 									@Override
 									public void success(ActionInvocation invocation) {
 										super.success(invocation);
@@ -553,8 +552,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 									}
 
 									@Override
-									public void failure(ActionInvocation invocation, UpnpResponse response,
-											String defaultMsg) {
+									public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
 										fireOnFailEvent(invocation.getAction(), response, defaultMsg);
 										m_isBusy = false;
 									}

@@ -18,8 +18,11 @@ import org.teleal.cling.model.types.UDN;
 import android.util.Log;
 
 import com.app.dlna.dmc.gui.MainActivity;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.DevicesListener;
+import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 import com.app.dlna.dmc.utility.Utility;
 import com.phonegap.api.PhonegapActivity;
 import com.phonegap.api.Plugin;
@@ -96,18 +99,23 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 
 	@SuppressWarnings("rawtypes")
 	private void setDMR(String udn) {
-		MainActivity.INSTANCE.showLongToast(udn);
 		MainActivity.UPNP_PROCESSOR.setCurrentDMR(new UDN(udn));
 		Device device = MainActivity.UPNP_PROCESSOR.getCurrentDMR();
+		String jsCommand = "";
 		if (device != null) {
 			MainActivity.UPNP_PROCESSOR.getDMRProcessor().addListener(dMRListner);
-			sendJavascript("setCurrentDMR('" + device.getIdentity().getUdn().getIdentifierString() + "');");
-			sendJavascript("playlist_updateDMRName('" + device.getDetails().getFriendlyName() + "');");
+			jsCommand += "setCurrentDMR('" + device.getIdentity().getUdn().getIdentifierString() + "');";
+			jsCommand += "playlist_updateDMRName('" + device.getDetails().getFriendlyName() + "');";
+			PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+			PlaylistItem currentItem = playlistProcessor.getCurrentItem();
+			if (currentItem != null) {
+				MainActivity.UPNP_PROCESSOR.getDMRProcessor().setURIandPlay(currentItem);
+			}
 		} else {
 			Log.i(TAG, "Selected device is null");
-			sendJavascript("playlist_updateDMRName('Please chose a DMR to play');");
+			jsCommand += "playlist_updateDMRName('Please chose a DMR to play');";
 		}
-
+		sendJavascript(jsCommand);
 	}
 
 	DMRProcessorListner dMRListner = new DMRProcessorListner() {
@@ -115,10 +123,15 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 
 		@Override
 		public void onUpdatePosition(long current, long max) {
-			playlistPlugin.sendJavascript("playlist_updateDurationSeekbar(" + current + ", " + max + ");");
-			playlistPlugin.sendJavascript("playlist_updateDurationString('" + Utility.getTimeString(current) + " / "
-					+ Utility.getTimeString(max) + "');");
-			playlistPlugin.sendJavascript("playlist_updateVolumeSeekbar(" + current + ", " + max + ");");
+			String jsCommand = "";
+			jsCommand += "playlist_updateDurationSeekbar(" + current + ", " + max + ");";
+			jsCommand += "playlist_updateDurationString('" + Utility.getTimeString(current) + " / " + Utility.getTimeString(max)
+					+ "');";
+			DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+			if (dmrProcessor != null)
+				jsCommand += "playlist_updateVolumeSeekbar(" + dmrProcessor.getVolume() + ", " + dmrProcessor.getMaxVolume()
+						+ ");";
+			playlistPlugin.sendJavascript(jsCommand);
 		}
 
 		@Override
@@ -151,6 +164,7 @@ public class DevicesPlugin extends Plugin implements DevicesListener {
 
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public void onActionFail(Action actionCallback, UpnpResponse response, String cause) {
 

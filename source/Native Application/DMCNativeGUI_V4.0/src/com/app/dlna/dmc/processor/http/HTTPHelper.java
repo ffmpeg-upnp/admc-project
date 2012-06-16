@@ -38,7 +38,7 @@ public class HTTPHelper {
 	}
 
 	public static String createDLNAHeaderField() {
-		return "contentFeatures.dlna.org: *";
+		return "contentFeatures.dlna.org: DLNA.ORG_OP=01;DLNA.ORG_CI=0;DLNA.ORG_FLAGS=01700000000000000000000000000000";
 	}
 
 	public static String makeHttp200Reponse(String filename) {
@@ -172,6 +172,16 @@ public class HTTPHelper {
 			PrintStream clientPs = new PrintStream(client.getOutputStream());
 			String line = null;
 			while ((line = br.readLine()) != null && !line.trim().isEmpty()) {
+				if (line.contains("Accept-Ranges")) {
+					line = "Accept-Ranges: bytes";
+				} else if (line.contains("Connection")) {
+					line = "Connection: close";
+				} else if (line.contains("Cache-Control")) {
+					line = "Cache-Control: no-store, no-cache, must-revalidate";
+				} else if (line.contains("Expires") || line.contains("Last-Modified") || line.contains("Server")
+						|| line.contains("X-Content-Type-Options")) {
+					continue;
+				}
 				clientPs.println(line);
 			}
 			clientPs.println(createDLNAHeaderField());

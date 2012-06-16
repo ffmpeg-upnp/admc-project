@@ -79,14 +79,6 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 
 	@Override
 	public void previous() {
-		// List<PlaylistItem> playlistItems = getAllItemsByViewMode();
-		// if (playlistItems.size() == 0)
-		// return;
-		// m_currentItemIdx = (m_currentItemIdx - 1) % playlistItems.size();
-		// if (m_currentItemIdx < 0) {
-		// m_currentItemIdx = playlistItems.size() - 1;
-		// } else if (m_currentItemIdx >= playlistItems.size())
-		// m_currentItemIdx = 0;
 		List<PlaylistItem> playlistItems = getAllItemsByViewMode();
 		if (playlistItems.size() == 0)
 			return;

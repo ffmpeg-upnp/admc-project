@@ -77,8 +77,10 @@ public class YoutubeView extends LinearLayout {
 			if (added != null) {
 				Toast.makeText(getContext(), "Added item to playlist", Toast.LENGTH_SHORT).show();
 				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-				if (dmrProcessor != null)
+				if (dmrProcessor != null) {
+					playlistProcessor.setCurrentItem(added);
 					dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
+				}
 			} else {
 				if (playlistProcessor.isFull()) {
 					Toast.makeText(getContext(), "Current playlist is full", Toast.LENGTH_SHORT).show();
@@ -99,8 +101,7 @@ public class YoutubeView extends LinearLayout {
 						public void onClick(DialogInterface dialog, int which) {
 							switch (which) {
 							case 0:
-								MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(
-										m_adapter.getItem(position));
+								MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(m_adapter.getItem(position));
 								break;
 							default:
 								break;

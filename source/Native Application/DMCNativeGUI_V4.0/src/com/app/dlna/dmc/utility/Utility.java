@@ -17,6 +17,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.teleal.cling.support.contentdirectory.DIDLParser;
 import org.teleal.cling.support.model.DIDLContent;
+import org.teleal.cling.support.model.ProtocolInfo;
 import org.teleal.cling.support.model.Res;
 import org.teleal.cling.support.model.item.AudioItem;
 import org.teleal.cling.support.model.item.ImageItem;
@@ -89,8 +90,7 @@ public class Utility {
 		long hour = seconds / 3600;
 		long minute = (seconds - hour * 3600) / 60;
 		long second = seconds - hour * 3600 - minute * 60;
-		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":"
-				+ String.format("%02d", second));
+		sb.append(String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", second));
 
 		return sb.toString();
 	}
@@ -103,8 +103,8 @@ public class Utility {
 		return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 	}
 
-	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl,
-			final Map<String, Bitmap> cache, final int size) {
+	public static void loadImageItemThumbnail(final ImageView image, final String imageUrl, final Map<String, Bitmap> cache,
+			final int size) {
 		MainActivity.INSTANCE.EXEC.execute(new Runnable() {
 
 			@Override
@@ -206,21 +206,22 @@ public class Utility {
 		return result;
 	}
 
-	public static String createMetaData(String title, PlaylistItem.Type type) {
+	public static String createMetaData(String title, PlaylistItem.Type type, String url) {
 		Item item = null;
+		Res res = new Res(new ProtocolInfo("*:*:*:*"), 0l, url);
 		switch (type) {
 		case AUDIO_LOCAL:
 		case AUDIO_REMOTE:
-			item = new AudioItem("", "", title, "", null);
+			item = new AudioItem("0", "0", title, "", res);
 			break;
 		case YOUTUBE:
 		case VIDEO_LOCAL:
 		case VIDEO_REMOTE:
-			item = new VideoItem("", "", title, "", null);
+			item = new VideoItem("0", "0", title, "", res);
 			break;
 		case IMAGE_LOCAL:
 		case IMAGE_REMOTE:
-			item = new ImageItem("", "", title, "", null);
+			item = new ImageItem("0", "0", title, "", res);
 			break;
 		default:
 			break;

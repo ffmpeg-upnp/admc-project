@@ -98,8 +98,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 						@SuppressWarnings("rawtypes")
 						@Override
 						public void received(ActionInvocation invocation, PositionInfo positionInfo) {
-							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(),
-									positionInfo.getTrackDurationSeconds());
+							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(), positionInfo.getTrackDurationSeconds());
 
 							if (positionInfo.getTrackDurationSeconds() == 0) {
 								fireOnEndTrackEvent();
@@ -493,7 +492,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 					if (result.getId().equals(m_currentItem.getUrl()))
 						synchronized (m_currentItem) {
 							setUriAndPlay(result.getDirectLink(),
-									Utility.createMetaData(result.getTitle(), Type.YOUTUBE));
+									Utility.createMetaData(result.getTitle(), Type.YOUTUBE, result.getDirectLink()));
 						}
 				}
 
@@ -600,8 +599,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 									}
 
 									@Override
-									public void failure(ActionInvocation invocation, UpnpResponse response,
-											String defaultMsg) {
+									public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
 										fireOnFailEvent(invocation.getAction(), response, defaultMsg);
 										m_isBusy = false;
 									}

@@ -74,7 +74,7 @@ public class PlaylistItem {
 	}
 	
 	public String getMetaData(){
-		return Utility.createMetaData(m_title, m_type);
+		return Utility.createMetaData(m_title, m_type, m_url);
 	}
 
 	@Override

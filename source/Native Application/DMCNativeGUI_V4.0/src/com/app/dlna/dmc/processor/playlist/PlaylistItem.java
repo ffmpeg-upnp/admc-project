@@ -3,8 +3,11 @@ package com.app.dlna.dmc.processor.playlist;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.teleal.cling.support.contentdirectory.DIDLParser;
+import org.teleal.cling.support.model.DIDLContent;
 import org.teleal.cling.support.model.DIDLObject;
 import org.teleal.cling.support.model.item.AudioItem;
+import org.teleal.cling.support.model.item.Item;
 import org.teleal.cling.support.model.item.VideoItem;
 
 import android.net.Uri;
@@ -21,12 +24,14 @@ public class PlaylistItem {
 	private String m_url;
 	private String m_title;
 	private Type m_type;
+	private String m_metadata;
 
 	public PlaylistItem() {
 		m_id = -1;
 		m_url = "";
 		m_title = "";
 		m_type = Type.UNKNOW;
+		m_metadata = "";
 	}
 
 	public void setId(long id) {
@@ -72,9 +77,15 @@ public class PlaylistItem {
 	public void setType(Type type) {
 		this.m_type = type;
 	}
-	
-	public String getMetaData(){
-		return Utility.createMetaData(m_title, m_type, m_url);
+
+	public String getMetaData() {
+		if (m_metadata.isEmpty())
+			return Utility.createMetaData(m_title, m_type, m_url);
+		return m_metadata;
+	}
+
+	public void setMetaData(String metadata) {
+		m_metadata = metadata;
 	}
 
 	@Override
@@ -106,6 +117,14 @@ public class PlaylistItem {
 				item.setType(Type.IMAGE_LOCAL);
 			} else
 				item.setType(Type.IMAGE_REMOTE);
+		}
+		DIDLParser ps = new DIDLParser();
+		DIDLContent ct = new DIDLContent();
+		ct.addItem((Item) object);
+		try {
+			item.setMetaData(ps.generate(ct));
+		} catch (Exception e) {
+			item.setMetaData("");
 		}
 		return item;
 	}

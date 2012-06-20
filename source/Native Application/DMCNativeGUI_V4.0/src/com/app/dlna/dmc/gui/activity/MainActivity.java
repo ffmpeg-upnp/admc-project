@@ -77,7 +77,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 	public static MainActivity INSTANCE;
 	private BroadcastReceiver m_mountedReceiver = new SDCardReceiver();
 	// NFC
-	private NfcAdapter m_nfcAdapter;
 	private PendingIntent m_pendingIntent;
 	private IntentFilter[] m_filters;
 	private String[][] m_techLists;
@@ -120,7 +119,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 		// m_ll_menu = (LinearLayout) findViewById(R.id.ll_floatMenu);
 
-		m_nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		m_pendingIntent = PendingIntent.getActivity(this, 0,
 				new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
 		// for NfcTAG that have data
@@ -128,7 +126,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 		try {
 			ndefDiscovered.addDataType("text/plain");
 		} catch (MalformedMimeTypeException e) {
-			throw new RuntimeException("fail", e);
+			throw new RuntimeException("Init failed");
 		}
 		// for Empty NfcTAG
 		IntentFilter techDiscovered = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
@@ -208,8 +206,9 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 	protected void onResume() {
 		super.onResume();
-		if (m_nfcAdapter != null)
-			m_nfcAdapter.enableForegroundDispatch(this, m_pendingIntent, m_filters, m_techLists);
+		NfcAdapter defaultAdapter = NfcAdapter.getDefaultAdapter(this);
+		if (defaultAdapter != null)
+			defaultAdapter.enableForegroundDispatch(this, m_pendingIntent, m_filters, m_techLists);
 		if (UPNP_PROCESSOR != null)
 			UPNP_PROCESSOR.setDMSExproted(AppPreference.getDMSExported());
 	};
@@ -217,8 +216,9 @@ public class MainActivity extends TabActivity implements SystemListener {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		if (m_nfcAdapter != null)
-			m_nfcAdapter.disableForegroundDispatch(MainActivity.this);
+		NfcAdapter defaultAdapter = NfcAdapter.getDefaultAdapter(this);
+		if (defaultAdapter != null)
+			defaultAdapter.disableForegroundDispatch(MainActivity.this);
 	}
 
 	protected void onDestroy() {
@@ -581,7 +581,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 	};
 
 	public void waitToWriteTAG(String text) {
-		if (m_nfcAdapter != null && m_nfcAdapter.isEnabled()) {
+		NfcAdapter defaultAdapter = NfcAdapter.getDefaultAdapter(this);
+		if (defaultAdapter != null && defaultAdapter.isEnabled()) {
 			m_messageToWrite = text;
 			m_waitToWriteTAG = true;
 			m_nfcProgressDialog.show();

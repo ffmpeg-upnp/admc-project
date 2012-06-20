@@ -97,5 +97,4 @@
             android:authorities="com.app.dlna.dmc.native.processor.provider.playlistprovider" >
         </provider>
     </application>
-
 </manifest>

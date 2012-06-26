@@ -16,9 +16,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
-public class HTTPHelper {
+import org.apache.http.protocol.HttpRequestHandler;
 
-	private static final int BUFFERSIZE = 131702;
+import android.util.Log;
+
+public class HTTPRequestHandler {
+
+	private static final int BUFFERSIZE = 102400;
+	private static final String TAG = HttpRequestHandler.class.getName();
 	public static String NEWLINE = "\r\n";
 
 	public static String makeGETrequest(String url) throws MalformedURLException {
@@ -41,6 +46,25 @@ public class HTTPHelper {
 		return "contentFeatures.dlna.org: *";
 	}
 
+	public static String createDLNAHeaderField(String mimeType) {
+		String result = "contentFeatures.dlna.org: ";
+		String DLNAHeader = getDLNAHeaderValue(mimeType);
+
+		return result + DLNAHeader;
+	}
+
+	public static String getDLNAHeaderValue(String mimeType) {
+		String DLNAHeader = "*";
+		if (mimeType.startsWith("audio")) {
+			DLNAHeader = "DLNA.ORG_PN=MP3;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+		} else if (mimeType.startsWith("video")) {
+			DLNAHeader = "DLNA.ORG_PN=MPEG_PS_NTSC;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+		} else if (mimeType.startsWith("image")) {
+			DLNAHeader = "DLNA.ORG_PN=JPEG_SM;DLNA.ORG_OP=01;DLNA.ORG_FLAGS=01700000000000000000000000000000";
+		}
+		return DLNAHeader;
+	}
+
 	public static String makeHttp200Reponse(String filename) {
 		String result = "";
 
@@ -54,7 +78,7 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += "Accept-Ranges: bytes";
 		result += NEWLINE;
-		result += createDLNAHeaderField();
+		result += createDLNAHeaderField(mimeType);
 		result += NEWLINE;
 		result += "transferMode.dlna.org: Streaming";
 		result += NEWLINE;
@@ -81,7 +105,7 @@ public class HTTPHelper {
 		result += NEWLINE;
 		result += "Accept-Ranges: bytes";
 		result += NEWLINE;
-		result += createDLNAHeaderField();
+		result += createDLNAHeaderField(mimeType);
 		result += NEWLINE;
 		result += "transferMode.dlna.org: Streaming";
 		result += NEWLINE;
@@ -95,13 +119,14 @@ public class HTTPHelper {
 	}
 
 	public static void handleClientRequest(final Socket client, String requesttype, long range, String filename) {
+		Log.e(TAG, "Request file name = " + filename);
 		try {
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
 			if (range == 0) {
-				bw.write(HTTPHelper.makeHttp200Reponse(filename));
+				bw.write(HTTPRequestHandler.makeHttp200Reponse(filename));
 				bw.flush();
 			} else {
-				bw.write(HTTPHelper.makeHttp206Reponse(filename, range));
+				bw.write(HTTPRequestHandler.makeHttp206Reponse(filename, range));
 				bw.flush();
 			}
 

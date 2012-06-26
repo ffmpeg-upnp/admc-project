@@ -60,7 +60,6 @@ import com.app.dlna.dmc.processor.localdevice.service.LocalContentDirectoryServi
 import com.app.dlna.dmc.processor.nfc.NFCUtils;
 import com.app.dlna.dmc.processor.playlist.PlaylistManager;
 import com.app.dlna.dmc.processor.receiver.SDCardReceiver;
-import com.app.dlna.dmc.processor.systemservice.RestartService;
 import com.app.dlna.dmc.processor.upnp.CoreUpnpService;
 
 @SuppressWarnings("deprecation")
@@ -376,7 +375,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
-									restartActivity();
 								}
 							}).create().show();
 				} catch (Exception e) {
@@ -443,10 +441,6 @@ public class MainActivity extends TabActivity implements SystemListener {
 		});
 	}
 
-	private void restartActivity() {
-		MainActivity.this.startService(new Intent(MainActivity.this, RestartService.class));
-		MainActivity.this.finish();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

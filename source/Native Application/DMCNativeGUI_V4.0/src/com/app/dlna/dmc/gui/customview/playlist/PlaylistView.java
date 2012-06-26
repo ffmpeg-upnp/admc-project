@@ -194,8 +194,6 @@ public class PlaylistView extends DMRListenerView {
 				MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(m_currentPlaylist);
 				m_currentPlaylist.addListener(m_playlistListener);
 				dmrProcessor.setPlaylistProcessor(m_currentPlaylist);
-				dmrProcessor.setSeftAutoNext(true);
-
 				PlaylistItem playlistItem = (PlaylistItem) object;
 				m_currentPlaylist.setCurrentItem(playlistItem);
 				dmrProcessor.setURIandPlay(playlistItem);

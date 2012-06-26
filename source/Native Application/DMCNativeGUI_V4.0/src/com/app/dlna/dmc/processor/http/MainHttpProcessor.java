@@ -87,12 +87,12 @@ public class MainHttpProcessor extends Thread {
 								Log.e(TAG, "Request = " + request);
 								if (HTTPServerData.LINK_MAP.containsKey(request)) {
 									Log.e(TAG, "Youtube Proxy mode");
-									HTTPHelper.handleProxyDataRequest(client, rawrequest, HTTPServerData.LINK_MAP.get(request));
+									HTTPRequestHandler.handleProxyDataRequest(client, rawrequest, HTTPServerData.LINK_MAP.get(request));
 								} else {
 									filename = URLDecoder.decode(request, "ASCII");
 									Log.e(TAG, "Play-to mode, file name = " + filename);
 									if (filename != null && filename.length() != 0) {
-										HTTPHelper.handleClientRequest(client, requesttype, range, filename);
+										HTTPRequestHandler.handleClientRequest(client, requesttype, range, filename);
 									}
 								}
 

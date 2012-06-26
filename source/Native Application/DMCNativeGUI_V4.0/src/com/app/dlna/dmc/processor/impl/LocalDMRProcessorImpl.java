@@ -32,7 +32,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	private PlaylistProcessor m_playlistProcessor;
 	private AudioManager m_audioManager;
 	private int m_maxVolume;
-	private boolean m_selfAutoNext;
 	private static final int STATE_PLAYING = 0;
 	private static final int STATE_STOPED = 1;
 	private static final int STATE_PAUSED = 2;
@@ -107,7 +106,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		m_currentItem = new PlaylistItem();
 		m_audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		m_maxVolume = m_audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-		m_selfAutoNext = true;
 		m_updateThread = new UpdateThread();
 		m_updateThread.start();
 	}
@@ -204,7 +202,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 									}
 							}
 						else {
-							autoNext();
 						}
 					}
 				}
@@ -230,7 +227,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		public void onCompletion(MediaPlayer mp) {
 			mp.reset();
 			fireOnStopedEvent();
-			if (m_playlistProcessor != null && m_selfAutoNext)
+			if (m_playlistProcessor != null && AppPreference.getAutoNext())
 				m_playlistProcessor.next();
 		}
 	};
@@ -358,10 +355,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 		m_playlistProcessor = playlistProcessor;
 	}
 
-	@Override
-	public void setSeftAutoNext(boolean autoNext) {
-		m_selfAutoNext = autoNext;
-	}
 
 	@Override
 	public String getCurrentTrackURI() {
@@ -414,13 +407,6 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 				listener.onPlaying();
 			}
 		}
-	}
-
-	private void autoNext() {
-		m_player.reset();
-		fireOnStopedEvent();
-		if (m_playlistProcessor != null && m_selfAutoNext)
-			m_playlistProcessor.next();
 	}
 
 	public void setHolder(SurfaceHolder holder) {

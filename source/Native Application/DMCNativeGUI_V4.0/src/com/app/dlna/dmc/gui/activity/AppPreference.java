@@ -79,4 +79,12 @@ public class AppPreference {
 	public static boolean stopDMR() {
 		return PREF != null ? PREF.getBoolean("stop_dmr", true) : true;
 	}
+
+	public static String getLocalServerName() {
+		return "Media2Share Server";
+	}
+
+	public static boolean getAutoNext() {
+		return PREF != null ? PREF.getBoolean("auto_next", false) : false;
+	}
 }

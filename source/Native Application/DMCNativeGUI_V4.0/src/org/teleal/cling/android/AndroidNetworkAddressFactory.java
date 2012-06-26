@@ -262,7 +262,6 @@ public class AndroidNetworkAddressFactory implements NetworkAddressFactory {
 			log.info("No network interfaces available");
 			return null;
 		}
-
 		if (interfaces.size() <= 1) {
 			// case 1
 			// only loopback interface or no interface present
@@ -280,23 +279,23 @@ public class AndroidNetworkAddressFactory implements NetworkAddressFactory {
 				}
 
 				if (networkInfo == null) {
-					// case 4: only hot-spot mode
+					// case 3: only hot-spot mode
 					return iface;
 				} else if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE
 						|| networkInfo.getType() == ConnectivityManager.TYPE_MOBILE_DUN
 						|| networkInfo.getType() == ConnectivityManager.TYPE_MOBILE_HIPRI
 						|| networkInfo.getType() == ConnectivityManager.TYPE_MOBILE_MMS
 						|| networkInfo.getType() == ConnectivityManager.TYPE_MOBILE_SUPL) {
-					// case 6: only mobile network
+					// case 5: only mobile network
 					return null;
 				} else if (connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
-					// case 2, 3: connected to an access point
+					// case 2: connected to an access point
 					return iface;
 				}
 			}
 		}
 		if (interfaces.size() >= 3) {
-			// case 5: hot-spot + mobile network
+			// case 4: hot-spot + mobile network
 			for (NetworkInterface iface : interfaces) {
 				try {
 					if (iface.isLoopback()) {

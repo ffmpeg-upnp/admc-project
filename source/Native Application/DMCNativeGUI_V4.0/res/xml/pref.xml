@@ -5,7 +5,7 @@
         android:summary="Application"
         android:title="Application" >
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="kill_process"
             android:summary="WARNING: Not recommended. Use this option only when application do something wrong."
             android:title="Kill process after exit" />
@@ -56,7 +56,13 @@
             android:key="stop_dmr"
             android:summary="Stop DMR when switching to another or close application"
             android:title="Stop DMR when leave" />
-        <ListPreference
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="auto_next"
+            android:summary="Auto next when renderer reach the end of track"
+            android:title="Auto next" />
+
+        <ListPreference
             android:defaultValue="512"
             android:entries="@array/imageQuality"
             android:entryValues="@array/imageQualityValues"

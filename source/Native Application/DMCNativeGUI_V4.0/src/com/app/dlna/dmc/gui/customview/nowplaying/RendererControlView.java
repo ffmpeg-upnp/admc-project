@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
@@ -48,6 +49,7 @@ public class RendererControlView extends LinearLayout {
 	private static final int STATE_PLAYING = 0;
 	private static final int STATE__PAUSE = 1;
 	private static final int STATE_STOP = 2;
+	protected static final String TAG = RendererControlView.class.getName();
 	private TextView m_tv_current;
 	private TextView m_tv_max;
 	private ImageView m_btn_playPause, m_btn_next, m_btn_prev;
@@ -398,11 +400,18 @@ public class RendererControlView extends LinearLayout {
 
 		@Override
 		public void onErrorEvent(final String error) {
+			// MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+			//
+			// @Override
+			// public void run() {
+			// MainActivity.UPNP_PROCESSOR.refreshDevicesList();
+			// }
+			// });
+			Log.e(TAG, "error = " + error);
 			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
 				@Override
 				public void run() {
-					MainActivity.UPNP_PROCESSOR.refreshDevicesList();
+					Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
 				}
 			});
 		}
@@ -410,13 +419,15 @@ public class RendererControlView extends LinearLayout {
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void onActionFail(Action actionCallback, final UpnpResponse response, final String cause) {
-			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					MainActivity.UPNP_PROCESSOR.refreshDevicesList();
-				}
-			});
+			// MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+			//
+			// @Override
+			// public void run() {
+			// MainActivity.UPNP_PROCESSOR.refreshDevicesList();
+			// }
+			// });
+			Log.e(TAG, "Action fail: actionName = " + actionCallback.getName() + " ; response = " + response.getStatusMessage()
+					+ " ; cause = " + cause);
 		}
 
 		@Override

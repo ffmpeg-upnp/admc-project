@@ -87,10 +87,6 @@
             android:name="com.app.dlna.dmc.processor.upnp.CoreUpnpService"
             android:description="@string/upnp_service" >
         </service>
-        <service
-            android:name="com.app.dlna.dmc.processor.systemservice.RestartService"
-            android:description="@string/upnp_service" >
-        </service>
 
         <provider
             android:name="com.app.dlna.dmc.processor.provider.PlaylistProvider"

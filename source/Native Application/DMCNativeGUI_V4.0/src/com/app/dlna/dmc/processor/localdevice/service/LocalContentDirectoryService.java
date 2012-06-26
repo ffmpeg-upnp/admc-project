@@ -13,6 +13,7 @@ import org.teleal.cling.support.model.BrowseFlag;
 import org.teleal.cling.support.model.BrowseResult;
 import org.teleal.cling.support.model.DIDLContent;
 import org.teleal.cling.support.model.DIDLObject;
+import org.teleal.cling.support.model.ProtocolInfo;
 import org.teleal.cling.support.model.Res;
 import org.teleal.cling.support.model.SortCriterion;
 import org.teleal.cling.support.model.container.StorageFolder;
@@ -32,6 +33,7 @@ import android.webkit.MimeTypeMap;
 
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.resource.ResourceManager;
+import com.app.dlna.dmc.processor.http.HTTPRequestHandler;
 import com.app.dlna.dmc.processor.http.HTTPServerData;
 import com.app.dlna.dmc.utility.Utility;
 
@@ -50,8 +52,8 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	public static void scanMedia(final Context context) {
 		IS_SCANNING = true;
 		m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		final Notification notification = new Notification(ResourceManager.getScanningIcon(),
-				"Scanning content on sdcard", System.currentTimeMillis());
+		final Notification notification = new Notification(ResourceManager.getScanningIcon(), "Scanning content on sdcard",
+				System.currentTimeMillis());
 
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(), 0);
 
@@ -150,20 +152,23 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			if (fileExtension != null) {
 				if (m_musicMap.contains(fileExtension)) {
 					MusicTrack musicTrack = new MusicTrack("0/1/" + subFile.getName(), "0/1", subFile.getName(),
-							"local dms", "", "", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
-									subFile.length(), Utility.createLink(subFile)));
+							AppPreference.getLocalServerName(), "", "", new Res(new ProtocolInfo("http-get:*:" + mimeType + ":"
+									+ HTTPRequestHandler.getDLNAHeaderValue(mimeType)), subFile.length(),
+									Utility.createLink(subFile)));
 					m_listMusic.add(musicTrack);
 					return musicTrack;
 				} else if (m_videoMap.contains(fileExtension)) {
 					VideoItem videoItem = new VideoItem("0/2/" + subFile.getName(), "0/2", subFile.getName(),
-							"local dms", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
-									subFile.length(), Utility.createLink(subFile)));
+							AppPreference.getLocalServerName(), new Res(new ProtocolInfo("http-get:*:" + mimeType + ":"
+									+ HTTPRequestHandler.getDLNAHeaderValue(mimeType)), subFile.length(),
+									Utility.createLink(subFile)));
 					m_listVideo.add(new VideoItem(videoItem));
 					return videoItem;
 				} else if (m_imageMap.contains(fileExtension)) {
 					ImageItem imageItem = new ImageItem("0/3/" + subFile.getName(), "0/3", subFile.getName(),
-							"local dms", new Res(new MimeType(mimeType.split("/")[0], mimeType.split("/")[1]),
-									subFile.length(), Utility.createLink(subFile)));
+							AppPreference.getLocalServerName(), new Res(new ProtocolInfo("http-get:*:" + mimeType + ":"
+									+ HTTPRequestHandler.getDLNAHeaderValue(mimeType)), subFile.length(),
+									Utility.createLink(subFile)));
 					m_listPhoto.add(new ImageItem(imageItem));
 					return imageItem;
 				}
@@ -173,16 +178,19 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	}
 
 	@Override
-	public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult,
-			long maxResults, SortCriterion[] orderby) throws ContentDirectoryException {
+	public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults,
+			SortCriterion[] orderby) throws ContentDirectoryException {
 		BrowseResult br = null;
 		int count = 0;
 		try {
 			final DIDLContent content = new DIDLContent();
 			if (objectID.equals("0")) {
-				content.addContainer(new StorageFolder("0/1", "0", "Music", "Android Local DMS", m_listMusic.size(), 0l));
-				content.addContainer(new StorageFolder("0/2", "0", "Video", "Android Local DMS", m_listVideo.size(), 0l));
-				content.addContainer(new StorageFolder("0/3", "0", "Photo", "Android Local DMS", m_listPhoto.size(), 0l));
+				content.addContainer(new StorageFolder("0/1", "0", "Music", AppPreference.getLocalServerName(), m_listMusic
+						.size(), 0l));
+				content.addContainer(new StorageFolder("0/2", "0", "Video", AppPreference.getLocalServerName(), m_listVideo
+						.size(), 0l));
+				content.addContainer(new StorageFolder("0/3", "0", "Photo", AppPreference.getLocalServerName(), m_listPhoto
+						.size(), 0l));
 				count = 3;
 			} else if (objectID.equals("0/1"))
 				count = getResultContent(firstResult, maxResults, content, m_listMusic);
@@ -207,8 +215,8 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			if (maxResults == 0)
 				toIndex = sourceList.size();
 			else
-				toIndex = ((firstResult + maxResults) < (sourceList.size() - 1) ? (int) (firstResult + maxResults)
-						: (sourceList.size() - 1)) + 1;
+				toIndex = ((firstResult + maxResults) < (sourceList.size() - 1) ? (int) (firstResult + maxResults) : (sourceList
+						.size() - 1)) + 1;
 			for (DIDLObject didlObject : sourceList.subList((int) firstResult, toIndex)) {
 				if (didlObject != null) {
 					content.addItem((Item) didlObject);

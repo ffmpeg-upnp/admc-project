@@ -196,15 +196,6 @@ public class DMRListActivity extends Activity implements SystemListener {
 		}
 	}
 
-	public void onCloseClick(View view) {
-		this.finish();
-	}
-
-	public void onRefreshClick(View view) {
-		if (m_upnpProcessor != null)
-			m_upnpProcessor.refreshDevicesList();
-	}
-
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void onStartComplete() {

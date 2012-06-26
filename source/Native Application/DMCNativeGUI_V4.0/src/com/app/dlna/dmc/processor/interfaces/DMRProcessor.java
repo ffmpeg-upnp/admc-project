@@ -33,8 +33,6 @@ public interface DMRProcessor {
 
 	void setPlaylistProcessor(PlaylistProcessor playlistProcessor);
 
-	void setSeftAutoNext(boolean autoNext);
-
 	String getCurrentTrackURI();
 
 	void setRunning(boolean running);

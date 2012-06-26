@@ -5,9 +5,11 @@ import org.teleal.cling.model.meta.Action;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.gui.customview.adapter.CustomArrayAdapter;
@@ -29,6 +31,8 @@ public class DMRListenerView extends LinearLayout {
 	}
 
 	DMRProcessorListner m_dmrListner = new DMRProcessorListner() {
+
+		private String TAG = DMRListenerView.class.getName();
 
 		@Override
 		public void onUpdatePosition(long current, long max) {
@@ -72,8 +76,18 @@ public class DMRListenerView extends LinearLayout {
 		}
 
 		@Override
-		public void onErrorEvent(String error) {
-			MainActivity.UPNP_PROCESSOR.refreshDevicesList();
+		public void onErrorEvent(final String error) {
+			// MainActivity.UPNP_PROCESSOR.refreshDevicesList();
+			Log.e(TAG, "error: " + error);
+			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+				}
+			});
+
 		}
 
 		@SuppressWarnings("rawtypes")

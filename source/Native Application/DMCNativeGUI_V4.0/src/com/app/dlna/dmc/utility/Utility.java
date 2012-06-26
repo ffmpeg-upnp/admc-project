@@ -194,14 +194,15 @@ public class Utility {
 
 	public static CheckResult checkItemURL(PlaylistItem item) {
 		CheckResult result = new CheckResult(item, false);
-		try {
-			HttpURLConnection connection = (HttpURLConnection) new URL(item.getUrl()).openConnection();
-			connection.setConnectTimeout(3000);
-			connection.setRequestMethod("HEAD");
-			result.setReachable(connection.getResponseCode() == HttpURLConnection.HTTP_OK);
-		} catch (Exception ex) {
-			Log.w(TAG, "check fail, url = " + item.getUrl());
-		}
+//		try {
+//			HttpURLConnection connection = (HttpURLConnection) new URL(item.getUrl()).openConnection();
+//			connection.setConnectTimeout(3000);
+//			connection.setRequestMethod("HEAD");
+//			result.setReachable(connection.getResponseCode() == HttpURLConnection.HTTP_OK);
+//		} catch (Exception ex) {
+//			Log.w(TAG, "check fail, url = " + item.getUrl());
+//		}
+		result.setReachable(true);
 
 		return result;
 	}

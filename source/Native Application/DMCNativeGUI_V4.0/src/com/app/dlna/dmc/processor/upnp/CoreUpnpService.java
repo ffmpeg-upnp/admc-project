@@ -7,7 +7,6 @@ import org.apache.commons.io.IOUtils;
 import org.teleal.cling.UpnpService;
 import org.teleal.cling.UpnpServiceConfiguration;
 import org.teleal.cling.UpnpServiceImpl;
-import org.teleal.cling.android.AndroidUpnpService;
 import org.teleal.cling.android.AndroidUpnpServiceConfiguration;
 import org.teleal.cling.android.AndroidWifiSwitchableRouter;
 import org.teleal.cling.binding.annotations.AnnotationLocalServiceBinder;
@@ -252,7 +251,7 @@ public class CoreUpnpService extends Service {
 		return binder;
 	}
 
-	public class CoreUpnpServiceBinder extends android.os.Binder implements AndroidUpnpService {
+	public class CoreUpnpServiceBinder extends android.os.Binder {
 
 		public boolean isInitialized() {
 			return m_isInitialized;

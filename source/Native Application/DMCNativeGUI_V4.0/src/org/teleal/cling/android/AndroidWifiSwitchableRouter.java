@@ -53,7 +53,6 @@ public class AndroidWifiSwitchableRouter extends SwitchableRouterImpl {
 		super(configuration, protocolFactory);
 		this.wifiManager = wifiManager;
 		this.connectivityManager = connectivityManager;
-
 		enable();
 	}
 

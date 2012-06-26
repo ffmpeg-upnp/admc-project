@@ -36,7 +36,7 @@ public interface DMRProcessor {
 	String getCurrentTrackURI();
 
 	void setRunning(boolean running);
-	
+
 	PlaylistItem getCurrentItem();
 
 	public interface DMRProcessorListner {
@@ -49,9 +49,9 @@ public interface DMRProcessor {
 		void onPlaying();
 
 		void onErrorEvent(String error);
-		
+
 		void onCheckURLStart();
-		
+
 		void onCheckURLEnd();
 
 		@SuppressWarnings("rawtypes")

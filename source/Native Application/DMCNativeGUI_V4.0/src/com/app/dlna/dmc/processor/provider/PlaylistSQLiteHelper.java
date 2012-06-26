@@ -47,7 +47,6 @@ public class PlaylistSQLiteHelper extends SQLiteOpenHelper {
 		db.execSQL(DATABASE_CREATE_PLAYLIST);
 		db.execSQL(DATABASE_CREATE_UNSAVEDLIST);
 		db.execSQL(DATABASE_CREATE_PLAYLIST_ITEM);
-
 	}
 
 	@Override

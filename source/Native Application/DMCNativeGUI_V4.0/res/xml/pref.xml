@@ -21,6 +21,12 @@
             android:summary="Define how many items will be load when browse on Media Server"
             android:title="Number of item per load" />
 
+        <EditTextPreference
+            android:defaultValue="50"
+            android:key="min_size"
+            android:summary="Minimum size of file to be shared (KB)"
+            android:title="Minimum File Size (KB)" />
+
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="dms_exported"

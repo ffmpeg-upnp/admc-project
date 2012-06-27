@@ -221,9 +221,13 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 				try {
 					final Icon[] icons = device.getIcons();
 					if (icons != null && icons.length > 0 && icons[0] != null && icons[0].getUri() != null) {
-						loadDeviceIcon(device, holder, udn, icons);
+						if (icons[0].getUri().getPath() == null || icons[0].getUri().getPath().isEmpty())
+							holder.icon.setImageResource(R.drawable.ic_device_unknow_server);
+						else
+							loadDeviceIcon(device, holder, udn, icons);
 					}
 				} catch (Exception ex) {
+					holder.icon.setImageResource(R.drawable.ic_device_unknow_server);
 					ex.printStackTrace();
 				}
 			} else {

@@ -132,7 +132,7 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			for (File subFile : file.listFiles()) {
 				if (subFile.isDirectory()) {
 					scanFile(subFile.getAbsolutePath());
-				} else if (subFile.length() >= 51200) {
+				} else if (subFile.length() >= AppPreference.getMinSize()) {
 					insertFileToLibrary(subFile);
 				}
 			}

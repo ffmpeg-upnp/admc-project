@@ -9,7 +9,7 @@ public class AppPreference {
 	public static SharedPreferences PREF = null;
 
 	public static int getMaxItemPerLoad() {
-		return PREF != null ? Integer.valueOf(PREF.getString("max_item_count", "50")) : 50;
+		return PREF != null ? Integer.valueOf(PREF.getString("max_item_count", "25")) : 25;
 	}
 
 	public static boolean isVideoHQ() {
@@ -53,7 +53,7 @@ public class AppPreference {
 	public static String[] getVideoExtension() {
 		String videoExtension = PREF != null ? PREF.getString("video_ext", "") : "";
 		if (PREF != null && videoExtension.trim().isEmpty()) {
-			videoExtension = "mp4;flv;mpg;avi;mkv;m4v;";
+			videoExtension = "mp4;flv;mpg;avi;mkv;m4v;wmv;";
 			PREF.edit().putString("video_ext", videoExtension).commit();
 		}
 		return videoExtension.split(";");
@@ -86,5 +86,9 @@ public class AppPreference {
 
 	public static boolean getAutoNext() {
 		return PREF != null ? PREF.getBoolean("auto_next", false) : false;
+	}
+
+	public static long getMinSize() {
+		return Long.valueOf(PREF != null ? PREF.getString("min_size", "50") : "50") * 1024;
 	}
 }

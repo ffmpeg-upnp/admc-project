@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.teleal.cling.model.types.csv.CSV;
+import org.teleal.cling.model.types.csv.CSVString;
 import org.teleal.cling.support.contentdirectory.AbstractContentDirectoryService;
 import org.teleal.cling.support.contentdirectory.ContentDirectoryException;
 import org.teleal.cling.support.contentdirectory.DIDLParser;
@@ -207,6 +209,21 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 			e.printStackTrace();
 		}
 		return br;
+	}
+
+
+	@Override
+	public CSV<String> getSearchCapabilities() {
+		CSVString result = new CSVString("*");
+		return result;
+	}
+
+	@Override
+	public BrowseResult search(String containerId, String searchCriteria, String filter, long firstResult, long maxResults,
+			SortCriterion[] orderBy) throws ContentDirectoryException {
+		Log.e(TAG, "containerID = " + containerId + ";search = " + searchCriteria + "; filter = " + filter + "; firstResult = "
+				+ firstResult + "; maxresult = " + maxResults);
+		return super.search(containerId, searchCriteria, filter, firstResult, maxResults, orderBy);
 	}
 
 	private int[] getResultContent(long firstResult, long maxResults, final DIDLContent content,

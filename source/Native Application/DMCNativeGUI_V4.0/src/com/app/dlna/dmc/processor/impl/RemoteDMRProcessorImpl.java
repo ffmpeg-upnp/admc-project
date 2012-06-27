@@ -597,8 +597,49 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 									@Override
 									public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
-										fireOnFailEvent(invocation.getAction(), response, defaultMsg);
+
+										fireUpdatePositionEvent(0, 0);
 										m_isBusy = false;
+										// m_state = STOP;
+										m_controlPoint.execute(new SetAVTransportURI(m_avtransportService, url, metaData) {
+											@Override
+											public void success(ActionInvocation invocation) {
+												super.success(invocation);
+												m_controlPoint.execute(new Play(m_avtransportService) {
+
+													@Override
+													public void failure(ActionInvocation invocation, UpnpResponse operation,
+															String defaultMsg) {
+														fireOnFailEvent(invocation.getAction(), operation, defaultMsg);
+														m_isBusy = false;
+													}
+
+													public void success(ActionInvocation invocation) {
+														m_isBusy = false;
+													};
+												});
+											}
+
+											@Override
+											public void failure(ActionInvocation invocation, UpnpResponse response,
+													String defaultMsg) {
+												m_controlPoint.execute(new Play(m_avtransportService) {
+
+													@Override
+													public void failure(ActionInvocation invocation, UpnpResponse operation,
+															String defaultMsg) {
+														fireOnFailEvent(invocation.getAction(), operation, defaultMsg);
+														m_isBusy = false;
+													}
+
+													public void success(ActionInvocation invocation) {
+														m_isBusy = false;
+													};
+												});
+												fireOnFailEvent(invocation.getAction(), response, defaultMsg);
+												m_isBusy = false;
+											}
+										});
 									}
 								});
 							}
@@ -606,8 +647,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 							@Override
 							public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
 								fireOnFailEvent(invocation.getAction(), response, defaultMsg);
-								m_isBusy = false;
-								m_user_stop = false;
+								// m_isBusy = false;
+								// m_user_stop = false;
 							}
 						};
 						m_controlPoint.execute(stop);

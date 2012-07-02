@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:summary="Application"
+        android:title="Application" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="kill_process"
+            android:summary="WARNING: Not recommended. Use this option only when application do something wrong."
+            android:title="Kill process after exit" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="Media Server"
+        android:title="Media Server" >
+        <ListPreference
+            android:defaultValue="25"
+            android:entries="@array/itemPerLoad"
+            android:entryValues="@array/itemPerLoadValues"
+            android:key="max_item_count"
+            android:summary="Define how many items will be load when browse on Media Server"
+            android:title="Number of item per load" />
+
+        <EditTextPreference
+            android:defaultValue="50"
+            android:key="min_size"
+            android:summary="Minimum size of file to be shared (KB)"
+            android:title="Minimum File Size (KB)" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="dms_exported"
+            android:summary="Export content on device"
+            android:title="Export DMS" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="proxy_mode"
+            android:summary="Must enable for some DLNA TV when playing Youtube Video"
+            android:title="Youtube Proxy Mode" />
+
+        <EditTextPreference
+            android:defaultValue="mp3;wma;midi;wav;mid;midi;"
+            android:key="music_ext"
+            android:summary="Extension of music file want to share"
+            android:title="Music extension" />
+        <EditTextPreference
+            android:defaultValue="mp4;flv;mpg;avi;mkv;m4v;"
+            android:key="video_ext"
+            android:summary="Extension of video file want to share"
+            android:title="Video extension" />
+        <EditTextPreference
+            android:defaultValue="jpeg;jpg;png;gif;bmp;gif;"
+            android:key="image_ext"
+            android:summary="Extension of image file want to share"
+            android:title="Image extension" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="Media Renderer"
+        android:title="Media Renderer" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="stop_dmr"
+            android:summary="Stop DMR when switching to another or close application"
+            android:title="Stop DMR when leave" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="auto_next"
+            android:summary="Auto next when renderer reach the end of track"
+            android:title="Auto next" />
+
+        <ListPreference
+            android:defaultValue="512"
+            android:entries="@array/imageQuality"
+            android:entryValues="@array/imageQualityValues"
+            android:key="image_qualitiy"
+            android:summary="Higher quality can cause loading problem."
+            android:title="Image quality" />
+        <ListPreference
+            android:defaultValue="ALL"
+            android:entries="@array/viewMode"
+            android:entryValues="@array/viewModeValues"
+            android:key="playlist_viewmode"
+            android:summary="Filter item in playlist"
+            android:title="View Mode" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="image_zoomable"
+            android:summary="Enable zoom for Image item (swipe to next/previous item will be disabled)"
+            android:title="Zoomable Image" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="Internet"
+        android:title="Internet Video" >
+        <CheckBoxPreference
+            android:key="video_quality"
+            android:summary="Will cost more data."
+            android:title="Highest Video Quality" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:summary="Open Source Liscence"
+        android:title="Open Source Liscence" >
+        <PreferenceScreen
+            android:summary="Java/Android UPnP library and tools."
+            android:title="Cling" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://4thline.org/projects/cling/" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="Provide more than 340000 free icons."
+            android:title="IconArchive" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.iconarchive.com/" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

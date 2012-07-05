@@ -1,7 +1,10 @@
 package com.app.dlna.dmc.processor.playlist;
 
+import org.teleal.cling.support.contentdirectory.DIDLParser;
+import org.teleal.cling.support.model.DIDLContent;
 import org.teleal.cling.support.model.DIDLObject;
 import org.teleal.cling.support.model.item.AudioItem;
+import org.teleal.cling.support.model.item.Item;
 import org.teleal.cling.support.model.item.VideoItem;
 
 import com.app.dlna.dmc.utility.Utility;
@@ -15,6 +18,7 @@ public class PlaylistItem {
 	private String m_url;
 	private String m_title;
 	private Type m_type;
+	private String m_metadata;
 
 	public PlaylistItem() {
 		m_id = -1;
@@ -55,10 +59,6 @@ public class PlaylistItem {
 		this.m_type = type;
 	}
 
-	public String getMetaData() {
-		return Utility.createMetaData(m_title, m_type);
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof PlaylistItem))
@@ -78,7 +78,23 @@ public class PlaylistItem {
 		} else {
 			item.setType(Type.IMAGE);
 		}
+		DIDLParser ps = new DIDLParser();
+		DIDLContent ct = new DIDLContent();
+		ct.addItem((Item) object);
+		try {
+			item.setMetaData(ps.generate(ct));
+		} catch (Exception e) {
+			item.setMetaData("");
+		}
 		return item;
+	}
+
+	public String getMetaData() {
+		return m_metadata;
+	}
+
+	public void setMetaData(String metadata) {
+		this.m_metadata = metadata;
 	}
 
 }

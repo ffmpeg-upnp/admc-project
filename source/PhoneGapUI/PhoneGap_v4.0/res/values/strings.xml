@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <resources>
 
-	<string name="app_name">Media2Share</string>
+	<string name="app_name">PocketSharing</string>
 	<string name="upnp_service">Upnp Service</string>
 	<string name="refresh">Refresh</string>
 	<string name="str_play">Play</string>

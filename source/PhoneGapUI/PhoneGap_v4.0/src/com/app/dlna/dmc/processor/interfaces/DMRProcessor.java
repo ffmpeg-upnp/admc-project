@@ -7,8 +7,6 @@ import com.app.dlna.dmc.processor.playlist.PlaylistItem;
 
 public interface DMRProcessor {
 
-	void setURIandPlay(PlaylistItem item);
-
 	void play();
 
 	void pause();
@@ -33,13 +31,9 @@ public interface DMRProcessor {
 
 	void setPlaylistProcessor(PlaylistProcessor playlistProcessor);
 
-	void setSeftAutoNext(boolean autoNext);
-
 	String getCurrentTrackURI();
 
 	void setRunning(boolean running);
-	
-	PlaylistItem getCurrentItem();
 
 	public interface DMRProcessorListner {
 		void onUpdatePosition(long current, long max);
@@ -51,13 +45,15 @@ public interface DMRProcessor {
 		void onPlaying();
 
 		void onErrorEvent(String error);
-		
+
 		void onCheckURLStart();
-		
+
 		void onCheckURLEnd();
 
 		@SuppressWarnings("rawtypes")
 		void onActionFail(Action actionCallback, UpnpResponse response, final String cause);
 	}
+
+	void setURIandPlay(PlaylistItem item);
 
 }

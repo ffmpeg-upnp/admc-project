@@ -56,7 +56,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	private boolean m_checkGetTransportInfo = false;
 	private boolean m_checkGetVolumeInfo = false;
 	private boolean m_user_stop;
-	private boolean m_seftAutoNext = false;
 	private int m_autoNextPending = 0;
 	private PlaylistItem m_currentItem;
 	private UpdateThread m_updateThread = null;
@@ -138,8 +137,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 					});
 				}
-
-				if (!m_checkGetVolumeInfo) {
+				if (m_renderingControl != null && !m_checkGetVolumeInfo) {
 					m_checkGetVolumeInfo = true;
 					m_controlPoint.execute(new GetVolume(m_renderingControl) {
 						@SuppressWarnings("rawtypes")
@@ -172,6 +170,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		m_controlPoint = controlPoint;
 		m_avtransportService = m_device.findService(new ServiceType("schemas-upnp-org", "AVTransport"));
 		m_renderingControl = m_device.findService(new ServiceType("schemas-upnp-org", "RenderingControl"));
+		if (m_renderingControl.getAction("SetVolume") == null || m_renderingControl.getAction("GetVolume") == null)
+			m_renderingControl = null;
 		m_listeners = new ArrayList<DMRProcessor.DMRProcessorListner>();
 		m_currentItem = new PlaylistItem();
 		m_user_stop = false;
@@ -264,7 +264,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		synchronized (m_listeners) {
 			if (!m_listeners.contains(listener))
 				m_listeners.add(listener);
-			if (m_avtransportService == null || m_renderingControl == null)
+			if (m_avtransportService == null)
 				fireOnErrorEvent("Cannot get service on this device");
 		}
 	}
@@ -329,15 +329,13 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		if (m_isBusy)
 			return;
 		synchronized (m_listeners) {
-			if (m_seftAutoNext) {
-				if (m_autoNextPending == 0) {
-					if (m_playlistProcessor != null && !m_user_stop) {
-						m_playlistProcessor.next();
-					}
-					m_autoNextPending = AUTO_NEXT_DELAY;
-				} else {
-					--m_autoNextPending;
+			if (m_autoNextPending == 0) {
+				if (m_playlistProcessor != null && !m_user_stop) {
+					m_playlistProcessor.next();
 				}
+				m_autoNextPending = AUTO_NEXT_DELAY;
+			} else {
+				--m_autoNextPending;
 			}
 		}
 	}
@@ -391,20 +389,22 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void setVolume(int newVolume) {
-		m_isBusy = true;
-		m_controlPoint.execute(new SetVolume(m_renderingControl, newVolume) {
-			@Override
-			public void success(ActionInvocation invocation) {
-				super.success(invocation);
-				m_isBusy = false;
-			}
+		if (m_renderingControl != null) {
+			m_isBusy = true;
+			m_controlPoint.execute(new SetVolume(m_renderingControl, newVolume) {
+				@Override
+				public void success(ActionInvocation invocation) {
+					super.success(invocation);
+					m_isBusy = false;
+				}
 
-			@Override
-			public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-				fireOnFailEvent(invocation.getAction(), operation, defaultMsg);
-				m_isBusy = false;
-			}
-		});
+				@Override
+				public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+					fireOnFailEvent(invocation.getAction(), operation, defaultMsg);
+					m_isBusy = false;
+				}
+			});
+		}
 	}
 
 	@Override
@@ -426,11 +426,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	public void setPlaylistProcessor(PlaylistProcessor playlistProcessor) {
 		m_playlistProcessor = playlistProcessor;
 
-	}
-
-	@Override
-	public void setSeftAutoNext(boolean autoNext) {
-		m_seftAutoNext = autoNext;
 	}
 
 	@Override
@@ -470,20 +465,24 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		m_isBusy = true;
 		m_currentItem = item;
 		stop();
-		new Thread(new Runnable() {
+		switch (item.getType()) {
+		default:
+			new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				CheckResult result = Utility.checkItemURL(item);
-				if (result.getItem().equals(m_currentItem)) {
-					if (result.isReachable())
-						setUriAndPlay(url, item.getMetaData());
-					else {
+				@Override
+				public void run() {
+					CheckResult result = Utility.checkItemURL(item);
+					if (result.getItem().equals(m_currentItem)) {
+						if (result.isReachable())
+							setUriAndPlay(url, item.getMetaData());
+						else {
+						}
 					}
 				}
-			}
 
-		}).start();
+			}).start();
+			break;
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -553,8 +552,49 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 									@Override
 									public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
-										fireOnFailEvent(invocation.getAction(), response, defaultMsg);
+
+										fireUpdatePositionEvent(0, 0);
 										m_isBusy = false;
+										// m_state = STOP;
+										m_controlPoint.execute(new SetAVTransportURI(m_avtransportService, url, metaData) {
+											@Override
+											public void success(ActionInvocation invocation) {
+												super.success(invocation);
+												m_controlPoint.execute(new Play(m_avtransportService) {
+
+													@Override
+													public void failure(ActionInvocation invocation, UpnpResponse operation,
+															String defaultMsg) {
+														fireOnFailEvent(invocation.getAction(), operation, defaultMsg);
+														m_isBusy = false;
+													}
+
+													public void success(ActionInvocation invocation) {
+														m_isBusy = false;
+													};
+												});
+											}
+
+											@Override
+											public void failure(ActionInvocation invocation, UpnpResponse response,
+													String defaultMsg) {
+												m_controlPoint.execute(new Play(m_avtransportService) {
+
+													@Override
+													public void failure(ActionInvocation invocation, UpnpResponse operation,
+															String defaultMsg) {
+														fireOnFailEvent(invocation.getAction(), operation, defaultMsg);
+														m_isBusy = false;
+													}
+
+													public void success(ActionInvocation invocation) {
+														m_isBusy = false;
+													};
+												});
+												fireOnFailEvent(invocation.getAction(), response, defaultMsg);
+												m_isBusy = false;
+											}
+										});
 									}
 								});
 							}
@@ -562,8 +602,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 							@Override
 							public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
 								fireOnFailEvent(invocation.getAction(), response, defaultMsg);
-								m_isBusy = false;
-								m_user_stop = false;
+								// m_isBusy = false;
+								// m_user_stop = false;
 							}
 						};
 						m_controlPoint.execute(stop);
@@ -571,10 +611,5 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				}
 			});
 		}
-	}
-
-	@Override
-	public PlaylistItem getCurrentItem() {
-		return m_currentItem;
 	}
 }

@@ -36,9 +36,10 @@ import com.app.dlna.dmc.processor.async.AsyncTaskWithProgressDialog;
 import com.app.dlna.dmc.processor.impl.LocalDMRProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.ChangeMode;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
-import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
+import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.utility.Utility;
 
 public class NowPlayingActivity extends Activity {
@@ -175,8 +176,7 @@ public class NowPlayingActivity extends Activity {
 
 	private PlaylistListener m_playlistListener = new PlaylistListener() {
 
-		@Override
-		public void onPrev() {
+		public void onItemChanged(PlaylistItem item, final ChangeMode changeMode) {
 			cancelLoadingTask();
 			runOnUiThread(new Runnable() {
 
@@ -185,30 +185,21 @@ public class NowPlayingActivity extends Activity {
 					if (m_viewFlipper == null)
 						return;
 					if (m_viewFlipper.isShown()) {
-						m_viewFlipper.setInAnimation(m_animFlipInPrevious);
-						m_viewFlipper.setOutAnimation(m_animFlipOutPrevious);
-						m_viewFlipper.showPrevious();
-					} else {
-						updateItemInfo();
-						m_swipeDetector.setEnable(true);
-					}
-				}
-			});
-		}
+						switch (changeMode) {
+						case NEXT:
+							m_viewFlipper.setInAnimation(m_animFlipInNext);
+							m_viewFlipper.setOutAnimation(m_animFlipOutNext);
+							m_viewFlipper.showNext();
+							break;
+						case PREV:
+							m_viewFlipper.setInAnimation(m_animFlipInPrevious);
+							m_viewFlipper.setOutAnimation(m_animFlipOutPrevious);
+							m_viewFlipper.showPrevious();
+							break;
+						default:
+							break;
+						}
 
-		@Override
-		public void onNext() {
-			cancelLoadingTask();
-			runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					if (m_viewFlipper == null)
-						return;
-					if (m_viewFlipper.isShown()) {
-						m_viewFlipper.setInAnimation(m_animFlipInNext);
-						m_viewFlipper.setOutAnimation(m_animFlipOutNext);
-						m_viewFlipper.showNext();
 					} else {
 						updateItemInfo();
 						m_swipeDetector.setEnable(true);

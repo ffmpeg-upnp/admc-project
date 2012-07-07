@@ -48,10 +48,7 @@ public interface PlaylistProcessor {
 	void setData(Playlist data);
 
 	public interface PlaylistListener {
-		void onNext();
-
-		void onPrev();
-
+		void onItemChanged(PlaylistItem item, ChangeMode changeMode);
 	}
 
 	void saveState();
@@ -59,9 +56,13 @@ public interface PlaylistProcessor {
 	int getCurrentItemIndex();
 
 	void updateItemList();
-	
+
 	List<PlaylistItem> getAllItemsByViewMode();
-	
+
 	void updateForViewMode();
+
+	public enum ChangeMode {
+		NEXT, PREV, UNKNOW
+	}
 
 }

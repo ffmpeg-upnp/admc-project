@@ -60,18 +60,15 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		if (currentIdx >= playlistItems.size())
 			currentIdx = 0;
 		m_currentItemIdx = m_playlistItems.indexOf(playlistItems.get(currentIdx));
-		// m_currentItemIdx = (m_currentItemIdx + 1) % playlistItems.size();
-		// if (m_currentItemIdx < 0 || m_currentItemIdx >= playlistItems.size())
-		// {
-		// m_currentItemIdx = 0;
-		// }
-		fireOnNextEvent();
+		fireOnItemChangedEvent(ChangeMode.NEXT);
 	}
 
-	private void fireOnNextEvent() {
+	private void fireOnItemChangedEvent(ChangeMode changeMode) {
+		if (m_currentItemIdx < 0 || m_currentItemIdx >= m_playlistItems.size())
+			return;
 		synchronized (m_listeners) {
 			for (PlaylistListener listener : m_listeners) {
-				listener.onNext();
+				listener.onItemChanged(m_playlistItems.get(m_currentItemIdx), changeMode);
 			}
 		}
 	}
@@ -86,15 +83,7 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		if (currentIdx < 0)
 			currentIdx = playlistItems.size() - 1;
 		m_currentItemIdx = m_playlistItems.indexOf(playlistItems.get(currentIdx));
-		fireOnPrevEvent();
-	}
-
-	private void fireOnPrevEvent() {
-		synchronized (m_listeners) {
-			for (PlaylistListener listener : m_listeners) {
-				listener.onPrev();
-			}
-		}
+		fireOnItemChangedEvent(ChangeMode.PREV);
 	}
 
 	@Override
@@ -111,15 +100,20 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 
 	@Override
 	public int setCurrentItem(int idx) {
-		if (0 <= idx && idx < m_playlistItems.size())
-			return m_currentItemIdx = idx;
+		if (0 <= idx && idx < m_playlistItems.size()) {
+			m_currentItemIdx = idx;
+			fireOnItemChangedEvent(ChangeMode.UNKNOW);
+			return m_currentItemIdx;
+		}
 		return -1;
 	}
 
 	@Override
 	public int setCurrentItem(PlaylistItem item) {
 		synchronized (m_playlistItems) {
-			return m_currentItemIdx = m_playlistItems.indexOf(item);
+			m_currentItemIdx = m_playlistItems.indexOf(item);
+			fireOnItemChangedEvent(ChangeMode.UNKNOW);
+			return m_currentItemIdx;
 		}
 	}
 

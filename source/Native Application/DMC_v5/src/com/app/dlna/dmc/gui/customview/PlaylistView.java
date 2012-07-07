@@ -21,10 +21,11 @@ import com.app.dlna.dmc.processor.async.AsyncTaskWithProgressDialog;
 import com.app.dlna.dmc.processor.impl.PlaylistManager;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.ChangeMode;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
 import com.app.dlna.dmc.processor.model.Playlist;
-import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
+import com.app.dlna.dmc.processor.model.PlaylistItem;
 
 public class PlaylistView extends DMRListenerView {
 
@@ -36,24 +37,10 @@ public class PlaylistView extends DMRListenerView {
 	private PlaylistProcessor m_currentPlaylist = null;
 
 	private PlaylistListener m_playlistListener = new PlaylistListener() {
-
 		@Override
-		public void onPrev() {
+		public void onItemChanged(PlaylistItem item, ChangeMode changeMode) {
 			if (MainActivity.UPNP_PROCESSOR == null || MainActivity.UPNP_PROCESSOR.getPlaylistProcessor() == null)
 				return;
-			final PlaylistItem item = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getCurrentItem();
-			if (item != null) {
-				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-				if (dmrProcessor != null)
-					dmrProcessor.setURIandPlay(item);
-			}
-		}
-
-		@Override
-		public void onNext() {
-			if (MainActivity.UPNP_PROCESSOR == null || MainActivity.UPNP_PROCESSOR.getPlaylistProcessor() == null)
-				return;
-			final PlaylistItem item = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getCurrentItem();
 			if (item != null) {
 				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 				if (dmrProcessor != null)

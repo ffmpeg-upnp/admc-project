@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Surface;
+import android.os.CountDownTimer;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -43,6 +43,7 @@ import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.utility.Utility;
 
 public class NowPlayingActivity extends Activity {
+	private static final String TAG = NowPlayingActivity.class.getName();
 	private RendererControlView m_rendererControl;
 	private ViewFlipper m_viewFlipper;
 	private ProgressDialog m_progressDialog;
@@ -115,22 +116,21 @@ public class NowPlayingActivity extends Activity {
 		m_adapter = new CustomArrayAdapter(NowPlayingActivity.this, 0);
 		m_adapter.setTag(AppPreference.getPlaylistViewMode());
 		m_adapter.setDropDownMode(true);
-		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+		final PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 		if (playlistProcessor != null) {
 			for (PlaylistItem item : playlistProcessor.getAllItemsByViewMode())
 				m_adapter.add(new AdapterItem(item));
-			PlaylistItem current = playlistProcessor.getCurrentItem();
+			final PlaylistItem current = playlistProcessor.getCurrentItem();
 			if (current == null) {
 				m_playlistView.smoothScrollToPosition(0);
 			} else {
-				int idx = 0;
+				int idx;
 				if (AppPreference.getPlaylistViewMode().equals(ViewMode.ALL)) {
 					idx = playlistProcessor.getAllItems().indexOf(current);
 				} else {
 					idx = playlistProcessor.getAllItemsByViewMode().indexOf(current);
 				}
-
-				m_playlistView.smoothScrollToPosition(idx < 3 ? 0 : idx + 3);
+				m_playlistView.smoothScrollToPosition(idx);
 			}
 		}
 		m_playlistView.setAdapter(m_adapter);
@@ -163,16 +163,6 @@ public class NowPlayingActivity extends Activity {
 			updateItemInfo();
 		}
 	};
-
-	private void initPortrait() {
-		initializeComponents();
-		m_rendererControl.initComponents();
-	}
-
-	private void initLandscape() {
-		initializeComponents();
-		m_rendererControl.initComponents();
-	}
 
 	private PlaylistListener m_playlistListener = new PlaylistListener() {
 
@@ -257,7 +247,8 @@ public class NowPlayingActivity extends Activity {
 	}
 
 	public void updateItemInfo() {
-		updateRotation();
+		initializeComponents();
+		m_rendererControl.initComponents();
 		m_rendererControl.connectToDMR();
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 		DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
@@ -373,15 +364,6 @@ public class NowPlayingActivity extends Activity {
 		}
 		updateSurfaceView();
 		dmrProcessor.setURIandPlay(item);
-	}
-
-	public void updateRotation() {
-		int displayMode = getWindowManager().getDefaultDisplay().getRotation();
-		if (displayMode == Surface.ROTATION_0 || displayMode == Surface.ROTATION_180) {
-			initPortrait();
-		} else {
-			initLandscape();
-		}
 	}
 
 	@Override

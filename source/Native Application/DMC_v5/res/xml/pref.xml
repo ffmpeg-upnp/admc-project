@@ -67,6 +67,12 @@
             android:key="auto_next"
             android:summary="Auto next when renderer reach the end of track"
             android:title="Auto next" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="auto_next"
+            android:key="random_track"
+            android:summary="Play random track"
+            android:title="Shuttle" />
 
         <ListPreference
             android:defaultValue="512"

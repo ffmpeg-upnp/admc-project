@@ -2,6 +2,7 @@ package com.app.dlna.dmc.processor.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.teleal.cling.support.model.DIDLObject;
 
@@ -20,6 +21,7 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 	private int m_maxSize;
 	private Playlist m_data;
 	private List<PlaylistListener> m_listeners;
+	private static Random RANDOM = new Random(System.currentTimeMillis());;
 
 	public PlaylistProcessorImpl(Playlist data, int maxItem) {
 		m_playlistItems = new ArrayList<PlaylistItem>();
@@ -52,6 +54,13 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 
 	@Override
 	public void next() {
+		if (AppPreference.getShuttle())
+			nextShuttle();
+		else
+			nextNormal();
+	}
+
+	private void nextNormal() {
 		List<PlaylistItem> playlistItems = getAllItemsByViewMode();
 		if (playlistItems.size() == 0)
 			return;
@@ -60,6 +69,20 @@ public class PlaylistProcessorImpl implements PlaylistProcessor {
 		if (currentIdx >= playlistItems.size())
 			currentIdx = 0;
 		m_currentItemIdx = m_playlistItems.indexOf(playlistItems.get(currentIdx));
+		fireOnItemChangedEvent(ChangeMode.NEXT);
+	}
+
+	public void nextShuttle() {
+		List<PlaylistItem> playlistItems = getAllItemsByViewMode();
+		if (playlistItems.size() == 0)
+			return;
+		if (playlistItems.size() != 1) {
+			int currentIdx = playlistItems.indexOf(m_playlistItems.get(m_currentItemIdx));
+			int newIdx = currentIdx;
+			while (newIdx == currentIdx)
+				newIdx = RANDOM.nextInt(playlistItems.size());
+			m_currentItemIdx = m_playlistItems.indexOf(playlistItems.get(newIdx));
+		}
 		fireOnItemChangedEvent(ChangeMode.NEXT);
 	}
 

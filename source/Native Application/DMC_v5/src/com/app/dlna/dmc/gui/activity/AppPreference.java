@@ -91,4 +91,8 @@ public class AppPreference {
 	public static long getMinSize() {
 		return Long.valueOf(PREF != null ? PREF.getString("min_size", "50") : "50") * 1024;
 	}
+
+	public static boolean getShuttle() {
+		return PREF != null ? PREF.getBoolean("random_track", false) : false;
+	}
 }

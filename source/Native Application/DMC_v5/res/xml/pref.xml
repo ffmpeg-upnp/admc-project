@@ -63,7 +63,7 @@
             android:summary="Stop DMR when switching to another or close application"
             android:title="Stop DMR when leave" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="auto_next"
             android:summary="Auto next when renderer reach the end of track"
             android:title="Auto next" />

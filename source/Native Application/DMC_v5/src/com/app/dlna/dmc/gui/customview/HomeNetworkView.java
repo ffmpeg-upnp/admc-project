@@ -10,11 +10,11 @@ import org.teleal.cling.support.model.DIDLObject;
 import org.teleal.cling.support.model.container.Container;
 import org.teleal.cling.support.model.item.Item;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-//import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,13 +32,15 @@ import com.app.dlna.dmc.gui.activity.LibraryActivity;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.gui.dialog.DeviceDetailsDialog;
 import com.app.dlna.dmc.gui.dialog.DeviceDetailsDialog.DeviceDetailsListener;
+import com.app.dlna.dmc.processor.impl.PlaylistManager;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSProcessorListner;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.DevicesListener;
-import com.app.dlna.dmc.processor.model.PlaylistItem;
+import com.app.dlna.dmc.processor.model.Playlist;
 import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
+import com.app.dlna.dmc.processor.model.PlaylistItem;
 
 public class HomeNetworkView extends DMRListenerView {
 	private ProgressDialog m_progressDlg;
@@ -51,8 +53,7 @@ public class HomeNetworkView extends DMRListenerView {
 	public HomeNetworkView(Context context) {
 		super(context);
 		m_isBrowsing = false;
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork,
-				this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork, this);
 		m_listView = (ListView) findViewById(R.id.lv_mediasource_browsing);
 		m_adapter = new CustomArrayAdapter(context, 0);
 		m_listView.setAdapter(m_adapter);
@@ -90,8 +91,8 @@ public class HomeNetworkView extends DMRListenerView {
 						&& !m_progressDlg.isShowing()
 						&& firstVisibleItem + visibleItemCount == totalItemCount
 						&& m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData() instanceof DIDLObject
-						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId()
-								.equals("-1")) {
+						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId().equals(
+								"-1")) {
 					doLoadMoreItems();
 				}
 			} catch (Exception ex) {
@@ -152,27 +153,61 @@ public class HomeNetworkView extends DMRListenerView {
 					}
 				}).show();
 			} else if (object instanceof Item) {
-				new AlertDialog.Builder(getContext()).setTitle("Select Action")
-						.setItems(new String[] { "Download" }, new DialogInterface.OnClickListener() {
+				new AlertDialog.Builder(getContext())
+						.setTitle("Select Action")
+						.setItems(getResources().getStringArray(R.array.didlobject_contextmenu),
+								new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								switch (which) {
-								case 0:
-									MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(((Item) object));
-									break;
-								default:
-									break;
-								}
-								dialog.dismiss();
-							}
-						}).create().show();
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										switch (which) {
+										case 0:
+											addToOtherPlaylist((Item) object);
+											break;
+										case 1:
+											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(((Item) object));
+											break;
+										default:
+											break;
+										}
+										dialog.dismiss();
+									}
+								}).create().show();
 			}
 
 			return true;
 		}
 
 	};
+
+	private void addToOtherPlaylist(final Item item) {
+		final List<Playlist> allPlaylist = PlaylistManager.getAllPlaylist();
+		String[] listPlaylistName = new String[allPlaylist.size()];
+		for (int i = 0; i < allPlaylist.size(); ++i) {
+			listPlaylistName[i] = allPlaylist.get(i).getName();
+		}
+		new AlertDialog.Builder(getContext()).setTitle("Select Playlist To Add")
+				.setItems(listPlaylistName, new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, final int which) {
+						new Thread(new Runnable() {
+
+							@Override
+							public void run() {
+								MainActivity.INSTANCE.showLoadingMessage("Adding item to playlist \""
+										+ allPlaylist.get(which).getName() + "\"");
+								PlaylistItem playlistItem = PlaylistManager.getPlaylistProcessor(allPlaylist.get(which))
+										.addDIDLObject(item);
+								MainActivity.INSTANCE.dismissLoadingDialog();
+								if (playlistItem != null) {
+									MainActivity.INSTANCE.showToast("Item added to playlist sucessfully");
+								}
+							}
+						}).start();
+					}
+				}).create().show();
+	}
 
 	private void doLoadMoreItems() {
 		m_loadMore = true;

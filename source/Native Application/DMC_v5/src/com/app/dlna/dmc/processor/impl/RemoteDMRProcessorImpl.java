@@ -45,7 +45,8 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	private static final int UPDATE_INTERVAL = 1000;
 	private static final int MAX_VOLUME = 100;
 	private static final long SEEK_DELAY_INTERVAL = 200;
-	private static final int AUTO_NEXT_DELAY = 8; // second
+	private static final int AUTO_NEXT_DELAY = 4; // second
+	private static final String TAG = RemoteDMRProcessorImpl.class.getName();
 	@SuppressWarnings("rawtypes")
 	private Device m_device;
 	private ControlPoint m_controlPoint;
@@ -60,8 +61,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	private boolean m_checkGetPositionInfo = false;
 	private boolean m_checkGetTransportInfo = false;
 	private boolean m_checkGetVolumeInfo = false;
-	private boolean m_user_stop;
-	private int m_autoNextPending = 0;
+	private int m_autoNextPending = AUTO_NEXT_DELAY;
 	private PlaylistItem m_currentItem;
 	private UpdateThread m_updateThread = null;
 
@@ -98,10 +98,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 						@Override
 						public void received(ActionInvocation invocation, PositionInfo positionInfo) {
 							fireUpdatePositionEvent(positionInfo.getTrackElapsedSeconds(), positionInfo.getTrackDurationSeconds());
-
-							if (positionInfo.getTrackDurationSeconds() == 0) {
-								fireOnEndTrackEvent();
-							}
 							m_checkGetPositionInfo = false;
 						}
 					});
@@ -124,15 +120,13 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 							switch (transportInfo.getCurrentTransportState()) {
 							case PLAYING:
 								fireOnPlayingEvent();
-								// m_state = PLAYING;
 								break;
 							case PAUSED_PLAYBACK:
 								fireOnPausedEvent();
-								// m_state = PAUSE;
 								break;
 							case STOPPED:
 								fireOnStopedEvent();
-								// m_state = STOP;
+								fireOnEndTrackEvent();
 								break;
 							default:
 								break;
@@ -179,7 +173,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 			m_renderingControl = null;
 		m_listeners = new ArrayList<DMRProcessor.DMRProcessorListner>();
 		m_currentItem = new PlaylistItem();
-		m_user_stop = false;
 		m_updateThread = new UpdateThread();
 		m_updateThread.start();
 	}
@@ -197,7 +190,6 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				super.success(invocation);
 				m_isBusy = false;
 				// m_state = PLAYING;
-				m_user_stop = false;
 			}
 
 			@Override
@@ -250,14 +242,12 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 				fireUpdatePositionEvent(0, 0);
 				m_isBusy = false;
 				// m_state = STOP;
-				m_user_stop = true;
 			}
 
 			@Override
 			public void failure(ActionInvocation invocation, UpnpResponse response, String defaultMsg) {
 				fireOnFailEvent(invocation.getAction(), response, defaultMsg);
 				m_isBusy = false;
-				m_user_stop = false;
 			}
 		};
 
@@ -335,8 +325,10 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 			return;
 		synchronized (m_listeners) {
 			if (AppPreference.getAutoNext()) {
-				if (m_autoNextPending == 0) {
-					if (m_playlistProcessor != null && !m_user_stop) {
+				Log.e(TAG, "onEndTrack, m_autoNextPending = " + m_autoNextPending);
+				if (m_autoNextPending <= 0) {
+					if (m_playlistProcessor != null) {
+						Log.e(TAG, "Call playlist next");
 						m_playlistProcessor.next();
 					}
 					m_autoNextPending = AUTO_NEXT_DELAY;
@@ -458,6 +450,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	@Override
 	public void setURIandPlay(final PlaylistItem item) {
+		m_autoNextPending = AUTO_NEXT_DELAY;
 		if (item == null) {
 			m_currentItem = null;
 			stop();

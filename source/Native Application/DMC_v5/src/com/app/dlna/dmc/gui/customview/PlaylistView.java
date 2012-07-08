@@ -180,7 +180,6 @@ public class PlaylistView extends DMRListenerView {
 				dmrProcessor.setPlaylistProcessor(m_currentPlaylist);
 				PlaylistItem playlistItem = (PlaylistItem) object;
 				m_currentPlaylist.setCurrentItem(playlistItem);
-				dmrProcessor.setURIandPlay(playlistItem);
 				switch (playlistItem.getType()) {
 				case AUDIO_LOCAL:
 				case AUDIO_REMOTE:

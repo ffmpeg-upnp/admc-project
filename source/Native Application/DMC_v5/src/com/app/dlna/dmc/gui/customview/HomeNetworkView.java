@@ -10,7 +10,6 @@ import org.teleal.cling.support.model.DIDLObject;
 import org.teleal.cling.support.model.container.Container;
 import org.teleal.cling.support.model.item.Item;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -53,7 +52,8 @@ public class HomeNetworkView extends DMRListenerView {
 	public HomeNetworkView(Context context) {
 		super(context);
 		m_isBrowsing = false;
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork,
+				this);
 		m_listView = (ListView) findViewById(R.id.lv_mediasource_browsing);
 		m_adapter = new CustomArrayAdapter(context, 0);
 		m_listView.setAdapter(m_adapter);
@@ -91,8 +91,8 @@ public class HomeNetworkView extends DMRListenerView {
 						&& !m_progressDlg.isShowing()
 						&& firstVisibleItem + visibleItemCount == totalItemCount
 						&& m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData() instanceof DIDLObject
-						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId().equals(
-								"-1")) {
+						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId()
+								.equals("-1")) {
 					doLoadMoreItems();
 				}
 			} catch (Exception ex) {
@@ -165,7 +165,8 @@ public class HomeNetworkView extends DMRListenerView {
 											addToOtherPlaylist((Item) object);
 											break;
 										case 1:
-											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(((Item) object));
+											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(
+													((Item) object));
 											break;
 										default:
 											break;
@@ -197,8 +198,8 @@ public class HomeNetworkView extends DMRListenerView {
 							public void run() {
 								MainActivity.INSTANCE.showLoadingMessage("Adding item to playlist \""
 										+ allPlaylist.get(which).getName() + "\"");
-								PlaylistItem playlistItem = PlaylistManager.getPlaylistProcessor(allPlaylist.get(which))
-										.addDIDLObject(item);
+								PlaylistItem playlistItem = PlaylistManager
+										.getPlaylistProcessor(allPlaylist.get(which)).addDIDLObject(item);
 								MainActivity.INSTANCE.dismissLoadingDialog();
 								if (playlistItem != null) {
 									MainActivity.INSTANCE.showToast("Item added to playlist sucessfully");

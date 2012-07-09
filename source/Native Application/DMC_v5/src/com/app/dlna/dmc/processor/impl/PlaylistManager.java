@@ -22,8 +22,8 @@ public class PlaylistManager {
 	public static List<Playlist> getAllPlaylist() {
 		try {
 			List<Playlist> result = new ArrayList<Playlist>();
-			Cursor cursor = RESOLVER.query(PlaylistProvider.PLAYLIST_URI, PlaylistSQLiteHelper.PLAYLIST_ALLCOLUMNS, null, null,
-					null);
+			Cursor cursor = RESOLVER.query(PlaylistProvider.PLAYLIST_URI, PlaylistSQLiteHelper.PLAYLIST_ALLCOLUMNS,
+					null, null, null);
 			if (cursor.moveToFirst()) {
 				do {
 					long id = cursor.getLong(cursor.getColumnIndex(PlaylistSQLiteHelper.COL_ID));
@@ -31,7 +31,8 @@ public class PlaylistManager {
 					Playlist playlist = new Playlist();
 					playlist.setId(id);
 					playlist.setName(name);
-					playlist.setCurrentIdx(cursor.getInt(cursor.getColumnIndex(PlaylistSQLiteHelper.COL_CURRENT_POSITION)));
+					playlist.setCurrentIdx(cursor.getInt(cursor
+							.getColumnIndex(PlaylistSQLiteHelper.COL_CURRENT_POSITION)));
 					result.add(playlist);
 
 				} while (cursor.moveToNext());
@@ -113,8 +114,8 @@ public class PlaylistManager {
 				playlist.setId(Long.valueOf(newId));
 				ContentValues updateValues = new ContentValues();
 				updateValues.put(PlaylistSQLiteHelper.COL_PLAYLIST_ID, newId);
-				RESOLVER.update(PlaylistProvider.PLAYLIST_ITEM_URI, updateValues, PlaylistSQLiteHelper.COL_PLAYLIST_ID + " = ?",
-						new String[] { "1" });
+				RESOLVER.update(PlaylistProvider.PLAYLIST_ITEM_URI, updateValues, PlaylistSQLiteHelper.COL_PLAYLIST_ID
+						+ " = ?", new String[] { "1" });
 				return true;
 			}
 			return false;
@@ -125,7 +126,11 @@ public class PlaylistManager {
 	}
 
 	public static boolean deletePlaylist(PlaylistProcessor playlistProcessor) {
-		long playlistId = playlistProcessor.getData().getId();
+		return deletePlaylist(playlistProcessor.getData());
+	}
+
+	public static boolean deletePlaylist(Playlist playlist) {
+		long playlistId = playlist.getId();
 		RESOLVER.delete(PlaylistProvider.PLAYLIST_ITEM_URI, PlaylistSQLiteHelper.COL_PLAYLIST_ID + " = ?",
 				new String[] { String.valueOf(playlistId) });
 		int playlistCount = RESOLVER.delete(PlaylistProvider.PLAYLIST_URI, PlaylistSQLiteHelper.COL_ID + " = ?",
@@ -172,5 +177,12 @@ public class PlaylistManager {
 			valuesList[i].put(PlaylistSQLiteHelper.COL_METADATA, playlistItem.getMetaData());
 		}
 		return RESOLVER.bulkInsert(PlaylistProvider.PLAYLIST_ITEM_URI, valuesList);
+	}
+
+	public static void renamePlaylist(long id, String value) {
+		ContentValues values = new ContentValues();
+		values.put(PlaylistSQLiteHelper.COL_NAME, value);
+		RESOLVER.update(PlaylistProvider.PLAYLIST_URI, values, PlaylistSQLiteHelper.COL_ID + " = ?",
+				new String[] { String.valueOf(id) });
 	}
 }

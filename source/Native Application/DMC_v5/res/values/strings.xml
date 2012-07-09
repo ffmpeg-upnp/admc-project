@@ -69,11 +69,23 @@
         <item>Add to other playlist</item>
         <item>Download</item>
     </string-array>
-        <string name="dev1_name">Nguyen Dac Phu</string>
-        <string name="dev1_email">ngdacphu.khtn@gmail.com</string>
-        <string name="dev2_name">Le Tan Minh Quan</string>
-        <string name="dev2_email">letanminhquan@gmail.com</string>
-        <string name="app_desc">DLNA Application For Android</string>
-        <string name="how_to_use">How To Use</string>
+    <string-array name="playlistitem_contextmenu">
+        <item>Download</item>
+    </string-array>
+    <string-array name="playlist_contextmenu">
+        <item>Clean</item>
+        <item>Rename</item>
+        <item>Remove</item>
+    </string-array>
+    <string-array name="playlist_unsaved_contextmenu">
+        <item>Clean</item>
+    </string-array>
+
+    <string name="dev1_name">Nguyen Dac Phu</string>
+    <string name="dev1_email">ngdacphu.khtn@gmail.com</string>
+    <string name="dev2_name">Le Tan Minh Quan</string>
+    <string name="dev2_email">letanminhquan@gmail.com</string>
+    <string name="app_desc">DLNA Application For Android</string>
+    <string name="how_to_use">How To Use</string>
 
 </resources>

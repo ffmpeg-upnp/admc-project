@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
@@ -55,32 +56,167 @@ public class PlaylistView extends DMRListenerView {
 		public boolean onItemLongClick(AdapterView<?> arg0, View arg1, final int position, long arg3) {
 
 			if (m_adapter.getItem(position).getData() instanceof PlaylistItem) {
+				new AlertDialog.Builder(getContext())
+						.setTitle("Select Action")
+						.setItems(getResources().getStringArray(R.array.playlistitem_contextmenu),
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										switch (which) {
+										case 0:
+											PlaylistItem playlistItem = (PlaylistItem) m_adapter.getItem(position)
+													.getData();
+											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(
+													playlistItem);
+											break;
+										default:
+											break;
+										}
+										dialog.dismiss();
+									}
+								}).create().show();
+				return true;
+			} else {
+				String[] actions = null;
+				if (position == 0) {
+					actions = getResources().getStringArray(R.array.playlist_unsaved_contextmenu);
+				} else {
+					actions = getResources().getStringArray(R.array.playlist_contextmenu);
+				}
 				new AlertDialog.Builder(getContext()).setTitle("Select Action")
-						.setItems(new String[] { "Download" }, new DialogInterface.OnClickListener() {
+						.setItems(actions, new DialogInterface.OnClickListener() {
 
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								switch (which) {
 								case 0:
-									PlaylistItem playlistItem = (PlaylistItem) m_adapter.getItem(position).getData();
-									MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(playlistItem);
+									cleanPlaylist((Playlist) m_adapter.getItem(position).getData());
 									break;
+								case 1:
+									renamePlaylist((Playlist) m_adapter.getItem(position).getData());
+									break;
+								case 2:
+									removePlaylist((Playlist) m_adapter.getItem(position).getData());
 								default:
 									break;
 								}
 								dialog.dismiss();
 							}
+
 						}).create().show();
 				return true;
 			}
-
-			return false;
 		}
 	};
 
+	private void removePlaylist(final Playlist playlist) {
+		new AlertDialog.Builder(getContext()).setTitle("Comfirm").setMessage("Are you sure to remove this playlist?")
+				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						new Thread(new Runnable() {
+
+							@Override
+							public void run() {
+								MainActivity.INSTANCE.showLoadingMessage("Cleaning playlist");
+								PlaylistManager.deletePlaylist(playlist);
+								MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+
+									@Override
+									public void run() {
+										m_adapter.clear();
+										preparePlaylist();
+									}
+								});
+								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR
+										.getPlaylistProcessor();
+								if (playlistProcessor != null
+										&& playlistProcessor.getData().getId() == playlist.getId()) {
+									MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(null);
+									DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+									if (dmrProcessor != null) {
+										dmrProcessor.stop();
+										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR
+												.getPlaylistProcessor());
+									}
+
+								}
+
+								MainActivity.INSTANCE.dismissLoadingDialog();
+								MainActivity.INSTANCE.showToast("Remove playlist sucessfully");
+							}
+						}).start();
+
+					}
+				}).setNegativeButton("Cancel", null).create().show();
+	}
+
+	private void renamePlaylist(final Playlist playlist) {
+		AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+
+		alert.setTitle("Save Playlist");
+		alert.setMessage("Insert playlist name:");
+
+		final EditText input = new EditText(getContext());
+		alert.setView(input);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String value = input.getText().toString();
+				if (value != null && value.trim().length() != 0) {
+					PlaylistManager.renamePlaylist(playlist.getId(), value);
+					m_adapter.clear();
+					preparePlaylist();
+				}
+			}
+		});
+
+		alert.setNegativeButton("Cancel", null);
+
+		alert.show();
+	}
+
+	private void cleanPlaylist(final Playlist playlist) {
+		new AlertDialog.Builder(getContext()).setTitle("Comfirm").setMessage("Are you sure to clean this playlist?")
+				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						new Thread(new Runnable() {
+
+							@Override
+							public void run() {
+								MainActivity.INSTANCE.showLoadingMessage("Cleaning playlist");
+								PlaylistManager.clearPlaylist(playlist.getId());
+								MainActivity.INSTANCE.dismissLoadingDialog();
+								MainActivity.INSTANCE.showToast("Clean playlist sucessfully");
+								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR
+										.getPlaylistProcessor();
+								if (playlistProcessor != null
+										&& playlistProcessor.getData().getId() == playlist.getId()) {
+									MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(PlaylistManager
+											.getPlaylistProcessor(playlist));
+									DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
+									if (dmrProcessor != null) {
+										dmrProcessor.stop();
+										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR
+												.getPlaylistProcessor());
+									}
+
+								}
+							}
+						}).start();
+
+					}
+				}).setNegativeButton("Cancel", null).create().show();
+	}
+
 	public PlaylistView(Context context) {
 		super(context);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_playlist_allitem, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+				R.layout.cv_playlist_allitem, this);
 		m_listView = (ListView) findViewById(R.id.lv_playlist);
 		m_adapter = new CustomArrayAdapter(getContext(), 0);
 		m_listView.setAdapter(m_adapter);
@@ -99,7 +235,8 @@ public class PlaylistView extends DMRListenerView {
 			MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().addListener(m_playlistListener);
 		switch (m_viewMode) {
 		case VM_DETAILS:
-			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null || m_currentPlaylist.getData().getName() == null) {
+			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null
+					|| m_currentPlaylist.getData().getName() == null) {
 				m_viewMode = VM_LIST;
 				preparePlaylist();
 				return;

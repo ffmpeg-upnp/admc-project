@@ -24,6 +24,9 @@ public final class R {
         public static final int itemPerLoadValues=0x7f070001;
         public static final int libray_pager_list=0x7f070006;
         public static final int menu_items=0x7f070007;
+        public static final int playlist_contextmenu=0x7f07000a;
+        public static final int playlist_unsaved_contextmenu=0x7f07000b;
+        public static final int playlistitem_contextmenu=0x7f070009;
         public static final int viewMode=0x7f070004;
         public static final int viewModeValues=0x7f070005;
     }

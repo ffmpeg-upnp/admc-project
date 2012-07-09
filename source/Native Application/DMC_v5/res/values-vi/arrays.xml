@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="itemPerLoad">
+        <item name="25">25 mục</item>
+        <item name="50">50 mục</item>
+        <item name="75">75 mục</item>
+        <item name="100">100 mục</item>
+    </string-array>
+    <string-array name="itemPerLoadValues">
+        <item name="25">25</item>
+        <item name="50">50</item>
+        <item name="75">75</item>
+        <item name="100">100</item>
+    </string-array>
+    <string-array name="imageQuality">
+        <item name="256">Thấp</item>
+        <item name="512">Trung Bình</item>
+        <item name="1024">Cao</item>
+    </string-array>
+    <string-array name="imageQualityValues">
+        <item name="256">256</item>
+        <item name="512">512</item>
+        <item name="1024">1024</item>
+    </string-array>
+    <string-array name="viewMode">
+        <item name="all">Tất cả các nội dung</item>
+        <item name="audio_only">Chỉ nội dung Âm Thanh</item>
+        <item name="video_only">Chỉ nội dung Phim</item>
+        <item name="image_only">Chỉ nội dung Hình Ảnh</item>
+    </string-array>
+    <string-array name="viewModeValues">
+        <item name="all">ALL</item>
+        <item name="audio_only">AUDIO_ONLY</item>
+        <item name="video_only">VIDEO_ONLY</item>
+        <item name="image_only">IMAGE_ONLY</item>
+    </string-array>
+    <string-array name="applicationLanguage">
+        <item name="en">English</item>
+        <item name="vi">Tiếng Việt</item>
+    </string-array>
+    <string-array name="applicationLanguageValue">
+        <item name="en">en</item>
+        <item name="vi">vi</item>
+    </string-array>
+
+</resources>

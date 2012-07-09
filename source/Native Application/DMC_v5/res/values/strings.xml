@@ -4,43 +4,18 @@
     <string name="app_name">PocketSharing</string>
     <string name="upnp_service">Upnp Service</string>
     <string name="refresh">Refresh</string>
-    <string name="str_play">Play</string>
-    <string name="str_pause">Pause</string>
-    <string name="str_stop">Stop</string>
-    <string name="browselocal">Browse Local</string>
-    <string name="music">Music</string>
-    <string name="video">Video</string>
-    <string name="photo">Photo</string>
-    <string name="youtube">YouTube</string>
-    <string name="youtube_proxy_port">7576</string>
-    <string name="play_to_httpserver_port">7677</string>
-    <string name="submit">Submit</string>
-    <string name="enter_video_link_">Enter video link:</string>
-    <string name="youtube_predefine_link">http://www.youtube.com/watch?v=e47TNTAz2tY</string>
-    <string name="proxy_enable_text">Proxy mode</string>
-    <string name="youtubeContent">Youtube Content</string>
-    <string name="youtube_host">youtube.com</string>
-    <string name="media_server">Media Server</string>
-    <string name="media_renderer">Media Renderer</string>
     <string name="change_dmr">Change</string>
     <string name="type_to_filter">type to filter</string>
-    <string name="dms_list">DMS List</string>
-    <string name="dmr_list">DMR List</string>
-    <string name="select_all">Select All</string>
-    <string name="deselect_all">Deselect All</string>
-    <string name="enter_keyword_here">Enter keyword here</string>
-    <string name="cancel">Cancel</string>
-    <string name="contentName">Content name</string>
     <string name="menu_refresh_devices">Refresh Devices List</string>
     <string name="menu_rescan_sdcard">Rescan Sdcard</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
-    <string name="back">Back</string>
     <string name="library">Library</string>
     <string name="now_playing">Now Playing</string>
     <string name="play">play</string>
     <string name="pause">pause</string>
-    <string name="deselectall">deselectAll</string>
+    <string name="enter_keyword_here">Enter keyword here</string>
+    <string name="cancel">Cancel</string>
 
     <string-array name="libray_pager_list">
         <item>Home Network</item>
@@ -84,6 +59,12 @@
     <string-array name="playlist_unsaved_contextmenu">
         <item>Clean</item>
     </string-array>
+     <string-array name="viewmode">
+        <item>All Items</item>
+        <item>Audio Only</item>
+        <item>Video Only</item>
+        <item>Image Only</item>
+    </string-array>
 
     <string name="dev1_name">Nguyen Dac Phu</string>
     <string name="dev1_email">ngdacphu.khtn@gmail.com</string>
@@ -96,7 +77,7 @@
     <string name="cannot_play_item">Cannot play item</string>
     <string name="cannot_start_upnp_service_please_try_again_later">Cannot start Upnp Service, please try again later</string>
     <string name="upnp_service_info">Upnp Service Info</string>
-    <string name="ok">OK</string>
+    <string name="ok">Ok</string>
     <string name="network_info">Network Info</string>
     <string name="cannot_find_a_wifi_connection_for_upnpservice_please_connect_to_a_wifi_network_or_run_wifi_hotspot_to_use_the_app_">Cannot find a wifi connection for UpnpService. Please connect to a wifi network or run wifi hotspot to use the app.</string>
     <string name="wifi_settings">Wifi settings</string>
@@ -115,7 +96,7 @@
     <string name="loading_image">Loading image</string>
     <string name="cannot_connect_to_renderer">Cannot connect to renderer</string>
     <string name="image_loading_error_reduce_image_quality_in_settings_maybe_fix_this_problem">Image loading error. Reduce image quality in Settings maybe fix this problem</string>
-    <string name="check_item_url_">Check item url...</string>
+    <string name="check_item_url_">Checking item url</string>
     <string name="you_are_in_root_of_this_data_source">You are in root of this data source</string>
     <string name="cannot_process_playlist">Cannot process playlist</string>
     <string name="cannot_contact_to_dms_server">Cannot contact to dms server</string>
@@ -140,5 +121,59 @@
     <string name="an_error_occurs_try_again_later">An error occurs, try again later</string>
     <string name="error_occurs">Error occurs</string>
     <string name="load_more_result">Load more result</string>
+    <string name="warning">Warning</string>
+    <string name="this_will_clear_all_item_in_this_playlist">This will clear all item in this playlist</string>
+    <string name="clear_playlist">Clear Playlist</string>
+    <string name="save_playlist">Save Playlist</string>
+    <string name="insert_playlist_name_">Insert playlist name:</string>
+    <string name="create_playlist">Create Playlist</string>
+    <string name="playlist_is_empty">Playlist is empty</string>
+    <string name="create_playlist_fail">Create playlist fail</string>
+    <string name="confirm_delete">Confirm Delete</string>
+    <string name="are_you_sure_to_delete_">Are you sure to delete \"</string>
+    <string name="delete_playlist_success">Delete playlist success</string>
+    <string name="delete_playlist_failed_try_again_later">Delete playlist failed, try again later</string>
+    <string name="comfirm">Comfirm</string>
+    <string name="are_you_sure_to_remove_this_playlist_">Are you sure to remove this playlist?</string>
+    <string name="are_you_sure_to_clean_this_playlist_">Are you sure to clean this playlist?</string>
+    <string name="cleaning_playlist">Cleaning playlist</string>
+    <string name="clean_playlist_sucessfully">Clean playlist sucessfully</string>
+    <string name="loading_all_playlist">Loading All Playlist</string>
+    <string name="loading_playlist_items">Loading Playlist Items</string>
+    <string name="cannot_get_playlist">Cannot get playlist</string>
+    <string name="loading_all_playlists">Loading all playlists</string>
+    <string name="loading_playlist">Loading playlist</string>
+    <string name="current_playlist_is_empty">Current playlist is empty</string>
+    <string name="select_filter_mode">Select filter mode</string>
+    <string name="download">Download</string>
+    <string name="device_info">Device info</string>
+    <string name="no_network_found">No network found</string>
+    <string name="scanning_content_on_sdcard">Scanning content on sdcard</string>
+    <string name="scan_content_on_sdcard">Scan content on sdcard</string>
+    <string name="scanning">Scanning</string>
+    <string name="set_dmr_fail_cannot_get_dmr_info_udn_">"Set DMR fail. Cannot get DMR info; UDN = "</string>
+    <string name="set_dms_fail_cannot_get_dms_info_udn_">"Set DMS fail. Cannot get DMS info; UDN = "</string>
+    <string name="service_is_running">Service is running</string>
+    <string name="coreupnpservice_started">CoreUpnpService started</string>
+    <string name="contacting_to_youtube">Contacting to Youtube</string>
+    <string name="sorry_this_item_cannot_be_downloaded">Sorry, this item cannot be downloaded</string>
+    <string name="download_fail">Download fail</string>
+    <string name="item_cannot_be_downloaded">Item cannot be downloaded</string>
+    <string name="download_file">Download file</string>
+    <string name="downloading_content">Downloading content</string>
+    <string name="download_content">Download content</string>
+    <string name="download_complete">Download complete</string>
+    <string name="cannot_download_item_">"Cannot download item : "</string>
+    <string name="download_failed_file_">"Download failed, file: "</string>
+    <string name="download_complete_file_">"Download complete, file: "</string>
+    <string name="contacting_to_youtube_server">Contacting to youtube server</string>
+    <string name="starting_download">Starting download</string>
+    <string name="action_canceled">Action canceled</string>
+    <string name="download_file_failed_try_again_later_">Download file failed. Try again later.</string>
+    <string name="all_items">All items</string>
+    <string name="audio_only">Audio only</string>
+    <string name="video_only">Video only</string>
+    <string name="image_only">Image only</string>
+    <string name="added_item_to_playlist">Added item to playlist</string>
 
 </resources>

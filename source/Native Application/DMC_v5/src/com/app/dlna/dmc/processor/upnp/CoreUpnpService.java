@@ -273,7 +273,7 @@ public class CoreUpnpService extends Service {
 			if (m_currentDMS != null) {
 				m_dmsProcessor = new DMSProcessorImpl(m_currentDMS, getControlPoint());
 			} else {
-				Toast.makeText(getApplicationContext(), "Set DMS fail. Cannot get DMS info; UDN = " + uDN.toString(),
+				Toast.makeText(getApplicationContext(), R.string.set_dms_fail_cannot_get_dms_info_udn_ + uDN.toString(),
 						Toast.LENGTH_SHORT).show();
 				m_dmsProcessor = null;
 			}
@@ -290,7 +290,7 @@ public class CoreUpnpService extends Service {
 				else
 					m_dmrProcessor = new RemoteDMRProcessorImpl(m_currentDMR, getControlPoint());
 			} else {
-				Toast.makeText(getApplicationContext(), "Set DMR fail. Cannot get DMR info; UDN = " + uDN.toString(),
+				Toast.makeText(getApplicationContext(), R.string.set_dmr_fail_cannot_get_dmr_info_udn_ + uDN.toString(),
 						Toast.LENGTH_SHORT).show();
 				m_dmrProcessor = null;
 			}
@@ -405,12 +405,12 @@ public class CoreUpnpService extends Service {
 	}
 
 	private void showNotification() {
-		Notification notification = new Notification(R.drawable.ic_launcher, "CoreUpnpService started",
+		Notification notification = new Notification(R.drawable.ic_launcher, getString(R.string.coreupnpservice_started),
 				System.currentTimeMillis());
 
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(CoreUpnpService.this, MainActivity.class), 0);
 
-		notification.setLatestEventInfo(this, "CoreUpnpService", "Service is running", contentIntent);
+		notification.setLatestEventInfo(this, "CoreUpnpService", getString(R.string.service_is_running), contentIntent);
 		notification.flags = Notification.FLAG_ONGOING_EVENT;
 
 		m_notificationManager.notify(NOTIFICATION, notification);

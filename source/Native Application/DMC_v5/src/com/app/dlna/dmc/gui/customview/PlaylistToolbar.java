@@ -69,19 +69,22 @@ public class PlaylistToolbar extends LinearLayout {
 			if (currentPlaylistProcessor.getData().getId() == 1 && currentPlaylistProcessor.getAllItems().size() > 0)
 				createSaveDialog();
 			else
-				Toast.makeText(getContext(), "Playlist is empty", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getContext(), getContext().getResources().getString(R.string.playlist_is_empty),
+						Toast.LENGTH_SHORT).show();
 		}
 	};
 	private OnClickListener m_clearClick = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
-			new AlertDialog.Builder(getContext()).setMessage("Warning").setMessage("This will clear all item in this playlist")
+			new AlertDialog.Builder(getContext()).setMessage(R.string.warning)
+					.setMessage(R.string.this_will_clear_all_item_in_this_playlist)
 					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							new AsyncTaskWithProgressDialog<Void, Void, Void>("Clear Playlist") {
+							new AsyncTaskWithProgressDialog<Void, Void, Void>(getContext().getResources().getString(
+									R.string.clear_playlist)) {
 								@Override
 								protected Void doInBackground(Void... params) {
 									long playlistId = m_playlistView.getCurrentPlaylistProcessor().getData().getId();
@@ -105,7 +108,7 @@ public class PlaylistToolbar extends LinearLayout {
 
 							}.execute(new Void[] {});
 						}
-					}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					}).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -128,13 +131,13 @@ public class PlaylistToolbar extends LinearLayout {
 	private void createSaveDialog() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
 
-		alert.setTitle("Save Playlist");
-		alert.setMessage("Insert playlist name:");
+		alert.setTitle(R.string.save_playlist);
+		alert.setMessage(R.string.insert_playlist_name_);
 
 		final EditText input = new EditText(getContext());
 		alert.setView(input);
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString();
 				if (value != null && value.trim().length() != 0) {
@@ -143,7 +146,7 @@ public class PlaylistToolbar extends LinearLayout {
 			}
 		});
 
-		alert.setNegativeButton("Cancel", null);
+		alert.setNegativeButton(R.string.cancel, null);
 
 		alert.show();
 	}
@@ -152,7 +155,7 @@ public class PlaylistToolbar extends LinearLayout {
 		final Playlist playlist = new Playlist();
 		playlist.setName(name);
 
-		new AsyncTaskWithProgressDialog<Void, Void, Boolean>("Create Playlist") {
+		new AsyncTaskWithProgressDialog<Void, Void, Boolean>(getContext().getResources().getString(R.string.create_playlist)) {
 
 			@Override
 			protected Boolean doInBackground(Void... params) {
@@ -183,7 +186,8 @@ public class PlaylistToolbar extends LinearLayout {
 					}.execute(new Void[] {});
 
 				} else {
-					Toast.makeText(getContext(), "Create playlist fail", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), getContext().getResources().getString(R.string.create_playlist_fail),
+							Toast.LENGTH_SHORT).show();
 				}
 			};
 		}.execute(new Void[] {});
@@ -192,8 +196,8 @@ public class PlaylistToolbar extends LinearLayout {
 	private void confirmDelete() {
 		final PlaylistProcessor processor = m_playlistView.getCurrentPlaylistProcessor();
 		AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-		alert.setTitle("Confirm Delete");
-		alert.setMessage("Are you sure to delete \"" + processor.getData().getName() + "\"?");
+		alert.setTitle(R.string.confirm_delete);
+		alert.setMessage(R.string.are_you_sure_to_delete_ + processor.getData().getName() + "\"?");
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 
 			@Override
@@ -211,7 +215,7 @@ public class PlaylistToolbar extends LinearLayout {
 						super.onPostExecute(result);
 						String resultText = "";
 						if (result) {
-							resultText = "Delete playlist success";
+							resultText = getContext().getString(R.string.delete_playlist_success);
 							if (MainActivity.UPNP_PROCESSOR.getPlaylistProcessor() != null
 									&& MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getData().getId() == processor
 											.getData().getId()) {
@@ -222,7 +226,7 @@ public class PlaylistToolbar extends LinearLayout {
 
 							}
 						} else {
-							resultText = "Delete playlist failed, try again later";
+							resultText = getContext().getString(R.string.delete_playlist_failed_try_again_later);
 						}
 						Toast.makeText(getContext(), resultText, Toast.LENGTH_SHORT).show();
 						m_playlistView.backToListPlaylist();

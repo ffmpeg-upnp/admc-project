@@ -55,12 +55,12 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 	public static void scanMedia(final Context context) {
 		IS_SCANNING = true;
 		m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		final Notification notification = new Notification(R.drawable.ic_scanning_sdcard, "Scanning content on sdcard",
+		final Notification notification = new Notification(R.drawable.ic_scanning_sdcard, context.getString(R.string.scanning_content_on_sdcard),
 				System.currentTimeMillis());
 
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(), 0);
 
-		notification.setLatestEventInfo(context, "Scan content on sdcard", "Scanning", contentIntent);
+		notification.setLatestEventInfo(context, context.getString(R.string.scan_content_on_sdcard), context.getString(R.string.scanning), contentIntent);
 		notification.flags = Notification.FLAG_NO_CLEAR;
 
 		m_mineMap = new HashMap<String, String>();

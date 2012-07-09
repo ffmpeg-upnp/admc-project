@@ -120,7 +120,7 @@ public class RendererControlView extends LinearLayout {
 
 		@Override
 		public void onClick(View v) {
-			new AsyncTaskWithProgressDialog<Void, Void, List<Playlist>>("Loading all playlists...") {
+			new AsyncTaskWithProgressDialog<Void, Void, List<Playlist>>(getContext().getString(R.string.loading_all_playlists)) {
 
 				@Override
 				protected List<Playlist> doInBackground(Void... params) {
@@ -139,8 +139,8 @@ public class RendererControlView extends LinearLayout {
 						m_playlistAdapter.add(new AdapterItem(playlist));
 					}
 
-					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView)
-							.setNegativeButton("Close", null).create();
+					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView).setNegativeButton("Close", null)
+							.create();
 					m_alertDialog.show();
 				};
 
@@ -154,16 +154,14 @@ public class RendererControlView extends LinearLayout {
 		@Override
 		public void onItemClick(AdapterView<?> arg0, View view, final int position, long arg3) {
 			PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-			if (playlistProcessor != null
-					&& m_playlistAdapter.getItem(position).getData().equals(playlistProcessor.getData()))
+			if (playlistProcessor != null && m_playlistAdapter.getItem(position).getData().equals(playlistProcessor.getData()))
 				dismissSelectDialog();
 			else
-				new AsyncTaskWithProgressDialog<Void, Void, PlaylistProcessor>("Loading playlist") {
+				new AsyncTaskWithProgressDialog<Void, Void, PlaylistProcessor>(getContext().getString(R.string.loading_playlist)) {
 
 					@Override
 					protected PlaylistProcessor doInBackground(Void... params) {
-						return PlaylistManager.getPlaylistProcessor((Playlist) m_playlistAdapter.getItem(position)
-								.getData());
+						return PlaylistManager.getPlaylistProcessor((Playlist) m_playlistAdapter.getItem(position).getData());
 					}
 
 					protected void onPostExecute(PlaylistProcessor result) {
@@ -179,7 +177,7 @@ public class RendererControlView extends LinearLayout {
 							}
 							dismissSelectDialog();
 						} else {
-							Toast.makeText(getContext(), "Playlist is empty", Toast.LENGTH_SHORT).show();
+							Toast.makeText(getContext(), R.string.playlist_is_empty, Toast.LENGTH_SHORT).show();
 						}
 					}
 
@@ -196,7 +194,8 @@ public class RendererControlView extends LinearLayout {
 
 		@Override
 		public void onClick(View v) {
-			new AsyncTaskWithProgressDialog<Void, Void, List<PlaylistItem>>("Loading all playlists...") {
+			new AsyncTaskWithProgressDialog<Void, Void, List<PlaylistItem>>(getContext()
+					.getString(R.string.loading_all_playlists)) {
 
 				@Override
 				protected List<PlaylistItem> doInBackground(Void... params) {
@@ -210,7 +209,7 @@ public class RendererControlView extends LinearLayout {
 					super.onPostExecute(result);
 					PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 					if (result.size() == 0) {
-						Toast.makeText(getContext(), "Current playlist is empty", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getContext(), R.string.current_playlist_is_empty, Toast.LENGTH_SHORT).show();
 						return;
 					}
 					ListView listView = new ListView(getContext());
@@ -236,8 +235,8 @@ public class RendererControlView extends LinearLayout {
 						m_playlistItemAdapter.add(new AdapterItem(playlistItem));
 					}
 
-					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView)
-							.setNegativeButton("Close", null).create();
+					m_alertDialog = new AlertDialog.Builder(getContext()).setView(listView).setNegativeButton("Close", null)
+							.create();
 					m_alertDialog.show();
 				};
 
@@ -366,8 +365,7 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
-							R.drawable.ic_btn_media_play));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_play));
 					m_sb_duration.setProgress(0);
 				}
 			});
@@ -380,8 +378,7 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
-							R.drawable.ic_btn_media_pause));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_pause));
 				}
 			});
 
@@ -394,8 +391,7 @@ public class RendererControlView extends LinearLayout {
 
 				@Override
 				public void run() {
-					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(
-							R.drawable.ic_btn_media_play));
+					m_btn_playPause.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_media_play));
 				}
 			});
 
@@ -463,12 +459,8 @@ public class RendererControlView extends LinearLayout {
 		@Override
 		public void onClick(View v) {
 			final ViewMode[] viewModes = ViewMode.values();
-			int len = viewModes.length;
-			String items[] = new String[len];
-			for (int i = 0; i < len; ++i) {
-				items[i] = viewModes[i].getString();
-			}
-			new AlertDialog.Builder(getContext()).setTitle("Select filter mode")
+			String items[] = getContext().getResources().getStringArray(R.array.viewMode);
+			new AlertDialog.Builder(getContext()).setTitle(R.string.select_filter_mode)
 					.setItems(items, new DialogInterface.OnClickListener() {
 
 						@Override

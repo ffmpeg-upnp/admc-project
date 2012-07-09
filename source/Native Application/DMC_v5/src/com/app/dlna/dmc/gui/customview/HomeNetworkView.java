@@ -17,6 +17,7 @@ import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -62,7 +63,7 @@ public class HomeNetworkView extends DMRListenerView {
 		m_listView.setOnItemLongClickListener(m_itemLongClick);
 		m_listView.setOnScrollListener(m_scrollListener);
 		m_progressDlg = new ProgressDialog(MainActivity.INSTANCE);
-		m_progressDlg.setTitle(context.getString(R.string.loading));
+		m_progressDlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		m_progressDlg.setMessage(context.getString(R.string.waiting_for_loading_items));
 		m_progressDlg.setCancelable(true);
 		m_progressDlg.setCanceledOnTouchOutside(false);

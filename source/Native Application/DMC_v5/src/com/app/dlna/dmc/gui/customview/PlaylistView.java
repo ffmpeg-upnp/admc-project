@@ -5,7 +5,6 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -57,7 +56,7 @@ public class PlaylistView extends DMRListenerView {
 
 			if (m_adapter.getItem(position).getData() instanceof PlaylistItem) {
 				new AlertDialog.Builder(getContext())
-						.setTitle("Select Action")
+						.setTitle(R.string.select_action)
 						.setItems(getResources().getStringArray(R.array.playlistitem_contextmenu),
 								new DialogInterface.OnClickListener() {
 
@@ -65,10 +64,8 @@ public class PlaylistView extends DMRListenerView {
 									public void onClick(DialogInterface dialog, int which) {
 										switch (which) {
 										case 0:
-											PlaylistItem playlistItem = (PlaylistItem) m_adapter.getItem(position)
-													.getData();
-											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(
-													playlistItem);
+											PlaylistItem playlistItem = (PlaylistItem) m_adapter.getItem(position).getData();
+											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(playlistItem);
 											break;
 										default:
 											break;
@@ -84,7 +81,7 @@ public class PlaylistView extends DMRListenerView {
 				} else {
 					actions = getResources().getStringArray(R.array.playlist_contextmenu);
 				}
-				new AlertDialog.Builder(getContext()).setTitle("Select Action")
+				new AlertDialog.Builder(getContext()).setTitle(R.string.select_action)
 						.setItems(actions, new DialogInterface.OnClickListener() {
 
 							@Override
@@ -111,8 +108,9 @@ public class PlaylistView extends DMRListenerView {
 	};
 
 	private void removePlaylist(final Playlist playlist) {
-		new AlertDialog.Builder(getContext()).setTitle("Comfirm").setMessage("Are you sure to remove this playlist?")
-				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		new AlertDialog.Builder(getContext()).setTitle(R.string.comfirm)
+				.setMessage(R.string.are_you_sure_to_remove_this_playlist_)
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -120,7 +118,7 @@ public class PlaylistView extends DMRListenerView {
 
 							@Override
 							public void run() {
-								MainActivity.INSTANCE.showLoadingMessage("Cleaning playlist");
+								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(R.string.cleaning_playlist));
 								PlaylistManager.deletePlaylist(playlist);
 								MainActivity.INSTANCE.runOnUiThread(new Runnable() {
 
@@ -130,16 +128,13 @@ public class PlaylistView extends DMRListenerView {
 										preparePlaylist();
 									}
 								});
-								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR
-										.getPlaylistProcessor();
-								if (playlistProcessor != null
-										&& playlistProcessor.getData().getId() == playlist.getId()) {
+								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+								if (playlistProcessor != null && playlistProcessor.getData().getId() == playlist.getId()) {
 									MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(null);
 									DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 									if (dmrProcessor != null) {
 										dmrProcessor.stop();
-										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR
-												.getPlaylistProcessor());
+										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 									}
 
 								}
@@ -156,13 +151,13 @@ public class PlaylistView extends DMRListenerView {
 	private void renamePlaylist(final Playlist playlist) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
 
-		alert.setTitle("Save Playlist");
-		alert.setMessage("Insert playlist name:");
+		alert.setTitle(R.string.save_playlist);
+		alert.setMessage(R.string.insert_playlist_name_);
 
 		final EditText input = new EditText(getContext());
 		alert.setView(input);
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String value = input.getText().toString();
 				if (value != null && value.trim().length() != 0) {
@@ -179,8 +174,9 @@ public class PlaylistView extends DMRListenerView {
 	}
 
 	private void cleanPlaylist(final Playlist playlist) {
-		new AlertDialog.Builder(getContext()).setTitle("Comfirm").setMessage("Are you sure to clean this playlist?")
-				.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		new AlertDialog.Builder(getContext()).setTitle(R.string.comfirm)
+				.setMessage(R.string.are_you_sure_to_clean_this_playlist_)
+				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -188,21 +184,18 @@ public class PlaylistView extends DMRListenerView {
 
 							@Override
 							public void run() {
-								MainActivity.INSTANCE.showLoadingMessage("Cleaning playlist");
+								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(R.string.cleaning_playlist));
 								PlaylistManager.clearPlaylist(playlist.getId());
 								MainActivity.INSTANCE.dismissLoadingDialog();
-								MainActivity.INSTANCE.showToast("Clean playlist sucessfully");
-								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR
-										.getPlaylistProcessor();
-								if (playlistProcessor != null
-										&& playlistProcessor.getData().getId() == playlist.getId()) {
+								MainActivity.INSTANCE.showToast(getContext().getString(R.string.clean_playlist_sucessfully));
+								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
+								if (playlistProcessor != null && playlistProcessor.getData().getId() == playlist.getId()) {
 									MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(PlaylistManager
 											.getPlaylistProcessor(playlist));
 									DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 									if (dmrProcessor != null) {
 										dmrProcessor.stop();
-										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR
-												.getPlaylistProcessor());
+										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 									}
 
 								}
@@ -215,8 +208,7 @@ public class PlaylistView extends DMRListenerView {
 
 	public PlaylistView(Context context) {
 		super(context);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-				R.layout.cv_playlist_allitem, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_playlist_allitem, this);
 		m_listView = (ListView) findViewById(R.id.lv_playlist);
 		m_adapter = new CustomArrayAdapter(getContext(), 0);
 		m_listView.setAdapter(m_adapter);
@@ -235,8 +227,7 @@ public class PlaylistView extends DMRListenerView {
 			MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().addListener(m_playlistListener);
 		switch (m_viewMode) {
 		case VM_DETAILS:
-			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null
-					|| m_currentPlaylist.getData().getName() == null) {
+			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null || m_currentPlaylist.getData().getName() == null) {
 				m_viewMode = VM_LIST;
 				preparePlaylist();
 				return;
@@ -250,7 +241,7 @@ public class PlaylistView extends DMRListenerView {
 			m_playlistToolbar.updateToolbar(m_viewMode);
 			break;
 		case VM_LIST:
-			new AsyncTaskWithProgressDialog<Void, Void, List<Playlist>>("Loading All Playlist") {
+			new AsyncTaskWithProgressDialog<Void, Void, List<Playlist>>(getContext().getString(R.string.loading_all_playlist)) {
 
 				@Override
 				protected void onPreExecute() {
@@ -284,11 +275,11 @@ public class PlaylistView extends DMRListenerView {
 
 		@Override
 		public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-			Log.i(TAG, "On ItemClick");
 			final Object object = m_adapter.getItem(position).getData();
 			if (object instanceof Playlist) {
 
-				new AsyncTaskWithProgressDialog<Void, Void, PlaylistProcessor>("Loading Playlist Items") {
+				new AsyncTaskWithProgressDialog<Void, Void, PlaylistProcessor>(getContext().getString(
+						R.string.loading_playlist_items)) {
 
 					@Override
 					protected PlaylistProcessor doInBackground(Void... params) {
@@ -304,12 +295,12 @@ public class PlaylistView extends DMRListenerView {
 				}.execute(new Void[] {});
 			} else if (object instanceof PlaylistItem) {
 				if (m_currentPlaylist == null) {
-					Toast.makeText(getContext(), "Cannot get playlist", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), R.string.cannot_get_playlist, Toast.LENGTH_SHORT).show();
 					return;
 				}
 				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 				if (dmrProcessor == null) {
-					Toast.makeText(getContext(), "Cannot connect to renderer", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), R.string.cannot_connect_to_renderer, Toast.LENGTH_SHORT).show();
 					return;
 				}
 				MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(m_currentPlaylist);

@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 import app.dlna.controller.v4.R;
 
+import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.LibraryActivity;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.impl.YoutubeProcessorImpl;
@@ -28,6 +29,7 @@ import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor;
 import com.app.dlna.dmc.processor.interfaces.YoutubeProcessor.IYoutubeProcessorListener;
 import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.processor.model.YoutubeItem;
+import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
 
 public class YoutubeView extends LinearLayout {
 	private ListView m_listView;
@@ -51,7 +53,7 @@ public class YoutubeView extends LinearLayout {
 		m_youtubeProcessor = new YoutubeProcessorImpl();
 		m_progress = new ProgressDialog(context);
 		m_progress.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		m_progress.setMessage("Contacting to Youtube...");
+		m_progress.setMessage(context.getString(R.string.contacting_to_youtube));
 		m_progress.setCancelable(true);
 		m_progress.setCanceledOnTouchOutside(false);
 	}
@@ -75,17 +77,18 @@ public class YoutubeView extends LinearLayout {
 			PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 			PlaylistItem added = playlistProcessor.addYoutubeItem(m_adapter.getItem(position));
 			if (added != null) {
-				Toast.makeText(getContext(), "Added item to playlist", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getContext(), R.string.added_item_to_playlist, Toast.LENGTH_SHORT).show();
 				DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 				if (dmrProcessor != null) {
 					playlistProcessor.setCurrentItem(added);
 					dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
+					AppPreference.setPlaylistViewMode(ViewMode.VIDEO_ONLY);
 				}
 			} else {
 				if (playlistProcessor.isFull()) {
-					Toast.makeText(getContext(), "Current playlist is full", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), R.string.current_playlist_is_full, Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(getContext(), "An error occurs, try again later", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), R.string.an_error_occurs_try_again_later, Toast.LENGTH_SHORT).show();
 				}
 			}
 		}
@@ -94,21 +97,24 @@ public class YoutubeView extends LinearLayout {
 
 		@Override
 		public boolean onItemLongClick(AdapterView<?> adapter, View view, final int position, long arg3) {
-			new AlertDialog.Builder(getContext()).setTitle("Select Action")
-					.setItems(new String[] { "Download" }, new DialogInterface.OnClickListener() {
+			new AlertDialog.Builder(getContext())
+					.setTitle(R.string.select_action)
+					.setItems(new String[] { YoutubeView.this.getContext().getString(R.string.download) },
+							new DialogInterface.OnClickListener() {
 
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							switch (which) {
-							case 0:
-								MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(m_adapter.getItem(position));
-								break;
-							default:
-								break;
-							}
-							dialog.dismiss();
-						}
-					}).create().show();
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									switch (which) {
+									case 0:
+										MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(
+												m_adapter.getItem(position));
+										break;
+									default:
+										break;
+									}
+									dialog.dismiss();
+								}
+							}).create().show();
 			return true;
 		}
 	};

@@ -95,4 +95,8 @@ public class AppPreference {
 	public static boolean getShuttle() {
 		return PREF != null ? PREF.getBoolean("random_track", false) : false;
 	}
+
+	public static String getLanguage() {
+		return PREF != null ? PREF.getString("locale_override", "en") : "en";
+	}
 }

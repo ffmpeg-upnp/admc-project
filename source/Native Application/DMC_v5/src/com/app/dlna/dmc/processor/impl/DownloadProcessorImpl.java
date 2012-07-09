@@ -9,6 +9,7 @@ import org.teleal.cling.support.model.DIDLObject;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
+import app.dlna.controller.v4.R;
 
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.impl.DownloadThread.DownloadListener;
@@ -32,7 +33,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 				@Override
 				public void run() {
 					Toast.makeText(m_activity,
-							"Download failed, file: " + downloadThread.getItemName() + ", error = " + ex.getMessage(),
+							R.string.download_failed_file_ + downloadThread.getItemName() + ", error = " + ex.getMessage(),
 							Toast.LENGTH_SHORT).show();
 				}
 			});
@@ -44,7 +45,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			m_activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(m_activity, "Download complete, file: " + downloadThread.getItemName(), Toast.LENGTH_SHORT)
+					Toast.makeText(m_activity, R.string.download_complete_file_ + downloadThread.getItemName(), Toast.LENGTH_SHORT)
 							.show();
 				}
 			});
@@ -117,7 +118,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 		new YoutubeProcessorImpl().getDirectLinkAsync(item, new IYoutubeProcessorListener() {
 			@Override
 			public void onStartPorcess() {
-				MainActivity.INSTANCE.showLoadingMessage("Contacting to youtube server");
+				MainActivity.INSTANCE.showLoadingMessage(m_activity.getString(R.string.contacting_to_youtube_server));
 			}
 
 			@Override
@@ -129,15 +130,15 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			public void onGetLinkComplete(YoutubeItem result) {
 				if (MainActivity.INSTANCE.dismissLoadingDialog()) {
 					startDownload(item.getTitle(), result.getDirectLink());
-					MainActivity.INSTANCE.showToast("Starting download...");
+					MainActivity.INSTANCE.showToast(m_activity.getString(R.string.starting_download));
 				} else {
-					MainActivity.INSTANCE.showToast("Action canceled...");
+					MainActivity.INSTANCE.showToast(m_activity.getString(R.string.action_canceled));
 				}
 			}
 
 			@Override
 			public void onFail(Exception ex) {
-				MainActivity.INSTANCE.showToast("Download file failed. Try again later.");
+				MainActivity.INSTANCE.showToast(m_activity.getString(R.string.download_file_failed_try_again_later_));
 			}
 		});
 		return 0;
@@ -152,7 +153,7 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 
 						@Override
 						public void onStartPorcess() {
-							MainActivity.INSTANCE.showLoadingMessage("Contacting to youtube server");
+							MainActivity.INSTANCE.showLoadingMessage(m_activity.getString(R.string.contacting_to_youtube_server));
 						}
 
 						@Override
@@ -163,15 +164,15 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 						public void onGetLinkComplete(YoutubeItem result) {
 							if (MainActivity.INSTANCE.dismissLoadingDialog()) {
 								startDownload(result.getTitle(), result.getDirectLink());
-								MainActivity.INSTANCE.showToast("Starting download...");
+								MainActivity.INSTANCE.showToast(m_activity.getString(R.string.starting_download));
 							} else {
-								MainActivity.INSTANCE.showToast("Action canceled...");
+								MainActivity.INSTANCE.showToast(m_activity.getString(R.string.action_canceled));
 							}
 						}
 
 						@Override
 						public void onFail(Exception ex) {
-							MainActivity.INSTANCE.showToast("Download file failed. Try again later.");
+							MainActivity.INSTANCE.showToast(m_activity.getString(R.string.download_file_failed_try_again_later_));
 							MainActivity.INSTANCE.dismissLoadingDialog();
 						}
 					});

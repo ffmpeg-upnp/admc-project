@@ -22,7 +22,7 @@ public class DeviceDetailsDialog extends Dialog {
 		m_listener = listener;
 		requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		setContentView(R.layout.dl_devicedetails);
-		setTitle("Device info");
+		setTitle(R.string.device_info);
 		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_info);
 		((Button) findViewById(R.id.btn_select)).setOnClickListener(m_selectClick);
 		((Button) findViewById(R.id.btn_writeToTag)).setOnClickListener(m_saveTagClick);

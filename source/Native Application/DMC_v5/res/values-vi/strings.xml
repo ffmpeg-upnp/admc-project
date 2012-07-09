@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+
+    <string name="app_name">PocketSharing</string>
+    <string name="upnp_service">Upnp Service</string>
+    <string name="refresh">Refresh</string>
+    <string name="menu_refresh_devices">Cập nhật danh sách thiết bị</string>
+    <string name="menu_rescan_sdcard">Quét lại thẻ nhớ</string>
+    <string name="menu_settings">Tùy chỉnh</string>
+    <string name="menu_about">Thông tin</string>
+    <string name="library">Thư Viện</string>
+    <string name="now_playing">Đang Phát</string>
+    <string name="play">play</string>
+    <string name="pause">pause</string>
+    <string name="enter_keyword_here">Nhập từ khóa tìm kiêm</string>
+    <string name="cancel">Hủy bỏ</string>
+
+    <string-array name="libray_pager_list">
+        <item>Mạng gia đình</item>
+        <item>Playlist</item>
+        <item>Internet</item>
+    </string-array>
+
+    <string name="minimize">Thu nhỏ</string>
+    <string name="close">Đóng</string>
+    <string name="device_name">Tên thiết bị:</string>
+    <string name="device_type">Loại thiết bị:</string>
+    <string name="device_udn">UDN:</string>
+    <string name="select">Chọn</string>
+    <string name="writeToTag">Ghi thẻ</string>
+    <string name="anim_duration">300</string>
+    <string name="slash">/</string>
+    <string name="play_to">Phát trên Renderer</string>
+    <string name="view_mode">Kiểu lọc</string>
+
+    <string-array name="didlobject_contextmenu">
+        <item>Thêm vào playlist khác</item>
+        <item>Tải về</item>
+    </string-array>
+    <string-array name="container_contextmenu">
+        <item>Thêm tất cả vào playlist</item>
+        <item>Xóa tất cả trong playlist</item>
+    </string-array>
+    <string-array name="playlistitem_contextmenu">
+        <item>Tải về</item>
+    </string-array>
+    <string-array name="playlist_contextmenu">
+        <item>Xóa tất cả nội dung</item>
+        <item>Đổi tên</item>
+        <item>Xóa playlist</item>
+    </string-array>
+    <string-array name="playlist_unsaved_contextmenu">
+        <item>Xóa tất cả nội dung</item>
+    </string-array>
+
+    <string name="dev1_name">Nguyen Dac Phu</string>
+    <string name="dev1_email">ngdacphu.khtn@gmail.com</string>
+    <string name="dev2_name">Le Tan Minh Quan</string>
+    <string name="dev2_email">letanminhquan@gmail.com</string>
+    <string name="app_desc">DLNA Application For Android</string>
+    <string name="how_to_use">Hướng dẫn sử dụng</string>
+    <string name="tap_for_a_nfc_tag_to_write">Chạm vào một thẻ NFC để bắt đầu ghi dữ liệu</string>
+    <string name="sorry_this_item_cannot_be_played_">Xin lỗi. Nội dung này không thể phát.</string>
+    <string name="cannot_play_item">Không thể phát nội dung</string>
+    <string name="cannot_start_upnp_service_please_try_again_later">Không thể khởi động UPnP Service, xin hãy thử lại sau</string>
+    <string name="upnp_service_info">Thông tin UPnP Service</string>
+    <string name="ok">Đồng Ý</string>
+    <string name="network_info">Thông tin mạng</string>
+    <string name="cannot_find_a_wifi_connection_for_upnpservice_please_connect_to_a_wifi_network_or_run_wifi_hotspot_to_use_the_app_">Không thể tìm thấy kết nối phù hợp với giao thức UPnP. Hãy kết nối vào một mạng Wi-Fi hoặc sử dụng Wi-Fi Hotspot và khởi động lại ứng dụng.</string>
+    <string name="wifi_settings">Cấu hình Wi-Fi</string>
+    <string name="exit">Thoát</string>
+    <string name="network_interface_changed_application_must_restart_">Mạng kết nối có thay đổi. Ứng dụng cần phải khởi động lại.</string>
+    <string name="network_changed">Mạng kết nối có thay đổi</string>
+    <string name="network_error">Mạng kết nối lỗi</string>
+    <string name="network_disabled">Mạng kết nối không khả dụng</string>
+    <string name="network_disabled_try_to_re_enabled_network">Không thể truy cập vào mạng kết nối, hãy thử lại sau.</string>
+    <string name="confirm_exit">Xác nhật thoát ứng dụng</string>
+    <string name="are_you_sure_want_to_exit_">Bạn có thật sự muốn tắt ứng dụng?</string>
+    <string name="cannot_find_specified_device_from_nfc_tag_please_check_if_device_is_connected_to_the_network_or_the_data_on_your_tag">Không tìm thấy thiết bị được lưu trong thẻ NFC, hãy kiểm tra lại thiết bị đã kết nối hay chưa hoặc dữ liệu trên thẻ NFC của bạn</string>
+    <string name="write_device_info_to_nfc_tag_complete_">Ghi thông tin của thiết bị vào thẻ NFC</string>
+    <string name="write_failed_cause_">"Quá trình ghi bị lỗi; nguyên nhân : "</string>
+    <string name="please_enable_nfc_on_you_device_first">Hãy mở chức năng NFC trên thiết bị trước</string>
+    <string name="loading_image">Đang tải ảnh</string>
+    <string name="cannot_connect_to_renderer">Không thể kết nối vào Renderer</string>
+    <string name="image_loading_error_reduce_image_quality_in_settings_maybe_fix_this_problem">Có lỗi xảy ra. Thử giảm chất lượng ảnh trong phần tùy chọn có thể sẽ sửa được lỗi này.</string>
+    <string name="check_item_url_">Đang kiểm tra đường dẫn của nội dung</string>
+    <string name="you_are_in_root_of_this_data_source">Bạn đang ở thư mục gốc</string>
+    <string name="cannot_process_playlist">Không thể xử lý trên playlist</string>
+    <string name="cannot_contact_to_dms_server">Không thể kết nối đển Media Server</string>
+    <string name="waiting_for_add_all_items">Đang thêm tất cả các nội dung vào playlist</string>
+    <string name="waiting_for_remove_all_items">Đang xóa tất cả các nội dung trong playlist</string>
+    <string name="processing">Đang xử lý</string>
+    <string name="error_occur_">"Có lỗi xảy ra: "</string>
+    <string name="loading">Đang tải</string>
+    <string name="waiting_for_loading_items">Đang tải các mục nội dung</string>
+    <string name="folder_is_empty">Thư mục rỗng</string>
+    <string name="select_action">Chọn chức năng</string>
+    <string name="select_playlist">Chọn playlist</string>
+    <string name="adding_item_to_playlist_">Đang thêm các nội dung vào playlist "</string>
+    <string name="container_added_to_playlist_failed">Thêm thư mục thất bại. Hãy thử lại sau.</string>
+    <string name="container_added_to_playlist_sucessfully">Thêm thư mục thành công</string>
+    <string name="remove_container_from_playlist_">Đang xóa các nội dung khỏi playlist "</string>
+    <string name="container_removed_from_playlist_failed">Xóa thư mục thất bại. Hãy thử lại sau.</string>
+    <string name="container_removed_to_playlist_sucessfully">Xóa thư mục thành công</string>
+    <string name="select_playlist_to_add">Chọn playlist</string>
+    <string name="item_added_to_playlist_sucessfully">Thêm nội dung vào playlist thành công</string>
+    <string name="current_playlist_is_full">Playlist hiện tại đã đầy</string>
+    <string name="an_error_occurs_try_again_later">Có lỗi xảy ra. Hãy thử lại sau.</string>
+    <string name="error_occurs">Có lỗi xảy ra</string>
+    <string name="load_more_result">Tải thêm nội dung</string>
+    <string name="warning">Cảnh báo</string>
+    <string name="this_will_clear_all_item_in_this_playlist">Hành động này sẽ xóa tất cả nội dung trong playlist</string>
+    <string name="clear_playlist">Xóa nội dung playlist</string>
+    <string name="save_playlist">Lưu playlist</string>
+    <string name="insert_playlist_name_">Nhập tên playlist:</string>
+    <string name="create_playlist">Tạo playlist</string>
+    <string name="playlist_is_empty">Playlist rỗng</string>
+    <string name="create_playlist_fail">Tạo playlist thất bại. Hãy thử lại sau.</string>
+    <string name="confirm_delete">Xác nhận xóa</string>
+    <string name="are_you_sure_to_delete_">Bạn có thật sự muốn xóa "</string>
+    <string name="delete_playlist_success">Xóa playlist thành công</string>
+    <string name="delete_playlist_failed_try_again_later">Xóa playlist thất bại, hãy thử lại sau</string>
+    <string name="comfirm">Xác nhận</string>
+    <string name="are_you_sure_to_remove_this_playlist_">Bạn có chắc chắn muốn xóa playlist này không?</string>
+    <string name="are_you_sure_to_clean_this_playlist_">Bạn có chắc chắn muốn xóa nội dung playlist này không?</string>
+    <string name="cleaning_playlist">Xóa nội dung playlist</string>
+    <string name="clean_playlist_sucessfully">Xóa nội dung playlist thành công</string>
+    <string name="loading_all_playlist">Đang tải tất cả các playlist</string>
+    <string name="loading_playlist_items">Tải các nội dung trong playlist</string>
+    <string name="cannot_get_playlist">Không thể xử lý playlist. Hãy thử lại sau.</string>
+    <string name="loading_all_playlists">Đang tải tất cả các playlist</string>
+    <string name="loading_playlist">Đang tải playlist</string>
+    <string name="current_playlist_is_empty">Playlist hiện tại rỗng</string>
+    <string name="select_filter_mode">Chọn kiểu lọc</string>
+    <string name="download">Tải về</string>
+    <string name="device_info">Thông tin thiết bị</string>
+    <string name="no_network_found">Không tìm thấy mạng kết nối</string>
+    <string name="scanning_content_on_sdcard">Đang quét nội dung trên thẻ nhớ</string>
+    <string name="scan_content_on_sdcard">Quét nội dung trên thẻ nhớ</string>
+    <string name="scanning">Đang quét</string>
+    <string name="set_dmr_fail_cannot_get_dmr_info_udn_">"Không thể kết nối đến Media Renderer. UDN = "</string>
+    <string name="set_dms_fail_cannot_get_dms_info_udn_">"Không thể kết nối đến Media Server. UDN = "</string>
+    <string name="service_is_running">Service đang chạy</string>
+    <string name="coreupnpservice_started">CoreUpnpService khởi động</string>
+    <string name="contacting_to_youtube">Đang lấy thông tin từ Youtube</string>
+    <string name="sorry_this_item_cannot_be_downloaded">Nội dung không thể tải về. Hãy thử lại sau.</string>
+    <string name="download_fail">Tải về thất bại</string>
+    <string name="item_cannot_be_downloaded">Nội dung không thể được tải về</string>
+    <string name="download_file">Tải nội dung</string>
+    <string name="downloading_content">Đang tải nội dung</string>
+    <string name="download_content">Tải nội dung</string>
+    <string name="download_complete">Tải nội dung hoàn tất</string>
+    <string name="cannot_download_item_">Không thể tải về nội dung "</string>
+    <string name="download_failed_file_">"Tải về thất bại, nội dung: "</string>
+    <string name="download_complete_file_">"Tải về hoàn tất, nội dung: "</string>
+    <string name="contacting_to_youtube_server">Đang lấy dữ liệu từ Youtube</string>
+    <string name="starting_download">Bắt đầu tải về</string>
+    <string name="action_canceled">Hành động bị hủy</string>
+    <string name="download_file_failed_try_again_later_">Tải về thất bại. Hãy thử lại sau.</string>
+    <string name="all_items">Tất cả thể loại</string>
+    <string name="audio_only">Chỉ hiển thị âm thanh</string>
+    <string name="video_only">Chỉ hiển thị đoạn phim</string>
+    <string name="image_only">Chỉ hiển thị hình ảnh</string>
+	<string name="added_item_to_playlist">Thêm nội dung vào playlist hoàn tất</string>
+
+</resources>

@@ -168,15 +168,16 @@ public final class R {
         public static final int ic_youtube=0x7f020071;
     }
     public static final class id {
-        public static final int action=0x7f0d003c;
-        public static final int author=0x7f0d003f;
+        public static final int action=0x7f0d003e;
+        public static final int author=0x7f0d0041;
         public static final int botToolbar=0x7f0d0010;
         public static final int btn_back=0x7f0d0015;
         public static final int btn_clear=0x7f0d0027;
-        public static final int btn_close=0x7f0d0034;
+        public static final int btn_close=0x7f0d002c;
         public static final int btn_containerDeselectAll=0x7f0d0017;
         public static final int btn_containerSelectAll=0x7f0d0016;
         public static final int btn_fakeDropdown=0x7f0d001a;
+        public static final int btn_howToUse=0x7f0d002b;
         public static final int btn_next=0x7f0d001d;
         public static final int btn_playPause=0x7f0d0019;
         public static final int btn_prev=0x7f0d0018;
@@ -184,26 +185,26 @@ public final class R {
         public static final int btn_remove=0x7f0d0028;
         public static final int btn_save=0x7f0d0026;
         public static final int btn_search=0x7f0d0029;
-        public static final int btn_select=0x7f0d0032;
+        public static final int btn_select=0x7f0d0034;
         public static final int btn_toggleShowHide=0x7f0d0003;
         public static final int btn_viewmode=0x7f0d001c;
-        public static final int btn_writeToTag=0x7f0d0033;
-        public static final int cancel=0x7f0d0039;
+        public static final int btn_writeToTag=0x7f0d0035;
+        public static final int cancel=0x7f0d003b;
         public static final int content=0x7f0d0009;
-        public static final int contentName=0x7f0d0037;
+        public static final int contentName=0x7f0d0039;
         public static final int cv_compact_dmr=0x7f0d0005;
-        public static final int desc=0x7f0d003d;
-        public static final int deviceName=0x7f0d002c;
-        public static final int deviceType=0x7f0d002e;
-        public static final int deviceUDN=0x7f0d0030;
-        public static final int downloadProgress=0x7f0d0036;
-        public static final int download_icon=0x7f0d0035;
-        public static final int downloaded=0x7f0d0038;
+        public static final int desc=0x7f0d003f;
+        public static final int deviceName=0x7f0d002e;
+        public static final int deviceType=0x7f0d0030;
+        public static final int deviceUDN=0x7f0d0032;
+        public static final int downloadProgress=0x7f0d0038;
+        public static final int download_icon=0x7f0d0037;
+        public static final int downloaded=0x7f0d003a;
         public static final int ed_query=0x7f0d002a;
         public static final int gridView_renderer=0x7f0d0013;
-        public static final int icon=0x7f0d003a;
+        public static final int icon=0x7f0d003c;
         public static final int image=0x7f0d000a;
-        public static final int linearLayout1=0x7f0d0031;
+        public static final int linearLayout1=0x7f0d0033;
         public static final int listView=0x7f0d0000;
         public static final int ll_button_container=0x7f0d0001;
         public static final int ll_seekControl=0x7f0d0020;
@@ -211,12 +212,12 @@ public final class R {
         public static final int loading_icon=0x7f0d000c;
         public static final int lv_mediasource_browsing=0x7f0d0011;
         public static final int lv_playlist=0x7f0d0012;
-        public static final int menu_about=0x7f0d0043;
-        public static final int menu_refresh_devices=0x7f0d0040;
-        public static final int menu_rescan_sdcard=0x7f0d0041;
-        public static final int menu_settings=0x7f0d0042;
-        public static final int name=0x7f0d003b;
-        public static final int playing=0x7f0d003e;
+        public static final int menu_about=0x7f0d0045;
+        public static final int menu_refresh_devices=0x7f0d0042;
+        public static final int menu_rescan_sdcard=0x7f0d0043;
+        public static final int menu_settings=0x7f0d0044;
+        public static final int name=0x7f0d003d;
+        public static final int playing=0x7f0d0040;
         public static final int playlist=0x7f0d000d;
         public static final int playlistItem=0x7f0d001e;
         public static final int rendererControlView=0x7f0d000e;
@@ -226,9 +227,9 @@ public final class R {
         public static final int spinner_playlist=0x7f0d001f;
         public static final int surface=0x7f0d000b;
         public static final int tabwidget_container=0x7f0d0006;
-        public static final int textView1=0x7f0d002b;
-        public static final int textView3=0x7f0d002d;
-        public static final int textView5=0x7f0d002f;
+        public static final int textView1=0x7f0d002d;
+        public static final int textView3=0x7f0d002f;
+        public static final int textView5=0x7f0d0031;
         public static final int tv_current=0x7f0d0022;
         public static final int tv_max=0x7f0d0023;
         public static final int tv_playlistName=0x7f0d001b;
@@ -236,6 +237,7 @@ public final class R {
         public static final int viewPager=0x7f0d0002;
         public static final int viewPagerStrip=0x7f0d0004;
         public static final int volume=0x7f0d0024;
+        public static final int webView=0x7f0d0036;
     }
     public static final class layout {
         public static final int activity_dmrlist=0x7f030000;
@@ -253,12 +255,14 @@ public final class R {
         public static final int cv_toolbar_playlist=0x7f03000c;
         public static final int cv_tv_title=0x7f03000d;
         public static final int cv_youtube=0x7f03000e;
-        public static final int dl_devicedetails=0x7f03000f;
-        public static final int download_notification=0x7f030010;
-        public static final int gvitem_renderer_compact=0x7f030011;
-        public static final int lvitem_generic_item=0x7f030012;
-        public static final int lvitem_loadmoreitem=0x7f030013;
-        public static final int lvitem_youtube=0x7f030014;
+        public static final int dl_about=0x7f03000f;
+        public static final int dl_devicedetails=0x7f030010;
+        public static final int dl_help=0x7f030011;
+        public static final int download_notification=0x7f030012;
+        public static final int gvitem_renderer_compact=0x7f030013;
+        public static final int lvitem_generic_item=0x7f030014;
+        public static final int lvitem_loadmoreitem=0x7f030015;
+        public static final int lvitem_youtube=0x7f030016;
     }
     public static final class menu {
         public static final int main=0x7f0c0000;
@@ -268,6 +272,7 @@ public final class R {
     }
     public static final class string {
         public static final int anim_duration=0x7f0a002f;
+        public static final int app_desc=0x7f0a0037;
         public static final int app_name=0x7f0a0000;
         public static final int back=0x7f0a0022;
         public static final int browselocal=0x7f0a0006;
@@ -277,6 +282,10 @@ public final class R {
         public static final int contentName=0x7f0a001d;
         public static final int deselect_all=0x7f0a001a;
         public static final int deselectall=0x7f0a0027;
+        public static final int dev1_email=0x7f0a0034;
+        public static final int dev1_name=0x7f0a0033;
+        public static final int dev2_email=0x7f0a0036;
+        public static final int dev2_name=0x7f0a0035;
         public static final int device_name=0x7f0a002a;
         public static final int device_type=0x7f0a002b;
         public static final int device_udn=0x7f0a002c;
@@ -284,6 +293,7 @@ public final class R {
         public static final int dms_list=0x7f0a0017;
         public static final int enter_keyword_here=0x7f0a001b;
         public static final int enter_video_link_=0x7f0a000e;
+        public static final int how_to_use=0x7f0a0038;
         public static final int library=0x7f0a0023;
         public static final int media_renderer=0x7f0a0014;
         public static final int media_server=0x7f0a0013;

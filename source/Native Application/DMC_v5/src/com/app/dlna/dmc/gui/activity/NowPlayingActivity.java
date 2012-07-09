@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
@@ -43,7 +42,6 @@ import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.utility.Utility;
 
 public class NowPlayingActivity extends Activity {
-	private static final String TAG = NowPlayingActivity.class.getName();
 	private RendererControlView m_rendererControl;
 	private ViewFlipper m_viewFlipper;
 	private ProgressDialog m_progressDialog;

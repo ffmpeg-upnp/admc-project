@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -33,12 +34,14 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -53,6 +56,7 @@ import app.dlna.controller.v4.R;
 
 import com.app.dlna.dmc.gui.customview.RendererCompactView;
 import com.app.dlna.dmc.gui.customview.RendererCompactView.OnDMRChangeListener;
+import com.app.dlna.dmc.gui.dialog.AboutDialog;
 import com.app.dlna.dmc.processor.impl.PlaylistManager;
 import com.app.dlna.dmc.processor.impl.UpnpProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
@@ -464,6 +468,18 @@ public class MainActivity extends TabActivity implements SystemListener {
 		case R.id.menu_settings:
 			Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
 			MainActivity.this.startActivity(intent);
+			break;
+		case R.id.menu_about:
+			AboutDialog about = new AboutDialog(MainActivity.this);
+			WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+			lp.copyFrom(about.getWindow().getAttributes());
+			Display display = getWindowManager().getDefaultDisplay();
+			Point size = new Point();
+			display.getSize(size);
+			lp.width = (int) (size.x * 0.9f);
+			lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+			about.show();
+			about.getWindow().setAttributes(lp);
 			break;
 		}
 		return super.onOptionsItemSelected(item);

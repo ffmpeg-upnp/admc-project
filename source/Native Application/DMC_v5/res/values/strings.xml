@@ -69,6 +69,10 @@
         <item>Add to other playlist</item>
         <item>Download</item>
     </string-array>
+    <string-array name="container_contextmenu">
+        <item>Add All To playlist</item>
+        <item>Remove All From playlist</item>
+    </string-array>
     <string-array name="playlistitem_contextmenu">
         <item>Download</item>
     </string-array>

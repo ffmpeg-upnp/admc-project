@@ -1,7 +1,5 @@
 package com.app.dlna.dmc.gui.dialog;
 
-import com.app.dlna.dmc.gui.activity.MainActivity;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Point;
@@ -25,7 +23,8 @@ public class AboutDialog extends Dialog {
 				HelpDialog about = new HelpDialog(getContext());
 				WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
 				lp.copyFrom(about.getWindow().getAttributes());
-				Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+				Display display = ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
+						.getDefaultDisplay();
 				Point size = new Point();
 				display.getSize(size);
 				lp.width = WindowManager.LayoutParams.FILL_PARENT;

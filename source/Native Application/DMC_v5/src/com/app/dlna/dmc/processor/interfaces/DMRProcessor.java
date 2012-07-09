@@ -38,7 +38,7 @@ public interface DMRProcessor {
 	void setRunning(boolean running);
 
 	PlaylistItem getCurrentItem();
-
+	
 	public interface DMRProcessorListner {
 		void onUpdatePosition(long current, long max);
 

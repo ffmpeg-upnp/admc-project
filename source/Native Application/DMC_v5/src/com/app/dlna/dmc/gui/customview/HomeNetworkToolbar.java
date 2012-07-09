@@ -91,9 +91,9 @@ public class HomeNetworkToolbar extends LinearLayout {
 		}
 
 		if (type.equals(ACTION_SELECT_ALL)) {
-			dmsProcessor.addAllToPlaylist(playlistProcessor, m_playlistModifyListener);
+			dmsProcessor.addAllToPlaylist(playlistProcessor.getData(), m_playlistModifyListener);
 		} else if (type.equals(ACTION_DESELECT_ALL)) {
-			dmsProcessor.removeAllFromPlaylist(playlistProcessor, m_playlistModifyListener);
+			dmsProcessor.removeAllFromPlaylist(playlistProcessor.getData(), m_playlistModifyListener);
 		}
 
 	}

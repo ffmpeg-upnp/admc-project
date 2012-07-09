@@ -24,6 +24,7 @@ import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
+import com.app.dlna.dmc.processor.model.Playlist;
 import com.app.dlna.dmc.processor.model.PlaylistItem;
 
 public class DMSProcessorImpl implements DMSProcessor {
@@ -184,25 +185,24 @@ public class DMSProcessorImpl implements DMSProcessor {
 	}
 
 	@Override
-	public void addAllToPlaylist(final PlaylistProcessor playlistProcessor,
-			final DMSAddRemoveContainerListener actionListener) {
-		modifyContainerItemsInPlaylist(playlistProcessor, actionListener, ACTION_ADD);
+	public void addAllToPlaylist(Playlist playlist, final DMSAddRemoveContainerListener actionListener) {
+		modifyContainerItemsInPlaylist(playlist, m_currentObjectId, actionListener, ACTION_ADD);
 	}
 
 	@Override
-	public void removeAllFromPlaylist(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener) {
-		modifyContainerItemsInPlaylist(playlistProcessor, actionListener, ACTION_REMOVE);
+	public void removeAllFromPlaylist(Playlist playlist, DMSAddRemoveContainerListener actionListener) {
+		modifyContainerItemsInPlaylist(playlist, m_currentObjectId, actionListener, ACTION_REMOVE);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void modifyContainerItemsInPlaylist(final PlaylistProcessor playlistProcessor,
+	private void modifyContainerItemsInPlaylist(final Playlist playlist, final String containerID,
 			final DMSAddRemoveContainerListener actionListener, final String actionType) {
 		actionListener.onActionStart(actionType);
 		Service cds = m_server.findService(new ServiceType("schemas-upnp-org", "ContentDirectory"));
 		if (cds != null) {
 			Action action = cds.getAction("Browse");
 			ActionInvocation actionInvocation = new ActionInvocation(action);
-			actionInvocation.setInput("ObjectID", m_currentObjectId);
+			actionInvocation.setInput("ObjectID", containerID);
 			actionInvocation.setInput("BrowseFlag", "BrowseDirectChildren");
 			actionInvocation.setInput("Filter", "*");
 			actionInvocation.setInput("StartingIndex", new UnsignedIntegerFourBytes(0));
@@ -216,6 +216,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 						DIDLParser parser = new DIDLParser();
 						DIDLContent content = parser.parse(invocation.getOutput("Result").toString());
 						List<Item> items = content.getItems();
+						PlaylistProcessor playlistProcessor = PlaylistManager.getPlaylistProcessor(playlist);
 						if (playlistProcessor == null) {
 							actionListener.onActionFail(new RuntimeException("Playlist processor is null"));
 						} else {
@@ -283,4 +284,15 @@ public class DMSProcessorImpl implements DMSProcessor {
 		return null;
 	}
 
+	@Override
+	public void removeAllFromPlaylist(final Playlist playlist, String containerID,
+			final DMSAddRemoveContainerListener actionListener) {
+		modifyContainerItemsInPlaylist(playlist, containerID, actionListener, ACTION_REMOVE);
+	}
+
+	@Override
+	public void addAllToPlaylist(final Playlist playlist, String containerID,
+			final DMSAddRemoveContainerListener actionListener) {
+		modifyContainerItemsInPlaylist(playlist, containerID, actionListener, ACTION_ADD);
+	}
 }

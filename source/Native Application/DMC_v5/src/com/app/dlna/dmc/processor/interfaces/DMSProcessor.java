@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.teleal.cling.support.model.DIDLObject;
 
+import com.app.dlna.dmc.processor.model.Playlist;
+
 public interface DMSProcessor {
 	static final String ACTION_REMOVE = "Remove";
 	static final String ACTION_ADD = "Add";
@@ -23,12 +25,16 @@ public interface DMSProcessor {
 
 	void addCurrentItemsToPlaylist(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener);
 
-	void addAllToPlaylist(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener);
+	void addAllToPlaylist(Playlist playlist, DMSAddRemoveContainerListener actionListener);
+
+	void addAllToPlaylist(Playlist playlist, String containerID, DMSAddRemoveContainerListener actionListener);
 
 	void removeCurrentItemsFromPlaylist(PlaylistProcessor playlistProcessor,
 			DMSAddRemoveContainerListener actionListener);
 
-	void removeAllFromPlaylist(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener);
+	void removeAllFromPlaylist(Playlist playlist, DMSAddRemoveContainerListener actionListener);
+
+	void removeAllFromPlaylist(Playlist playlist, String containerID, DMSAddRemoveContainerListener actionListener);
 
 	List<DIDLObject> getAllObjects();
 

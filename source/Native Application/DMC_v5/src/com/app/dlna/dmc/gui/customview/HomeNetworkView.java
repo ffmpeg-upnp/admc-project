@@ -34,6 +34,7 @@ import com.app.dlna.dmc.gui.dialog.DeviceDetailsDialog.DeviceDetailsListener;
 import com.app.dlna.dmc.processor.impl.PlaylistManager;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
+import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSAddRemoveContainerListener;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor.DMSProcessorListner;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.DevicesListener;
@@ -173,6 +174,104 @@ public class HomeNetworkView extends DMRListenerView {
 										}
 										dialog.dismiss();
 									}
+								}).create().show();
+			} else if (object instanceof Container) {
+				new AlertDialog.Builder(getContext())
+						.setTitle("Select Action")
+						.setItems(getResources().getStringArray(R.array.container_contextmenu),
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										final List<Playlist> allPlaylist = PlaylistManager.getAllPlaylist();
+										String[] listPlaylistName = new String[allPlaylist.size()];
+										for (int i = 0; i < allPlaylist.size(); ++i) {
+											listPlaylistName[i] = allPlaylist.get(i).getName();
+										}
+										final int choice = which;
+										new AlertDialog.Builder(getContext()).setTitle("Select Playlist")
+												.setItems(listPlaylistName, new DialogInterface.OnClickListener() {
+
+													@Override
+													public void onClick(DialogInterface dialog, final int which) {
+														switch (choice) {
+														case 0:
+															MainActivity.UPNP_PROCESSOR.getDMSProcessor()
+																	.addAllToPlaylist(allPlaylist.get(which),
+																			((Container) object).getId(),
+																			new DMSAddRemoveContainerListener() {
+
+																				@Override
+																				public void onActionStart(String action) {
+																					MainActivity.INSTANCE
+																							.showLoadingMessage("Adding item to playlist \""
+																									+ allPlaylist.get(
+																											which)
+																											.getName()
+																									+ "\"");
+																				}
+
+																				@Override
+																				public void onActionFail(Exception ex) {
+																					MainActivity.INSTANCE
+																							.dismissLoadingDialog();
+																					MainActivity.INSTANCE
+																							.showToast("Container added to playlist failed");
+																				}
+
+																				@Override
+																				public void onActionComplete(
+																						String message) {
+																					MainActivity.INSTANCE
+																							.dismissLoadingDialog();
+																					MainActivity.INSTANCE
+																							.showToast("Container added to playlist sucessfully");
+																				}
+																			});
+															break;
+														case 1:
+															MainActivity.UPNP_PROCESSOR.getDMSProcessor()
+																	.removeAllFromPlaylist(allPlaylist.get(which),
+																			((Container) object).getId(),
+																			new DMSAddRemoveContainerListener() {
+
+																				@Override
+																				public void onActionStart(String action) {
+																					MainActivity.INSTANCE
+																							.showLoadingMessage("Remove container from playlist \""
+																									+ allPlaylist.get(
+																											which)
+																											.getName()
+																									+ "\"");
+																				}
+
+																				@Override
+																				public void onActionFail(Exception ex) {
+																					MainActivity.INSTANCE
+																							.dismissLoadingDialog();
+																					MainActivity.INSTANCE
+																							.showToast("Container removed from playlist failed");
+																				}
+
+																				@Override
+																				public void onActionComplete(
+																						String message) {
+																					MainActivity.INSTANCE
+																							.dismissLoadingDialog();
+																					MainActivity.INSTANCE
+																							.showToast("Container removed to playlist sucessfully");
+																				}
+																			});
+
+															break;
+														default:
+															break;
+														}
+													}
+												}).create().show();
+										dialog.dismiss();
+									}
+
 								}).create().show();
 			}
 

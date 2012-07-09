@@ -140,7 +140,6 @@ public class PlaylistManager {
 
 	public static PlaylistProcessor getPlaylistProcessor(Playlist playlist) {
 		PlaylistProcessor processor = new PlaylistProcessorImpl(playlist, MAX_ITEM);
-
 		for (PlaylistItem item : getAllPlaylistItem(playlist.getId())) {
 			processor.getAllItems().add(item);
 		}

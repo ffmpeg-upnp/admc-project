@@ -114,8 +114,8 @@ public class DMRListActivity extends Activity implements SystemListener {
 	};
 
 	private void closeActivity() {
-		new AlertDialog.Builder(DMRListActivity.this).setMessage("Sorry. This item cannot be played.")
-				.setTitle("Cannot play item").setPositiveButton("Ok", new OnClickListener() {
+		new AlertDialog.Builder(DMRListActivity.this).setMessage(R.string.sorry_this_item_cannot_be_played_)
+				.setTitle(R.string.cannot_play_item).setPositiveButton("Ok", new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -185,8 +185,8 @@ public class DMRListActivity extends Activity implements SystemListener {
 			PlaylistManager.RESOLVER = getContentResolver();
 		} catch (Exception e) {
 			e.printStackTrace();
-			new AlertDialog.Builder(DMRListActivity.this).setMessage("Sorry. This item cannot be played.")
-					.setTitle("Cannot play item").setPositiveButton("Ok", new OnClickListener() {
+			new AlertDialog.Builder(DMRListActivity.this).setMessage(R.string.sorry_this_item_cannot_be_played_)
+					.setTitle(R.string.cannot_play_item).setPositiveButton("Ok", new OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -207,8 +207,8 @@ public class DMRListActivity extends Activity implements SystemListener {
 
 	@Override
 	public void onStartFailed() {
-		new AlertDialog.Builder(DMRListActivity.this).setMessage("Cannot start Upnp Service, please try again later")
-				.setTitle("Upnp Service Info").setPositiveButton("OK", new OnClickListener() {
+		new AlertDialog.Builder(DMRListActivity.this).setMessage(R.string.cannot_start_upnp_service_please_try_again_later)
+				.setTitle(R.string.upnp_service_info).setPositiveButton(R.string.ok, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {

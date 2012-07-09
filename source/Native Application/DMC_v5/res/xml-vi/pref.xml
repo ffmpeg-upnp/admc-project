@@ -7,15 +7,15 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="kill_process"
-            android:summary="WARNING: Not recommended. Use this option only when application do something wrong."
-            android:title="Kill process after exit" />
+            android:summary="Sử dụng khi ứng dụng gặp những lỗi không mong muốn"
+            android:title="Thoát hoàn toàn" />
         <ListPreference
             android:defaultValue="en"
             android:entries="@array/applicationLanguage"
             android:entryValues="@array/applicationLanguageValue"
             android:key="locale_override"
-            android:summary="Application must restart to take effect"
-            android:title="Language" />
+            android:summary="Khởi động lại ứng dụng để thay đổi này có hiệu lực"
+            android:title="Ngôn ngữ" />
     </PreferenceCategory>
     <PreferenceCategory
         android:summary="Media Server"
@@ -25,40 +25,40 @@
             android:entries="@array/itemPerLoad"
             android:entryValues="@array/itemPerLoadValues"
             android:key="max_item_count"
-            android:summary="Define how many items will be load when browse on Media Server"
-            android:title="Number of item per load" />
+            android:summary="Số lượng mục nội dung lấy về trong mỗi lần duyệt"
+            android:title="Số lượng mục nội dung" />
 
         <EditTextPreference
             android:defaultValue="50"
             android:key="min_size"
-            android:summary="Minimum size of file to be shared (KB)"
-            android:title="Minimum File Size (KB)" />
+            android:summary="Dung lượng tối thiểu của tập tin sẽ được liệt kê trong Media Server cục bộ"
+            android:title="Dung lượng tối thiểu (KB)" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="dms_exported"
-            android:summary="Export content on device"
-            android:title="Export DMS" />
+            android:summary="Cho phép các ứng dụng Controller từ bên ngoài có thể duyệt nội dung từ Media Server cục bộ"
+            android:title="Cung cấp Media Server" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="proxy_mode"
-            android:summary="Must enable for some DLNA TV when playing Youtube Video"
+            android:summary="Sử dụng khi chia sẽ nội dung từ Youtube với các DLNA TV"
             android:title="Youtube Proxy Mode" />
 
         <EditTextPreference
             android:defaultValue="mp3;wma;midi;wav;mid;midi;"
             android:key="music_ext"
-            android:summary="Extension of music file want to share"
+            android:summary="Phần mở rộng của những tập tin sẽ được liệt kê trong thư mục Music"
             android:title="Music extension" />
         <EditTextPreference
             android:defaultValue="mp4;flv;mpg;avi;mkv;m4v;"
             android:key="video_ext"
-            android:summary="Extension of video file want to share"
+            android:summary="Phần mở rộng của những tập tin sẽ được liệt kê trong thư mục Video"
             android:title="Video extension" />
         <EditTextPreference
             android:defaultValue="jpeg;jpg;png;gif;bmp;gif;"
             android:key="image_ext"
-            android:summary="Extension of image file want to share"
+            android:summary="Phần mở rộng của những tập tin sẽ được liệt kê trong thư mục Image"
             android:title="Image extension" />
     </PreferenceCategory>
     <PreferenceCategory
@@ -67,18 +67,18 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="stop_dmr"
-            android:summary="Stop DMR when switching to another or close application"
+            android:summary="Dừng phát trên Renderer khi không điều khiển Renderer đó nữa"
             android:title="Stop DMR when leave" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="auto_next"
-            android:summary="Auto next when renderer reach the end of track"
+            android:summary="Tự động chuyển sang nội dung khác khi Renderer phát xong một nội dung"
             android:title="Auto next" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:dependency="auto_next"
             android:key="random_track"
-            android:summary="Play random track"
+            android:summary="Chuyển sang một nội dung có thứ tự bất kỳ trong playlist"
             android:title="Shuttle" />
 
         <ListPreference
@@ -86,29 +86,29 @@
             android:entries="@array/imageQuality"
             android:entryValues="@array/imageQualityValues"
             android:key="image_qualitiy"
-            android:summary="Higher quality can cause loading problem."
-            android:title="Image quality" />
+            android:summary="Chất lượng hình ảnh càng cao sẽ dễ gây ra lỗi hơn"
+            android:title="Chất lượng hình ảnh" />
         <ListPreference
             android:defaultValue="ALL"
             android:entries="@array/viewMode"
             android:entryValues="@array/viewModeValues"
             android:key="playlist_viewmode"
-            android:summary="Filter item in playlist"
+            android:summary="Lọc nội dung khi hiển thị playlist"
             android:title="View Mode" />
 
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="image_zoomable"
-            android:summary="Enable zoom for Image item (swipe to next/previous item will be disabled)"
-            android:title="Zoomable Image" />
+            android:summary="Cho phép phóng to hình ảnh khi xem trên thiết bị"
+            android:title="Phóng to ảnh" />
     </PreferenceCategory>
     <PreferenceCategory
         android:summary="Internet"
         android:title="Internet Video" >
         <CheckBoxPreference
             android:key="video_quality"
-            android:summary="Will cost more data."
-            android:title="Highest Video Quality" />
+            android:summary="Tải nội dung với chất lượng cao nhất. Có thể sẽ phải tốn nhiều lưu lượng hơn."
+            android:title="Nội dung chất lượng cao nhất" />
     </PreferenceCategory>
     <PreferenceCategory
         android:summary="Open Source Liscence"

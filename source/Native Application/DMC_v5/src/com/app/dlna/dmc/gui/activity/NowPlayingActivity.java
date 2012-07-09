@@ -71,7 +71,7 @@ public class NowPlayingActivity extends Activity {
 		m_rendererControl = (RendererControlView) findViewById(R.id.rendererControlView);
 		m_rendererControl.setVisibility(View.VISIBLE);
 		m_progressDialog = new ProgressDialog(NowPlayingActivity.this);
-		m_progressDialog.setTitle("Loading image");
+		m_progressDialog.setTitle(getString(R.string.loading_image));
 		m_progressDialog.setCancelable(true);
 
 		m_swipeDetector = new SwipeDetector(this);
@@ -154,7 +154,7 @@ public class NowPlayingActivity extends Activity {
 				return;
 			DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 			if (dmrProcessor == null) {
-				Toast.makeText(NowPlayingActivity.this, "Cannot connect to renderer", Toast.LENGTH_SHORT).show();
+				Toast.makeText(NowPlayingActivity.this, R.string.cannot_connect_to_renderer, Toast.LENGTH_SHORT).show();
 				return;
 			}
 			playlistProcessor.setCurrentItem((PlaylistItem) object);
@@ -298,7 +298,7 @@ public class NowPlayingActivity extends Activity {
 		case IMAGE_REMOTE: {
 			m_playlistView.setVisibility(View.GONE);
 			cancelLoadingTask();
-			m_loadingImageTask = new AsyncTaskWithProgressDialog<String, Void, Bitmap>("Loading image") {
+			m_loadingImageTask = new AsyncTaskWithProgressDialog<String, Void, Bitmap>(getString(R.string.loading_image)) {
 
 				protected void onPreExecute() {
 					if (m_previousBitmap != null)
@@ -341,7 +341,7 @@ public class NowPlayingActivity extends Activity {
 					m_previousBitmap = result;
 					if (result == null) {
 						Toast.makeText(NowPlayingActivity.this,
-								"Image loading error. Reduce image quality in Settings maybe fix this problem",
+								R.string.image_loading_error_reduce_image_quality_in_settings_maybe_fix_this_problem,
 								Toast.LENGTH_SHORT).show();
 						m_image.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_didlobject_image_large));
 						m_image.setMaxZoom(1f);

@@ -62,8 +62,8 @@ public class HomeNetworkView extends DMRListenerView {
 		m_listView.setOnItemLongClickListener(m_itemLongClick);
 		m_listView.setOnScrollListener(m_scrollListener);
 		m_progressDlg = new ProgressDialog(MainActivity.INSTANCE);
-		m_progressDlg.setTitle("Loading");
-		m_progressDlg.setMessage("Waiting for loading items");
+		m_progressDlg.setTitle(context.getString(R.string.loading));
+		m_progressDlg.setMessage(context.getString(R.string.waiting_for_loading_items));
 		m_progressDlg.setCancelable(true);
 		m_progressDlg.setCanceledOnTouchOutside(false);
 		MainActivity.UPNP_PROCESSOR.addDevicesListener(m_upnpListener);
@@ -119,7 +119,7 @@ public class HomeNetworkView extends DMRListenerView {
 				final DIDLObject object = (DIDLObject) item.getData();
 				if (object instanceof Container) {
 					if (((Container) object).getChildCount() != null && ((Container) object).getChildCount() == 0)
-						Toast.makeText(getContext(), "Folder is empty", Toast.LENGTH_SHORT).show();
+						Toast.makeText(getContext(), R.string.folder_is_empty, Toast.LENGTH_SHORT).show();
 					else
 						browse(object.getId(), 0);
 				} else if (object instanceof Item) {
@@ -155,7 +155,7 @@ public class HomeNetworkView extends DMRListenerView {
 				}).show();
 			} else if (object instanceof Item) {
 				new AlertDialog.Builder(getContext())
-						.setTitle("Select Action")
+						.setTitle(R.string.select_action)
 						.setItems(getResources().getStringArray(R.array.didlobject_contextmenu),
 								new DialogInterface.OnClickListener() {
 
@@ -177,7 +177,7 @@ public class HomeNetworkView extends DMRListenerView {
 								}).create().show();
 			} else if (object instanceof Container) {
 				new AlertDialog.Builder(getContext())
-						.setTitle("Select Action")
+						.setTitle(R.string.select_action)
 						.setItems(getResources().getStringArray(R.array.container_contextmenu),
 								new DialogInterface.OnClickListener() {
 
@@ -189,7 +189,7 @@ public class HomeNetworkView extends DMRListenerView {
 											listPlaylistName[i] = allPlaylist.get(i).getName();
 										}
 										final int choice = which;
-										new AlertDialog.Builder(getContext()).setTitle("Select Playlist")
+										new AlertDialog.Builder(getContext()).setTitle(R.string.select_playlist)
 												.setItems(listPlaylistName, new DialogInterface.OnClickListener() {
 
 													@Override
@@ -204,7 +204,9 @@ public class HomeNetworkView extends DMRListenerView {
 																				@Override
 																				public void onActionStart(String action) {
 																					MainActivity.INSTANCE
-																							.showLoadingMessage("Adding item to playlist \""
+																							.showLoadingMessage(getContext()
+																									.getString(
+																											R.string.adding_item_to_playlist_)
 																									+ allPlaylist.get(
 																											which)
 																											.getName()
@@ -216,7 +218,9 @@ public class HomeNetworkView extends DMRListenerView {
 																					MainActivity.INSTANCE
 																							.dismissLoadingDialog();
 																					MainActivity.INSTANCE
-																							.showToast("Container added to playlist failed");
+																							.showToast(getContext()
+																									.getString(
+																											R.string.container_added_to_playlist_failed));
 																				}
 
 																				@Override
@@ -225,7 +229,9 @@ public class HomeNetworkView extends DMRListenerView {
 																					MainActivity.INSTANCE
 																							.dismissLoadingDialog();
 																					MainActivity.INSTANCE
-																							.showToast("Container added to playlist sucessfully");
+																							.showToast(getContext()
+																									.getString(
+																											R.string.container_added_to_playlist_sucessfully));
 																				}
 																			});
 															break;
@@ -238,7 +244,9 @@ public class HomeNetworkView extends DMRListenerView {
 																				@Override
 																				public void onActionStart(String action) {
 																					MainActivity.INSTANCE
-																							.showLoadingMessage("Remove container from playlist \""
+																							.showLoadingMessage(getContext()
+																									.getString(
+																											R.string.remove_container_from_playlist_)
 																									+ allPlaylist.get(
 																											which)
 																											.getName()
@@ -250,7 +258,9 @@ public class HomeNetworkView extends DMRListenerView {
 																					MainActivity.INSTANCE
 																							.dismissLoadingDialog();
 																					MainActivity.INSTANCE
-																							.showToast("Container removed from playlist failed");
+																							.showToast(getContext()
+																									.getString(
+																											R.string.container_removed_from_playlist_failed));
 																				}
 
 																				@Override
@@ -259,7 +269,9 @@ public class HomeNetworkView extends DMRListenerView {
 																					MainActivity.INSTANCE
 																							.dismissLoadingDialog();
 																					MainActivity.INSTANCE
-																							.showToast("Container removed to playlist sucessfully");
+																							.showToast(getContext()
+																									.getString(
+																											R.string.container_removed_to_playlist_sucessfully));
 																				}
 																			});
 
@@ -286,7 +298,7 @@ public class HomeNetworkView extends DMRListenerView {
 		for (int i = 0; i < allPlaylist.size(); ++i) {
 			listPlaylistName[i] = allPlaylist.get(i).getName();
 		}
-		new AlertDialog.Builder(getContext()).setTitle("Select Playlist To Add")
+		new AlertDialog.Builder(getContext()).setTitle(R.string.select_playlist_to_add)
 				.setItems(listPlaylistName, new DialogInterface.OnClickListener() {
 
 					@Override
@@ -295,13 +307,13 @@ public class HomeNetworkView extends DMRListenerView {
 
 							@Override
 							public void run() {
-								MainActivity.INSTANCE.showLoadingMessage("Adding item to playlist \""
+								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(R.string.adding_item_to_playlist_)
 										+ allPlaylist.get(which).getName() + "\"");
 								PlaylistItem playlistItem = PlaylistManager
 										.getPlaylistProcessor(allPlaylist.get(which)).addDIDLObject(item);
 								MainActivity.INSTANCE.dismissLoadingDialog();
 								if (playlistItem != null) {
-									MainActivity.INSTANCE.showToast("Item added to playlist sucessfully");
+									MainActivity.INSTANCE.showToast(getContext().getString(R.string.item_added_to_playlist_sucessfully));
 								}
 							}
 						}).start();
@@ -360,9 +372,9 @@ public class HomeNetworkView extends DMRListenerView {
 				dmrProcessor.setURIandPlay(playlistProcessor.getCurrentItem());
 			} else {
 				if (playlistProcessor.isFull()) {
-					Toast.makeText(getContext(), "Current playlist is full", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), R.string.current_playlist_is_full, Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(getContext(), "An error occurs, try again later", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), R.string.an_error_occurs_try_again_later, Toast.LENGTH_SHORT).show();
 				}
 			}
 		}
@@ -377,7 +389,7 @@ public class HomeNetworkView extends DMRListenerView {
 				@Override
 				public void run() {
 					m_progressDlg.dismiss();
-					new AlertDialog.Builder(MainActivity.INSTANCE).setTitle("Error occurs").setMessage(message)
+					new AlertDialog.Builder(MainActivity.INSTANCE).setTitle(R.string.error_occurs).setMessage(message)
 							.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
 								@Override
@@ -419,7 +431,7 @@ public class HomeNetworkView extends DMRListenerView {
 
 						if (haveNext) {
 							Item item = new Item();
-							item.setTitle("Load more result");
+							item.setTitle(getContext().getString(R.string.load_more_result));
 							item.setId("-1");
 							m_adapter.add(new AdapterItem(item));
 						}

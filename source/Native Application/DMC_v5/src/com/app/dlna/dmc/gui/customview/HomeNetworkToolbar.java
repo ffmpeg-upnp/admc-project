@@ -69,7 +69,7 @@ public class HomeNetworkToolbar extends LinearLayout {
 
 	private void upOneLevel() {
 		if (m_homeNetworkView.isRoot())
-			Toast.makeText(getContext(), "You are in root of this data source", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getContext(), R.string.you_are_in_root_of_this_data_source, Toast.LENGTH_SHORT).show();
 		else if (MainActivity.UPNP_PROCESSOR.getDMSProcessor() != null) {
 			m_homeNetworkView.getProgressDlg().show();
 			m_homeNetworkView.setLoadMore(false);
@@ -81,12 +81,12 @@ public class HomeNetworkToolbar extends LinearLayout {
 		LibraryActivity activity = (LibraryActivity) getContext();
 		final PlaylistProcessor playlistProcessor = activity.getPlaylistView().getCurrentPlaylistProcessor();
 		if (playlistProcessor == null) {
-			Toast.makeText(MainActivity.INSTANCE, "Cannot process playlist", Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.INSTANCE, R.string.cannot_process_playlist, Toast.LENGTH_SHORT).show();
 			return;
 		}
 		final DMSProcessor dmsProcessor = MainActivity.UPNP_PROCESSOR.getDMSProcessor();
 		if (dmsProcessor == null) {
-			Toast.makeText(MainActivity.INSTANCE, "Cannot contact to dms server", Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.INSTANCE, R.string.cannot_contact_to_dms_server, Toast.LENGTH_SHORT).show();
 			return;
 		}
 
@@ -107,10 +107,10 @@ public class HomeNetworkToolbar extends LinearLayout {
 
 				@Override
 				public void run() {
-					String message = actionType.equals(DMSProcessor.ACTION_ADD) ? "Waiting for add all items"
-							: "Waiting for remove all items";
+					String message = actionType.equals(DMSProcessor.ACTION_ADD) ? getContext().getString(R.string.waiting_for_add_all_items)
+							: getContext().getString(R.string.waiting_for_remove_all_items);
 
-					m_progreProgressDialog = ProgressDialog.show(getContext(), "Processing", message);
+					m_progreProgressDialog = ProgressDialog.show(getContext(), getContext().getString(R.string.processing), message);
 					m_progreProgressDialog.setCancelable(false);
 				}
 			});
@@ -124,7 +124,7 @@ public class HomeNetworkToolbar extends LinearLayout {
 				@Override
 				public void run() {
 					m_progreProgressDialog.dismiss();
-					Toast.makeText(getContext(), "Error occur: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), R.string.error_occur_ + ex.getMessage(), Toast.LENGTH_SHORT).show();
 					m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getListView());
 				}
 			});

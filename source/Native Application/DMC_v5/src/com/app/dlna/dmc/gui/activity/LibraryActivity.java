@@ -25,7 +25,6 @@ public class LibraryActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		m_homeNetworkView = new HomeNetworkView(this);
 		m_youtubeView = new YoutubeView(this);
 		m_playlistView = new PlaylistView(this);

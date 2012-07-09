@@ -35,5 +35,13 @@
         <item name="video_only">VIDEO_ONLY</item>
         <item name="image_only">IMAGE_ONLY</item>
     </string-array>
+    <string-array name="applicationLanguage">
+        <item name="en">English</item>
+        <item name="vi">Vietnamese</item>
+    </string-array>
+    <string-array name="applicationLanguageValue">
+        <item name="en">en</item>
+        <item name="vi">vi</item>
+    </string-array>
 
 </resources>

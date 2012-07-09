@@ -139,7 +139,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 
 		m_nfcProgressDialog = new ProgressDialog(MainActivity.this);
 		m_nfcProgressDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		m_nfcProgressDialog.setMessage("Tap for a NFC TAG to write");
+		m_nfcProgressDialog.setMessage(getString(R.string.tap_for_a_nfc_tag_to_write));
 		m_nfcProgressDialog.setCancelable(true);
 		m_nfcProgressDialog.setOnDismissListener(new OnDismissListener() {
 
@@ -336,10 +336,10 @@ public class MainActivity extends TabActivity implements SystemListener {
 	@Override
 	public void onStartFailed() {
 		new AlertDialog.Builder(MainActivity.this)
-				.setTitle("Network Info")
+				.setTitle(R.string.network_info)
 				.setMessage(
-						"Cannot find a wifi connection for UpnpService. Please connect to a wifi network or run wifi hotspot to use the app.")
-				.setPositiveButton("Wifi settings", new OnClickListener() {
+						R.string.cannot_find_a_wifi_connection_for_upnpservice_please_connect_to_a_wifi_network_or_run_wifi_hotspot_to_use_the_app_)
+				.setPositiveButton(R.string.wifi_settings, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -348,7 +348,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 						((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
 								.cancel(CoreUpnpService.NOTIFICATION);
 					}
-				}).setNegativeButton("Exit", new OnClickListener() {
+				}).setNegativeButton(R.string.exit, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -375,9 +375,9 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void run() {
 				try {
-					new AlertDialog.Builder(MainActivity.this).setTitle("Network changed")
-							.setMessage("Network interface changed. Application must restart.").setCancelable(false)
-							.setPositiveButton("OK", new OnClickListener() {
+					new AlertDialog.Builder(MainActivity.this).setTitle(R.string.network_changed)
+							.setMessage(R.string.network_interface_changed_application_must_restart_).setCancelable(false)
+							.setPositiveButton(R.string.ok, new OnClickListener() {
 
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
@@ -399,8 +399,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
 				try {
-					new AlertDialog.Builder(MainActivity.this).setTitle("Network error").setMessage(cause).setCancelable(false)
-							.setPositiveButton("OK", new OnClickListener() {
+					new AlertDialog.Builder(MainActivity.this).setTitle(R.string.network_error).setMessage(cause).setCancelable(false)
+							.setPositiveButton(R.string.ok, new OnClickListener() {
 
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
@@ -424,8 +424,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
 				try {
-					m_routerProgressDialog = ProgressDialog.show(MainActivity.this, "Router disabled",
-							"Router disabled, try to enabled router");
+					m_routerProgressDialog = ProgressDialog.show(MainActivity.this, getString(R.string.network_disabled),
+							getString(R.string.network_disabled_try_to_re_enabled_network));
 				} catch (Exception ex) {
 
 				}
@@ -491,7 +491,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 	}
 
 	private void confirmExit() {
-		new AlertDialog.Builder(MainActivity.this).setTitle("Confirm exit").setMessage("Are you sure want to exit?")
+		new AlertDialog.Builder(MainActivity.this).setTitle(R.string.confirm_exit).setMessage(R.string.are_you_sure_want_to_exit_)
 				.setPositiveButton(R.string.minimize, new OnClickListener() {
 
 					@Override
@@ -548,7 +548,7 @@ public class MainActivity extends TabActivity implements SystemListener {
 								} else {
 									Toast.makeText(
 											MainActivity.this,
-											"Cannot find specified device from Nfc TAG, please check if device is connected to the network or the data on your TAG",
+											R.string.cannot_find_specified_device_from_nfc_tag_please_check_if_device_is_connected_to_the_network_or_the_data_on_your_tag,
 											Toast.LENGTH_LONG).show();
 								}
 							}
@@ -580,14 +580,14 @@ public class MainActivity extends TabActivity implements SystemListener {
 			Tag detectedTag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 			if (NFCUtils.writeTag(NFCUtils.getNdefMessageFromString(m_messageToWrite), detectedTag)) {
 				m_nfcProgressDialog.dismiss();
-				Toast.makeText(this, "Write device info to NFC Tag complete.", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.write_device_info_to_nfc_tag_complete_, Toast.LENGTH_LONG).show();
 			} else {
 				m_nfcProgressDialog.dismiss();
 				Toast.makeText(this, "Write failed. Try again later.", Toast.LENGTH_LONG).show();
 			}
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			Toast.makeText(this, "Write failed; cause = " + e.getMessage(), Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.write_failed_cause_ + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 	};
 
@@ -598,8 +598,9 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_waitToWriteTAG = true;
 			m_nfcProgressDialog.show();
 		} else {
-			new AlertDialog.Builder(MainActivity.this).setTitle("NFC").setMessage("Please enable NFC on you device first")
-					.setPositiveButton("OK", null).create().show();
+			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
+					.setMessage(R.string.please_enable_nfc_on_you_device_first)
+					.setPositiveButton(R.string.ok, null).create().show();
 		}
 	}
 

@@ -10,6 +10,7 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
+import app.dlna.controller.v4.R;
 
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
@@ -25,7 +26,7 @@ public class DMRListenerView extends LinearLayout {
 		super(context);
 		m_pdlg = new ProgressDialog(getContext());
 		m_pdlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		m_pdlg.setMessage("Check item url...");
+		m_pdlg.setMessage(context.getString(R.string.check_item_url_));
 		m_pdlg.setCancelable(false);
 	}
 

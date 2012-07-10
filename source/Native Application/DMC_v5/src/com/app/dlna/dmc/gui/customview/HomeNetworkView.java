@@ -25,7 +25,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
 
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.LibraryActivity;

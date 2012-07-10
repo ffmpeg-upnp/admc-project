@@ -13,7 +13,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
 
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.MainActivity;
@@ -140,18 +140,18 @@ public class PlaylistView extends DMRListenerView {
 								}
 
 								MainActivity.INSTANCE.dismissLoadingDialog();
-								MainActivity.INSTANCE.showToast("Remove playlist sucessfully");
+								MainActivity.INSTANCE.showToast(getContext().getString(R.string.remove_playlist_sucessfully));
 							}
 						}).start();
 
 					}
-				}).setNegativeButton("Cancel", null).create().show();
+				}).setNegativeButton(R.string.cancel, null).create().show();
 	}
 
 	private void renamePlaylist(final Playlist playlist) {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
 
-		alert.setTitle(R.string.save_playlist);
+		alert.setTitle(R.string.change_playlist_name);
 		alert.setMessage(R.string.insert_playlist_name_);
 
 		final EditText input = new EditText(getContext());
@@ -168,7 +168,7 @@ public class PlaylistView extends DMRListenerView {
 			}
 		});
 
-		alert.setNegativeButton("Cancel", null);
+		alert.setNegativeButton(R.string.cancel, null);
 
 		alert.show();
 	}
@@ -203,7 +203,7 @@ public class PlaylistView extends DMRListenerView {
 						}).start();
 
 					}
-				}).setNegativeButton("Cancel", null).create().show();
+				}).setNegativeButton(R.string.cancel, null).create().show();
 	}
 
 	public PlaylistView(Context context) {

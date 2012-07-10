@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
 
 import com.app.dlna.dmc.gui.activity.LibraryActivity;
 import com.app.dlna.dmc.gui.activity.MainActivity;
@@ -30,7 +30,8 @@ public class PlaylistToolbar extends LinearLayout {
 
 	public PlaylistToolbar(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_toolbar_playlist, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+				R.layout.cv_toolbar_playlist, this);
 		m_btn_back = (ImageView) findViewById(R.id.btn_back);
 		m_btn_back.setOnClickListener(m_backClick);
 		m_btn_save = (ImageView) findViewById(R.id.btn_save);
@@ -79,7 +80,7 @@ public class PlaylistToolbar extends LinearLayout {
 		public void onClick(View v) {
 			new AlertDialog.Builder(getContext()).setMessage(R.string.warning)
 					.setMessage(R.string.this_will_clear_all_item_in_this_playlist)
-					.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+					.setPositiveButton(getContext().getString(R.string.ok), new DialogInterface.OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -155,7 +156,8 @@ public class PlaylistToolbar extends LinearLayout {
 		final Playlist playlist = new Playlist();
 		playlist.setName(name);
 
-		new AsyncTaskWithProgressDialog<Void, Void, Boolean>(getContext().getResources().getString(R.string.create_playlist)) {
+		new AsyncTaskWithProgressDialog<Void, Void, Boolean>(getContext().getResources().getString(
+				R.string.create_playlist)) {
 
 			@Override
 			protected Boolean doInBackground(Void... params) {
@@ -198,12 +200,12 @@ public class PlaylistToolbar extends LinearLayout {
 		AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
 		alert.setTitle(R.string.confirm_delete);
 		alert.setMessage(R.string.are_you_sure_to_delete_ + processor.getData().getName() + "\"?");
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 
-				new AsyncTaskWithProgressDialog<Void, Void, Boolean>("Delete Playlist") {
+				new AsyncTaskWithProgressDialog<Void, Void, Boolean>(getContext().getString(R.string.delete_playlist)) {
 
 					@Override
 					protected Boolean doInBackground(Void... params) {
@@ -236,7 +238,7 @@ public class PlaylistToolbar extends LinearLayout {
 			}
 		});
 
-		alert.setNegativeButton("Canel", null);
+		alert.setNegativeButton(R.string.cancel, null);
 
 		alert.show();
 	}

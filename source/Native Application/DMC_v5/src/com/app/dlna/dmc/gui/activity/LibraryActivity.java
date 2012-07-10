@@ -8,7 +8,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
 
 import com.app.dlna.dmc.gui.customview.HomeNetworkView;
 import com.app.dlna.dmc.gui.customview.PlaylistView;

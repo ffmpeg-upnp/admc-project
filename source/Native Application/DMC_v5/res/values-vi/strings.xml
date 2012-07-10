@@ -5,14 +5,14 @@
     <string name="upnp_service">Upnp Service</string>
     <string name="refresh">Refresh</string>
     <string name="menu_refresh_devices">Cập nhật danh sách thiết bị</string>
-    <string name="menu_rescan_sdcard">Quét lại thẻ nhớ</string>
+    <string name="menu_rescan_sdcard">Cập nhật thẻ nhớ</string>
     <string name="menu_settings">Tùy chỉnh</string>
     <string name="menu_about">Thông tin</string>
     <string name="library">Thư Viện</string>
     <string name="now_playing">Đang Phát</string>
     <string name="play">play</string>
     <string name="pause">pause</string>
-    <string name="enter_keyword_here">Nhập từ khóa tìm kiêm</string>
+    <string name="enter_keyword_here">Nhập từ khóa tìm kiếm</string>
     <string name="cancel">Hủy bỏ</string>
 
     <string-array name="libray_pager_list">
@@ -46,7 +46,7 @@
     </string-array>
     <string-array name="playlist_contextmenu">
         <item>Xóa tất cả nội dung</item>
-        <item>Đổi tên</item>
+        <item>Đổi tên playlist</item>
         <item>Xóa playlist</item>
     </string-array>
     <string-array name="playlist_unsaved_contextmenu">
@@ -62,16 +62,16 @@
     <string name="tap_for_a_nfc_tag_to_write">Chạm vào một thẻ NFC để bắt đầu ghi dữ liệu</string>
     <string name="sorry_this_item_cannot_be_played_">Xin lỗi. Nội dung này không thể phát.</string>
     <string name="cannot_play_item">Không thể phát nội dung</string>
-    <string name="cannot_start_upnp_service_please_try_again_later">Không thể khởi động UPnP Service, xin hãy thử lại sau</string>
+    <string name="cannot_start_upnp_service_please_try_again_later">Không thể khởi động UPnP Service. Hãy kiểm tra lại mạng kết nối và thử lại sau.</string>
     <string name="upnp_service_info">Thông tin UPnP Service</string>
-    <string name="ok">Đồng Ý</string>
+    <string name="ok">Đồng ý</string>
     <string name="network_info">Thông tin mạng</string>
     <string name="cannot_find_a_wifi_connection_for_upnpservice_please_connect_to_a_wifi_network_or_run_wifi_hotspot_to_use_the_app_">Không thể tìm thấy kết nối phù hợp với giao thức UPnP. Hãy kết nối vào một mạng Wi-Fi hoặc sử dụng Wi-Fi Hotspot và khởi động lại ứng dụng.</string>
     <string name="wifi_settings">Cấu hình Wi-Fi</string>
     <string name="exit">Thoát</string>
     <string name="network_interface_changed_application_must_restart_">Mạng kết nối có thay đổi. Ứng dụng cần phải khởi động lại.</string>
     <string name="network_changed">Mạng kết nối có thay đổi</string>
-    <string name="network_error">Mạng kết nối lỗi</string>
+    <string name="network_error">Mạng kết nối bị lỗi</string>
     <string name="network_disabled">Mạng kết nối không khả dụng</string>
     <string name="network_disabled_try_to_re_enabled_network">Không thể truy cập vào mạng kết nối, hãy thử lại sau.</string>
     <string name="confirm_exit">Xác nhật thoát ứng dụng</string>
@@ -161,6 +161,9 @@
     <string name="audio_only">Chỉ hiển thị âm thanh</string>
     <string name="video_only">Chỉ hiển thị đoạn phim</string>
     <string name="image_only">Chỉ hiển thị hình ảnh</string>
-	<string name="added_item_to_playlist">Thêm nội dung vào playlist hoàn tất</string>
+	<string name="added_item_to_playlist">Đã thêm nội dung vào playlist</string>
+    <string name="delete_playlist">Xóa playlist</string>
+    <string name="remove_playlist_sucessfully">Xóa playlist thành công</string>
+    <string name="change_playlist_name">Đổi tên playlist</string>
 
 </resources>

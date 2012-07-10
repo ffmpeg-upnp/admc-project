@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
 
 public class DeviceDetailsDialog extends Dialog {
 	@SuppressWarnings("rawtypes")

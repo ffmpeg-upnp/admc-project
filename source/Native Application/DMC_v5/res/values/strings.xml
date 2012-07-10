@@ -79,8 +79,8 @@
     <string name="upnp_service_info">Upnp Service Info</string>
     <string name="ok">Ok</string>
     <string name="network_info">Network Info</string>
-    <string name="cannot_find_a_wifi_connection_for_upnpservice_please_connect_to_a_wifi_network_or_run_wifi_hotspot_to_use_the_app_">Cannot find a wifi connection for UpnpService. Please connect to a wifi network or run wifi hotspot to use the app.</string>
-    <string name="wifi_settings">Wifi settings</string>
+    <string name="cannot_find_a_wifi_connection_for_upnpservice_please_connect_to_a_wifi_network_or_run_wifi_hotspot_to_use_the_app_">Cannot find a Wi-Fi connection for UpnpService. Please connect to a Wi-Fi network or run Wi-Fi hotspot to use the app.</string>
+    <string name="wifi_settings">Wi-Fi settings</string>
     <string name="exit">Exit</string>
     <string name="network_interface_changed_application_must_restart_">Network interface changed. Application must restart.</string>
     <string name="network_changed">Network changed</string>
@@ -175,5 +175,8 @@
     <string name="video_only">Video only</string>
     <string name="image_only">Image only</string>
     <string name="added_item_to_playlist">Added item to playlist</string>
+    <string name="delete_playlist">Delete Playlist</string>
+    <string name="remove_playlist_sucessfully">Remove playlist sucessfully</string>
+    <string name="change_playlist_name">Change Playlist Name</string>
 
 </resources>

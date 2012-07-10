@@ -52,7 +52,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 import android.widget.Toast;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
 
 import com.app.dlna.dmc.gui.customview.RendererCompactView;
 import com.app.dlna.dmc.gui.customview.RendererCompactView.OnDMRChangeListener;

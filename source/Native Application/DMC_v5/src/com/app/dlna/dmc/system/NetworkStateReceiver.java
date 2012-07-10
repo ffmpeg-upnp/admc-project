@@ -14,7 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
 
 import com.app.dlna.dmc.http.HTTPServerData;
 
@@ -31,7 +31,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 	}
 
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive(final Context context, Intent intent) {
 		if (!intent.getAction().equals("android.net.conn.TETHER_STATE_CHANGED")
 				&& !intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION))
 			return;
@@ -51,7 +51,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 							if (m_disableWifiPending) {
 								if (i == DISABLE_STATE_TIMEOUT - 1)
 									if (m_routerStateListener != null)
-										m_routerStateListener.onRouterError("No network found");
+										m_routerStateListener.onRouterError(context
+												.getString(R.string.no_network_found));
 							} else {
 								break;
 							}

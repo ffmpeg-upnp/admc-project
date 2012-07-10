@@ -25,7 +25,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
 
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.MainActivity;
@@ -36,8 +36,8 @@ import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.model.Playlist;
-import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
+import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.processor.model.PlaylistItem.Type;
 import com.app.dlna.dmc.utility.Utility;
 

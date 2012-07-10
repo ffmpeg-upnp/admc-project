@@ -1,12 +1,12 @@
 package com.app.dlna.dmc.gui.dialog;
 
-import com.app.dlna.dmc.gui.activity.AppPreference;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.view.Window;
 import android.webkit.WebView;
-import app.dlna.controller.v4.R;
+import app.dlna.controller.v5.R;
+
+import com.app.dlna.dmc.gui.activity.AppPreference;
 
 public class HelpDialog extends Dialog {
 

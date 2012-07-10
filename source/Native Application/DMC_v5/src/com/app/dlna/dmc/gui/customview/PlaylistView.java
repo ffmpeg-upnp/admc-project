@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 import app.dlna.controller.v5.R;
@@ -28,6 +29,8 @@ import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
 import com.app.dlna.dmc.processor.model.PlaylistItem;
 
 public class PlaylistView extends DMRListenerView {
+
+	private GridView m_gridView;
 
 	private PlaylistToolbar m_playlistToolbar;
 	public static final int VM_LIST = 0;
@@ -64,8 +67,10 @@ public class PlaylistView extends DMRListenerView {
 									public void onClick(DialogInterface dialog, int which) {
 										switch (which) {
 										case 0:
-											PlaylistItem playlistItem = (PlaylistItem) m_adapter.getItem(position).getData();
-											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(playlistItem);
+											PlaylistItem playlistItem = (PlaylistItem) m_adapter.getItem(position)
+													.getData();
+											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(
+													playlistItem);
 											break;
 										default:
 											break;
@@ -118,7 +123,8 @@ public class PlaylistView extends DMRListenerView {
 
 							@Override
 							public void run() {
-								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(R.string.cleaning_playlist));
+								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(
+										R.string.cleaning_playlist));
 								PlaylistManager.deletePlaylist(playlist);
 								MainActivity.INSTANCE.runOnUiThread(new Runnable() {
 
@@ -128,19 +134,23 @@ public class PlaylistView extends DMRListenerView {
 										preparePlaylist();
 									}
 								});
-								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-								if (playlistProcessor != null && playlistProcessor.getData().getId() == playlist.getId()) {
+								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR
+										.getPlaylistProcessor();
+								if (playlistProcessor != null
+										&& playlistProcessor.getData().getId() == playlist.getId()) {
 									MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(null);
 									DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 									if (dmrProcessor != null) {
 										dmrProcessor.stop();
-										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR
+												.getPlaylistProcessor());
 									}
 
 								}
 
 								MainActivity.INSTANCE.dismissLoadingDialog();
-								MainActivity.INSTANCE.showToast(getContext().getString(R.string.remove_playlist_sucessfully));
+								MainActivity.INSTANCE.showToast(getContext().getString(
+										R.string.remove_playlist_sucessfully));
 							}
 						}).start();
 
@@ -184,18 +194,23 @@ public class PlaylistView extends DMRListenerView {
 
 							@Override
 							public void run() {
-								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(R.string.cleaning_playlist));
+								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(
+										R.string.cleaning_playlist));
 								PlaylistManager.clearPlaylist(playlist.getId());
 								MainActivity.INSTANCE.dismissLoadingDialog();
-								MainActivity.INSTANCE.showToast(getContext().getString(R.string.clean_playlist_sucessfully));
-								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-								if (playlistProcessor != null && playlistProcessor.getData().getId() == playlist.getId()) {
+								MainActivity.INSTANCE.showToast(getContext().getString(
+										R.string.clean_playlist_sucessfully));
+								PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR
+										.getPlaylistProcessor();
+								if (playlistProcessor != null
+										&& playlistProcessor.getData().getId() == playlist.getId()) {
 									MainActivity.UPNP_PROCESSOR.setPlaylistProcessor(PlaylistManager
 											.getPlaylistProcessor(playlist));
 									DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
 									if (dmrProcessor != null) {
 										dmrProcessor.stop();
-										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+										dmrProcessor.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR
+												.getPlaylistProcessor());
 									}
 
 								}
@@ -208,12 +223,13 @@ public class PlaylistView extends DMRListenerView {
 
 	public PlaylistView(Context context) {
 		super(context);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_playlist_allitem, this);
-		m_listView = (ListView) findViewById(R.id.lv_playlist);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
+				R.layout.cv_playlist_allitem, this);
+		m_gridView = (GridView) findViewById(R.id.lv_playlist);
 		m_adapter = new CustomArrayAdapter(getContext(), 0);
-		m_listView.setAdapter(m_adapter);
-		m_listView.setOnItemClickListener(m_playlistItemClick);
-		m_listView.setOnItemLongClickListener(m_playlistItemLongClick);
+		m_gridView.setAdapter(m_adapter);
+		m_gridView.setOnItemClickListener(m_playlistItemClick);
+		m_gridView.setOnItemLongClickListener(m_playlistItemLongClick);
 
 		m_playlistToolbar = (PlaylistToolbar) findViewById(R.id.botToolbar);
 		m_playlistToolbar.setPlaylistView(this);
@@ -227,7 +243,8 @@ public class PlaylistView extends DMRListenerView {
 			MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().addListener(m_playlistListener);
 		switch (m_viewMode) {
 		case VM_DETAILS:
-			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null || m_currentPlaylist.getData().getName() == null) {
+			if (m_currentPlaylist == null || m_currentPlaylist.getData() == null
+					|| m_currentPlaylist.getData().getName() == null) {
 				m_viewMode = VM_LIST;
 				preparePlaylist();
 				return;
@@ -241,7 +258,8 @@ public class PlaylistView extends DMRListenerView {
 			m_playlistToolbar.updateToolbar(m_viewMode);
 			break;
 		case VM_LIST:
-			new AsyncTaskWithProgressDialog<Void, Void, List<Playlist>>(getContext().getString(R.string.loading_all_playlist)) {
+			new AsyncTaskWithProgressDialog<Void, Void, List<Playlist>>(getContext().getString(
+					R.string.loading_all_playlist)) {
 
 				@Override
 				protected void onPreExecute() {
@@ -354,6 +372,10 @@ public class PlaylistView extends DMRListenerView {
 		} else {
 			m_currentPlaylist = PlaylistManager.getPlaylistProcessor(m_currentPlaylist.getData());
 		}
+	}
+	
+	public GridView getGridView(){
+		return m_gridView;
 	}
 
 }

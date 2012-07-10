@@ -8,7 +8,6 @@ import android.content.Context;
 import android.util.Log;
 import android.view.Window;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.Toast;
 import app.dlna.controller.v5.R;
 
@@ -17,7 +16,7 @@ import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
 
 public class DMRListenerView extends LinearLayout {
-	protected ListView m_listView;
+	// protected ListView m_listView;
 	protected CustomArrayAdapter m_adapter;
 	protected String m_currentURI = "";
 	protected ProgressDialog m_pdlg;
@@ -36,27 +35,31 @@ public class DMRListenerView extends LinearLayout {
 
 		@Override
 		public void onUpdatePosition(long current, long max) {
-			if (MainActivity.UPNP_PROCESSOR == null || MainActivity.UPNP_PROCESSOR.getDMRProcessor() == null)
-				return;
-			if (!m_currentURI.equals(MainActivity.UPNP_PROCESSOR.getDMRProcessor().getCurrentTrackURI())) {
-				int start = m_listView.getFirstVisiblePosition();
-				int end = m_listView.getLastVisiblePosition();
-				for (int i = start, j = end; i <= j; i++) {
-					final int position = i;
-					MainActivity.INSTANCE.runOnUiThread(new Runnable() {
-
-						@Override
-						public void run() {
-							try {
-								m_adapter.updateSingleView(m_listView, position);
-							} catch (Exception e) {
-
-							}
-						}
-					});
-				}
-			}
-			m_currentURI = MainActivity.UPNP_PROCESSOR.getDMRProcessor().getCurrentTrackURI();
+			// if (MainActivity.UPNP_PROCESSOR == null ||
+			// MainActivity.UPNP_PROCESSOR.getDMRProcessor() == null)
+			// return;
+			// if
+			// (!m_currentURI.equals(MainActivity.UPNP_PROCESSOR.getDMRProcessor().getCurrentTrackURI()))
+			// {
+			// int start = m_listView.getFirstVisiblePosition();
+			// int end = m_listView.getLastVisiblePosition();
+			// for (int i = start, j = end; i <= j; i++) {
+			// final int position = i;
+			// MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+			//
+			// @Override
+			// public void run() {
+			// try {
+			// m_adapter.updateSingleView(m_listView, position);
+			// } catch (Exception e) {
+			//
+			// }
+			// }
+			// });
+			// }
+			// }
+			// m_currentURI =
+			// MainActivity.UPNP_PROCESSOR.getDMRProcessor().getCurrentTrackURI();
 
 		}
 

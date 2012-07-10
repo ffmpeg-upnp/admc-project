@@ -53,6 +53,11 @@ public class LibraryActivity extends Activity {
 		}
 	}
 
+	@Override
+	public void onBackPressed() {
+		MainActivity.INSTANCE.confirmExit();
+	}
+
 	private OnPageChangeListener m_onPageChangeListener = new OnPageChangeListener() {
 		@Override
 		public void onPageSelected(int position) {
@@ -138,6 +143,40 @@ public class LibraryActivity extends Activity {
 
 	public YoutubeView getYoutubeView() {
 		return m_youtubeView;
+	}
+
+	public void switchToPortrait() {
+		switch (m_pager.getCurrentItem()) {
+		case 0:
+			m_homeNetworkView.getGridView().setNumColumns(1);
+			break;
+		case 1:
+			m_playlistView.getGridView().setNumColumns(1);
+			m_playlistView.preparePlaylist();
+			break;
+		case 2:
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	public void switchToLandscape() {
+		switch (m_pager.getCurrentItem()) {
+		case 0:
+			m_homeNetworkView.getGridView().setNumColumns(2);
+			break;
+		case 1:
+			m_playlistView.getGridView().setNumColumns(2);
+			m_playlistView.preparePlaylist();
+			break;
+		case 2:
+			break;
+
+		default:
+			break;
+		}
 	}
 
 }

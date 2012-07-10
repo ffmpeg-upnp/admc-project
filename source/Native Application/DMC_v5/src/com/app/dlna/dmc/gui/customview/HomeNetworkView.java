@@ -23,7 +23,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.Toast;
 import app.dlna.controller.v5.R;
 
@@ -44,6 +44,9 @@ import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
 import com.app.dlna.dmc.processor.model.PlaylistItem;
 
 public class HomeNetworkView extends DMRListenerView {
+
+	private GridView m_gridView;
+
 	private ProgressDialog m_progressDlg;
 	private boolean m_loadMore;
 	private boolean m_isRoot;
@@ -56,12 +59,12 @@ public class HomeNetworkView extends DMRListenerView {
 		m_isBrowsing = false;
 		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork,
 				this);
-		m_listView = (ListView) findViewById(R.id.lv_mediasource_browsing);
+		m_gridView = (GridView) findViewById(R.id.lv_mediasource_browsing);
 		m_adapter = new CustomArrayAdapter(context, 0);
-		m_listView.setAdapter(m_adapter);
-		m_listView.setOnItemClickListener(m_itemClick);
-		m_listView.setOnItemLongClickListener(m_itemLongClick);
-		m_listView.setOnScrollListener(m_scrollListener);
+		m_gridView.setAdapter(m_adapter);
+		m_gridView.setOnItemClickListener(m_itemClick);
+		m_gridView.setOnItemLongClickListener(m_itemLongClick);
+		m_gridView.setOnScrollListener(m_scrollListener);
 		m_progressDlg = new ProgressDialog(MainActivity.INSTANCE);
 		m_progressDlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		m_progressDlg.setMessage(context.getString(R.string.waiting_for_loading_items));
@@ -151,7 +154,7 @@ public class HomeNetworkView extends DMRListenerView {
 
 					@Override
 					public void onSelectClick(Device device) {
-						m_listView.performItemClick(view, position, id);
+						m_gridView.performItemClick(view, position, id);
 					}
 				}).show();
 			} else if (object instanceof Item) {
@@ -308,13 +311,15 @@ public class HomeNetworkView extends DMRListenerView {
 
 							@Override
 							public void run() {
-								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(R.string.adding_item_to_playlist_)
+								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(
+										R.string.adding_item_to_playlist_)
 										+ allPlaylist.get(which).getName() + "\"");
 								PlaylistItem playlistItem = PlaylistManager
 										.getPlaylistProcessor(allPlaylist.get(which)).addDIDLObject(item);
 								MainActivity.INSTANCE.dismissLoadingDialog();
 								if (playlistItem != null) {
-									MainActivity.INSTANCE.showToast(getContext().getString(R.string.item_added_to_playlist_sucessfully));
+									MainActivity.INSTANCE.showToast(getContext().getString(
+											R.string.item_added_to_playlist_sucessfully));
 								}
 							}
 						}).start();
@@ -350,7 +355,8 @@ public class HomeNetworkView extends DMRListenerView {
 			playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 			PlaylistItem added = playlistProcessor.addDIDLObject(object);
 			if (added != null) {
-				m_adapter.notifyVisibleItemChanged(m_listView);
+				// TODO: aaaaaa
+				// m_adapter.notifyVisibleItemChanged(m_gridView);
 				switch (added.getType()) {
 				case AUDIO_LOCAL:
 				case AUDIO_REMOTE:
@@ -439,8 +445,9 @@ public class HomeNetworkView extends DMRListenerView {
 
 						m_progressDlg.dismiss();
 						if (!m_loadMore)
-							m_listView.smoothScrollToPosition(0);
-						m_adapter.notifyVisibleItemChanged(m_listView);
+							m_gridView.smoothScrollToPosition(0);
+						// TODO: aaaaaa
+						// m_adapter.notifyVisibleItemChanged(m_gridView);
 					}
 				}
 			});
@@ -562,12 +569,14 @@ public class HomeNetworkView extends DMRListenerView {
 
 	public void updateListView() {
 		super.updateListView();
-		m_adapter.notifyVisibleItemChanged(m_listView);
+		// TODO: aaaaaa
+		// m_adapter.notifyVisibleItemChanged(m_gridView);
 	}
 
-	public ListView getListView() {
-		return m_listView;
-	}
+	// public ListView getListView() {
+	// // TODO: aaaaaa
+	// // return m_gridView;
+	// }
 
 	@SuppressWarnings("rawtypes")
 	public void backToPlaylist() {
@@ -581,6 +590,10 @@ public class HomeNetworkView extends DMRListenerView {
 		m_isBrowsing = false;
 		m_adapter.cancelPrepareImageCache();
 		m_toolbar.setVisibility(View.GONE);
+	}
+
+	public GridView getGridView() {
+		return m_gridView;
 	}
 
 }

@@ -94,8 +94,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 	protected static final String ACTION_PLAYTO = "com.app.dlna.dmc.gui.MainActivity.ACTION_PLAYTO";
 	public static final String ACTION_CANCEL_DOWNLOAD = "CANCEL_DOWNLOAD";
 	public static final String EXTRA_DOWNLOAD_ID = "download_id";
-	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
-			new RejectedExecutionHandler() {
+	public ThreadPoolExecutor EXEC = new ThreadPoolExecutor(SIZE, SIZE, 8, TimeUnit.SECONDS,
+			new LinkedBlockingQueue<Runnable>(), new RejectedExecutionHandler() {
 
 				@Override
 				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
@@ -259,8 +259,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				libraryActivity.getHomeNetworkView().updateListView();
 				libraryActivity.getPlaylistView().updateListView();
 			}
-			MainActivity.UPNP_PROCESSOR.getDMRProcessor()
-					.setPlaylistProcessor(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
+			MainActivity.UPNP_PROCESSOR.getDMRProcessor().setPlaylistProcessor(
+					MainActivity.UPNP_PROCESSOR.getPlaylistProcessor());
 		}
 
 		@Override
@@ -376,8 +376,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void run() {
 				try {
 					new AlertDialog.Builder(MainActivity.this).setTitle(R.string.network_changed)
-							.setMessage(R.string.network_interface_changed_application_must_restart_).setCancelable(false)
-							.setPositiveButton(R.string.ok, new OnClickListener() {
+							.setMessage(R.string.network_interface_changed_application_must_restart_)
+							.setCancelable(false).setPositiveButton(R.string.ok, new OnClickListener() {
 
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
@@ -399,8 +399,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
 				try {
-					new AlertDialog.Builder(MainActivity.this).setTitle(R.string.network_error).setMessage(cause).setCancelable(false)
-							.setPositiveButton(R.string.ok, new OnClickListener() {
+					new AlertDialog.Builder(MainActivity.this).setTitle(R.string.network_error).setMessage(cause)
+							.setCancelable(false).setPositiveButton(R.string.ok, new OnClickListener() {
 
 								@Override
 								public void onClick(DialogInterface dialog, int which) {
@@ -424,7 +424,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 				if (m_routerProgressDialog != null)
 					m_routerProgressDialog.dismiss();
 				try {
-					m_routerProgressDialog = ProgressDialog.show(MainActivity.this, getString(R.string.network_disabled),
+					m_routerProgressDialog = ProgressDialog.show(MainActivity.this,
+							getString(R.string.network_disabled),
 							getString(R.string.network_disabled_try_to_re_enabled_network));
 				} catch (Exception ex) {
 
@@ -490,8 +491,9 @@ public class MainActivity extends TabActivity implements SystemListener {
 		confirmExit();
 	}
 
-	private void confirmExit() {
-		new AlertDialog.Builder(MainActivity.this).setTitle(R.string.confirm_exit).setMessage(R.string.are_you_sure_want_to_exit_)
+	public void confirmExit() {
+		new AlertDialog.Builder(MainActivity.this).setTitle(R.string.confirm_exit)
+				.setMessage(R.string.are_you_sure_want_to_exit_)
 				.setPositiveButton(R.string.minimize, new OnClickListener() {
 
 					@Override
@@ -525,8 +527,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 						String textEncoding = (buffer[0] & 0200) == 0 ? "UTF-8" : "UTF-16";
 						int languageCodeLength = buffer[0] & 0077;
 						try {
-							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength - 1,
-									textEncoding);
+							String text = new String(buffer, languageCodeLength + 1, buffer.length - languageCodeLength
+									- 1, textEncoding);
 							String deviceUDN = "";
 							if (text.startsWith("uuid:"))
 								deviceUDN = text.substring(5);
@@ -599,8 +601,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_nfcProgressDialog.show();
 		} else {
 			new AlertDialog.Builder(MainActivity.this).setTitle("NFC")
-					.setMessage(R.string.please_enable_nfc_on_you_device_first)
-					.setPositiveButton(R.string.ok, null).create().show();
+					.setMessage(R.string.please_enable_nfc_on_you_device_first).setPositiveButton(R.string.ok, null)
+					.create().show();
 		}
 	}
 
@@ -623,7 +625,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				if (m_btn_toggleRendererView != null)
-					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_down));
+					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(
+							R.drawable.ic_btn_navigate_down));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -649,7 +652,8 @@ public class MainActivity extends TabActivity implements SystemListener {
 			public void onAnimationEnd(Animation animation) {
 				m_rendererCompactView.setVisibility(View.GONE);
 				if (m_btn_toggleRendererView != null)
-					m_btn_toggleRendererView.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
+					m_btn_toggleRendererView
+							.setImageDrawable(getResources().getDrawable(R.drawable.ic_btn_navigate_up));
 			}
 		});
 		m_rendererCompactView.startAnimation(animation);
@@ -685,13 +689,15 @@ public class MainActivity extends TabActivity implements SystemListener {
 			m_btn_toggleRendererView.setVisibility(View.VISIBLE);
 			if (activity instanceof NowPlayingActivity)
 				((NowPlayingActivity) activity).switchToPortrait();
-
+			else
+				((LibraryActivity) activity).switchToPortrait();
 		} else if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			if (activity instanceof NowPlayingActivity) {
 				m_ll_tabwidgets.setVisibility(View.GONE);
 				m_btn_toggleRendererView.setVisibility(View.GONE);
 				((NowPlayingActivity) activity).switchToLandscape();
 			} else {
+				((LibraryActivity) activity).switchToLandscape();
 				m_ll_tabwidgets.setVisibility(View.VISIBLE);
 				m_btn_toggleRendererView.setVisibility(View.VISIBLE);
 			}

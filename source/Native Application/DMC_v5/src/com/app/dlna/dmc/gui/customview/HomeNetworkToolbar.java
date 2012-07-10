@@ -107,10 +107,12 @@ public class HomeNetworkToolbar extends LinearLayout {
 
 				@Override
 				public void run() {
-					String message = actionType.equals(DMSProcessor.ACTION_ADD) ? getContext().getString(R.string.waiting_for_add_all_items)
-							: getContext().getString(R.string.waiting_for_remove_all_items);
+					String message = actionType.equals(DMSProcessor.ACTION_ADD) ? getContext().getString(
+							R.string.waiting_for_add_all_items) : getContext().getString(
+							R.string.waiting_for_remove_all_items);
 
-					m_progreProgressDialog = ProgressDialog.show(getContext(), getContext().getString(R.string.processing), message);
+					m_progreProgressDialog = ProgressDialog.show(getContext(),
+							getContext().getString(R.string.processing), message);
 					m_progreProgressDialog.setCancelable(false);
 				}
 			});
@@ -125,7 +127,8 @@ public class HomeNetworkToolbar extends LinearLayout {
 				public void run() {
 					m_progreProgressDialog.dismiss();
 					Toast.makeText(getContext(), R.string.error_occur_ + ex.getMessage(), Toast.LENGTH_SHORT).show();
-					m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getListView());
+					// TODO: aaaaaa
+					// m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getListView());
 				}
 			});
 
@@ -141,7 +144,8 @@ public class HomeNetworkToolbar extends LinearLayout {
 					Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 					LibraryActivity activity = (LibraryActivity) getContext();
 					activity.getPlaylistView().udpateCurrentPlaylistProcessor();
-					m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getListView());
+					// TODO: aaaaaa
+					// m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getListView());
 				}
 			});
 

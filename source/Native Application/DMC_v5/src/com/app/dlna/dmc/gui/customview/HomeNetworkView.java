@@ -15,8 +15,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
-import android.graphics.Bitmap.Config;
-import android.graphics.drawable.GradientDrawable.Orientation;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;

@@ -32,9 +32,10 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 
 				@Override
 				public void run() {
-					Toast.makeText(m_activity,
-							R.string.download_failed_file_ + downloadThread.getItemName() + ", error = " + ex.getMessage(),
-							Toast.LENGTH_SHORT).show();
+					Toast.makeText(
+							m_activity,
+							R.string.download_failed_file_ + downloadThread.getItemName() + ", error = "
+									+ ex.getMessage(), Toast.LENGTH_SHORT).show();
 				}
 			});
 		}
@@ -45,8 +46,10 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			m_activity.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					Toast.makeText(m_activity, R.string.download_complete_file_ + downloadThread.getItemName(), Toast.LENGTH_SHORT)
-							.show();
+					Toast.makeText(
+							m_activity,
+							MainActivity.INSTANCE.getString(R.string.download_complete_file_)
+									+ downloadThread.getItemName(), Toast.LENGTH_SHORT).show();
 				}
 			});
 		}
@@ -66,8 +69,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 		synchronized (m_listDownloads) {
 			size = m_listDownloads.size();
 		}
-		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(), m_sdRoot,
-				m_downloadListener, ++size, m_activity);
+		DownloadThread downloadThread = new DownloadThread(item.getTitle(), item.getResources().get(0).getValue(),
+				m_sdRoot, m_downloadListener, ++size, m_activity);
 
 		synchronized (m_listDownloads) {
 			m_listDownloads.add(downloadThread);
@@ -106,7 +109,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 			size = m_listDownloads.size();
 		}
 		synchronized (m_listDownloads) {
-			DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, size + 6000, m_activity);
+			DownloadThread downloadThread = new DownloadThread(name, url, m_sdRoot, m_downloadListener, size + 6000,
+					m_activity);
 			m_listDownloads.add(downloadThread);
 			downloadThread.startDownload();
 		}
@@ -153,7 +157,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 
 						@Override
 						public void onStartPorcess() {
-							MainActivity.INSTANCE.showLoadingMessage(m_activity.getString(R.string.contacting_to_youtube_server));
+							MainActivity.INSTANCE.showLoadingMessage(m_activity
+									.getString(R.string.contacting_to_youtube_server));
 						}
 
 						@Override
@@ -172,7 +177,8 @@ public class DownloadProcessorImpl implements DownloadProcessor {
 
 						@Override
 						public void onFail(Exception ex) {
-							MainActivity.INSTANCE.showToast(m_activity.getString(R.string.download_file_failed_try_again_later_));
+							MainActivity.INSTANCE.showToast(m_activity
+									.getString(R.string.download_file_failed_try_again_later_));
 							MainActivity.INSTANCE.dismissLoadingDialog();
 						}
 					});

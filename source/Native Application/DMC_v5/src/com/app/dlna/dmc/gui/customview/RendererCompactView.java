@@ -26,8 +26,7 @@ import app.dlna.controller.v5.R;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.gui.dialog.DeviceDetailsDialog;
 import com.app.dlna.dmc.gui.dialog.DeviceDetailsDialog.DeviceDetailsListener;
-import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
-import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListener;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.DevicesListener;
 
 public class RendererCompactView extends LinearLayout {
@@ -178,12 +177,11 @@ public class RendererCompactView extends LinearLayout {
 	};
 
 	private void setDMRListener() {
-		DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-		if (dmrProcessor != null)
-			dmrProcessor.addListener(m_dmrListener);
+		if (MainActivity.UPNP_PROCESSOR != null)
+			MainActivity.UPNP_PROCESSOR.addDMRListener(m_dmrListener);
 	}
 
-	private DMRProcessorListner m_dmrListener = new DMRProcessorListner() {
+	private DMRProcessorListener m_dmrListener = new DMRProcessorListener() {
 
 		@Override
 		public void onUpdatePosition(long current, long max) {

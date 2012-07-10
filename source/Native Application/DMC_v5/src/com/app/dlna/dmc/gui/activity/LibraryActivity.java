@@ -42,6 +42,8 @@ public class LibraryActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		m_playlistView.preparePlaylist();
+		m_playlistView.updateGridView();
+		m_homeNetworkView.updateGridView();
 	}
 
 	@Override
@@ -71,12 +73,12 @@ public class LibraryActivity extends Activity {
 
 		@Override
 		public void onPageScrollStateChanged(int state) {
-			((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
-					m_youtubeView.getWindowToken(), 0);
+			((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(m_youtubeView.getWindowToken(),
+					0);
 			if (state == 0)
 				switch (m_pager.getCurrentItem()) {
 				case 0:
-					m_homeNetworkView.updateListView();
+					m_homeNetworkView.updateGridView();
 					break;
 				case 1:
 					m_playlistView.preparePlaylist();
@@ -100,7 +102,7 @@ public class LibraryActivity extends Activity {
 		public Object instantiateItem(ViewGroup container, int position) {
 			if (position == 0) {
 				((ViewPager) container).addView(m_homeNetworkView);
-				m_homeNetworkView.updateListView();
+				m_homeNetworkView.updateGridView();
 				return m_homeNetworkView;
 			} else if (position == 1) {
 				((ViewPager) container).addView(m_playlistView);
@@ -146,36 +148,20 @@ public class LibraryActivity extends Activity {
 	}
 
 	public void switchToPortrait() {
-		switch (m_pager.getCurrentItem()) {
-		case 0:
+		if (m_homeNetworkView != null)
 			m_homeNetworkView.getGridView().setNumColumns(1);
-			break;
-		case 1:
+		if (m_playlistView != null) {
 			m_playlistView.getGridView().setNumColumns(1);
 			m_playlistView.preparePlaylist();
-			break;
-		case 2:
-			break;
-
-		default:
-			break;
 		}
 	}
 
 	public void switchToLandscape() {
-		switch (m_pager.getCurrentItem()) {
-		case 0:
+		if (m_homeNetworkView != null)
 			m_homeNetworkView.getGridView().setNumColumns(2);
-			break;
-		case 1:
+		if (m_playlistView != null) {
 			m_playlistView.getGridView().setNumColumns(2);
 			m_playlistView.preparePlaylist();
-			break;
-		case 2:
-			break;
-
-		default:
-			break;
 		}
 	}
 

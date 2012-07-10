@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -190,8 +191,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 		holder.desc.setText("");
 		holder.icon.setImageResource(R.drawable.ic_playlist);
 		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-		if (playlistProcessor != null && playlistProcessor.getData() != null
-				&& playlistProcessor.getData().equals(data)) {
+		if (playlistProcessor != null && playlistProcessor.getData() != null && playlistProcessor.getData().equals(data)) {
 			holder.playing.setVisibility(View.VISIBLE);
 		} else {
 			holder.playing.setVisibility(View.GONE);
@@ -215,6 +215,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 		}
 
 		if (m_cacheDMSIcon.containsKey(udn)) {
+			holder.icon.setTag("");
 			holder.icon.setImageBitmap(m_cacheDMSIcon.get(udn));
 		} else {
 			if (device instanceof RemoteDevice) {
@@ -247,8 +248,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 					final RemoteDevice remoteDevice = (RemoteDevice) device;
 
 					String urlString = remoteDevice.getIdentity().getDescriptorURL().getProtocol() + "://"
-							+ remoteDevice.getIdentity().getDescriptorURL().getAuthority()
-							+ icons[0].getUri().toString();
+							+ remoteDevice.getIdentity().getDescriptorURL().getAuthority() + icons[0].getUri().toString();
 					URL url = new URL(urlString);
 					final Bitmap icon = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 					m_cacheDMSIcon.put(udn, icon);
@@ -265,6 +265,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 
 						@Override
 						public void run() {
+							holder.icon.setTag("");
 							holder.icon.setImageBitmap(null);
 						}
 					});
@@ -277,6 +278,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 	private void initDIDLObject(DIDLObject object, ViewHolder holder) {
 		holder.name.setText(object.getTitle());
 		if (object.getId().equals("-1")) {
+			holder.icon.setTag("");
 			holder.icon.setVisibility(View.GONE);
 			holder.desc.setText("");
 			holder.action.setVisibility(View.GONE);
@@ -285,6 +287,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 		}
 		holder.icon.setVisibility(View.VISIBLE);
 		if (object instanceof Container) {
+			holder.icon.setTag("");
 			holder.icon.setImageResource(R.drawable.ic_didlobject_container);
 			holder.action.setVisibility(View.GONE);
 			holder.playing.setVisibility(View.GONE);
@@ -292,8 +295,10 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 		} else {
 			String objectUrl = object.getResources().get(0).getValue();
 			if (object instanceof MusicTrack) {
+				holder.icon.setTag("");
 				holder.icon.setImageBitmap(BM_AUDIO);
 			} else if (object instanceof VideoItem) {
+				holder.icon.setTag("");
 				holder.icon.setImageBitmap(BM_VIDEO);
 			} else if (object instanceof ImageItem) {
 				HashMap<String, Bitmap> cache = Cache.getBitmapCache();
@@ -306,6 +311,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 					Utility.loadImageItemThumbnail(holder.icon, objectUrl, Cache.getBitmapCache(), MAX_SIZE);
 				}
 			} else {
+				holder.icon.setTag("");
 				holder.icon.setImageResource(R.drawable.ic_didlobject_unknow);
 			}
 			if (object.getResources().size() > 0) {
@@ -318,8 +324,7 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 					LibraryActivity activity = (LibraryActivity) getContext();
 					PlaylistProcessor playlistProcessor = activity.getPlaylistView().getCurrentPlaylistProcessor();
 					if (playlistProcessor.containsUrl(objectUrl)) {
-						holder.action.setImageDrawable(getContext().getResources()
-								.getDrawable(R.drawable.ic_btn_remove));
+						holder.action.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_remove));
 					} else {
 						holder.action.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_btn_add));
 					}
@@ -499,18 +504,13 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 			}
 	}
 
-	@Override
-	public void notifyDataSetChanged() {
-		super.notifyDataSetChanged();
-	}
-
-	public void notifyVisibleItemChanged(ListView list) {
-		int start = list.getFirstVisiblePosition() < getCount() ? list.getFirstVisiblePosition() : getCount() - 1;
-		int end = list.getLastVisiblePosition() < getCount() ? list.getLastVisiblePosition() : getCount() - 1;
+	public void notifyVisibleItemChanged(GridView gridView) {
+		int start = gridView.getFirstVisiblePosition() < getCount() ? gridView.getFirstVisiblePosition() : getCount() - 1;
+		int end = gridView.getLastVisiblePosition() < getCount() ? gridView.getLastVisiblePosition() : getCount() - 1;
 		for (int i = start, j = end; i <= j; i++) {
-			View view = list.getChildAt(i - start);
+			View view = gridView.getChildAt(i - start);
 			if (0 <= i && i < getCount())
-				list.getAdapter().getView(i, view, list);
+				gridView.getAdapter().getView(i, view, gridView);
 		}
 	}
 

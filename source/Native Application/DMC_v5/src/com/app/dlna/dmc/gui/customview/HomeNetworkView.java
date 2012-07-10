@@ -14,6 +14,9 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
+import android.graphics.Bitmap.Config;
+import android.graphics.drawable.GradientDrawable.Orientation;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,8 +48,6 @@ import com.app.dlna.dmc.processor.model.PlaylistItem;
 
 public class HomeNetworkView extends DMRListenerView {
 
-	private GridView m_gridView;
-
 	private ProgressDialog m_progressDlg;
 	private boolean m_loadMore;
 	private boolean m_isRoot;
@@ -57,9 +58,12 @@ public class HomeNetworkView extends DMRListenerView {
 	public HomeNetworkView(Context context) {
 		super(context);
 		m_isBrowsing = false;
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork,
-				this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_homenetwork, this);
 		m_gridView = (GridView) findViewById(R.id.lv_mediasource_browsing);
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+			m_gridView.setNumColumns(1);
+		else
+			m_gridView.setNumColumns(2);
 		m_adapter = new CustomArrayAdapter(context, 0);
 		m_gridView.setAdapter(m_adapter);
 		m_gridView.setOnItemClickListener(m_itemClick);
@@ -96,8 +100,8 @@ public class HomeNetworkView extends DMRListenerView {
 						&& !m_progressDlg.isShowing()
 						&& firstVisibleItem + visibleItemCount == totalItemCount
 						&& m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData() instanceof DIDLObject
-						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId()
-								.equals("-1")) {
+						&& ((DIDLObject) m_adapter.getItem(firstVisibleItem + visibleItemCount - 1).getData()).getId().equals(
+								"-1")) {
 					doLoadMoreItems();
 				}
 			} catch (Exception ex) {
@@ -170,8 +174,7 @@ public class HomeNetworkView extends DMRListenerView {
 											addToOtherPlaylist((Item) object);
 											break;
 										case 1:
-											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(
-													((Item) object));
+											MainActivity.UPNP_PROCESSOR.getDownloadProcessor().startDownload(((Item) object));
 											break;
 										default:
 											break;
@@ -200,84 +203,69 @@ public class HomeNetworkView extends DMRListenerView {
 													public void onClick(DialogInterface dialog, final int which) {
 														switch (choice) {
 														case 0:
-															MainActivity.UPNP_PROCESSOR.getDMSProcessor()
-																	.addAllToPlaylist(allPlaylist.get(which),
-																			((Container) object).getId(),
-																			new DMSAddRemoveContainerListener() {
+															MainActivity.UPNP_PROCESSOR.getDMSProcessor().addAllToPlaylist(
+																	allPlaylist.get(which), ((Container) object).getId(),
+																	new DMSAddRemoveContainerListener() {
 
-																				@Override
-																				public void onActionStart(String action) {
-																					MainActivity.INSTANCE
-																							.showLoadingMessage(getContext()
-																									.getString(
-																											R.string.adding_item_to_playlist_)
-																									+ allPlaylist.get(
-																											which)
-																											.getName()
-																									+ "\"");
-																				}
+																		@Override
+																		public void onActionStart(String action) {
+																			MainActivity.INSTANCE.showLoadingMessage(getContext()
+																					.getString(R.string.adding_item_to_playlist_)
+																					+ allPlaylist.get(which).getName() + "\"");
+																		}
 
-																				@Override
-																				public void onActionFail(Exception ex) {
-																					MainActivity.INSTANCE
-																							.dismissLoadingDialog();
-																					MainActivity.INSTANCE
-																							.showToast(getContext()
-																									.getString(
-																											R.string.container_added_to_playlist_failed));
-																				}
+																		@Override
+																		public void onActionFail(Exception ex) {
+																			MainActivity.INSTANCE.dismissLoadingDialog();
+																			MainActivity.INSTANCE
+																					.showToast(getContext()
+																							.getString(
+																									R.string.container_added_to_playlist_failed));
+																		}
 
-																				@Override
-																				public void onActionComplete(
-																						String message) {
-																					MainActivity.INSTANCE
-																							.dismissLoadingDialog();
-																					MainActivity.INSTANCE
-																							.showToast(getContext()
-																									.getString(
-																											R.string.container_added_to_playlist_sucessfully));
-																				}
-																			});
+																		@Override
+																		public void onActionComplete(String message) {
+																			MainActivity.INSTANCE.dismissLoadingDialog();
+																			MainActivity.INSTANCE
+																					.showToast(getContext()
+																							.getString(
+																									R.string.container_added_to_playlist_sucessfully));
+																		}
+																	});
 															break;
 														case 1:
-															MainActivity.UPNP_PROCESSOR.getDMSProcessor()
-																	.removeAllFromPlaylist(allPlaylist.get(which),
-																			((Container) object).getId(),
-																			new DMSAddRemoveContainerListener() {
+															MainActivity.UPNP_PROCESSOR.getDMSProcessor().removeAllFromPlaylist(
+																	allPlaylist.get(which), ((Container) object).getId(),
+																	new DMSAddRemoveContainerListener() {
 
-																				@Override
-																				public void onActionStart(String action) {
-																					MainActivity.INSTANCE
-																							.showLoadingMessage(getContext()
-																									.getString(
-																											R.string.remove_container_from_playlist_)
-																									+ allPlaylist.get(
-																											which)
-																											.getName()
-																									+ "\"");
-																				}
+																		@Override
+																		public void onActionStart(String action) {
+																			MainActivity.INSTANCE
+																					.showLoadingMessage(getContext()
+																							.getString(
+																									R.string.remove_container_from_playlist_)
+																							+ allPlaylist.get(which).getName()
+																							+ "\"");
+																		}
 
-																				@Override
-																				public void onActionFail(Exception ex) {
-																					MainActivity.INSTANCE
-																							.dismissLoadingDialog();
-																					MainActivity.INSTANCE
-																							.showToast(getContext()
-																									.getString(
-																											R.string.container_removed_from_playlist_failed));
-																				}
+																		@Override
+																		public void onActionFail(Exception ex) {
+																			MainActivity.INSTANCE.dismissLoadingDialog();
+																			MainActivity.INSTANCE
+																					.showToast(getContext()
+																							.getString(
+																									R.string.container_removed_from_playlist_failed));
+																		}
 
-																				@Override
-																				public void onActionComplete(
-																						String message) {
-																					MainActivity.INSTANCE
-																							.dismissLoadingDialog();
-																					MainActivity.INSTANCE
-																							.showToast(getContext()
-																									.getString(
-																											R.string.container_removed_to_playlist_sucessfully));
-																				}
-																			});
+																		@Override
+																		public void onActionComplete(String message) {
+																			MainActivity.INSTANCE.dismissLoadingDialog();
+																			MainActivity.INSTANCE
+																					.showToast(getContext()
+																							.getString(
+																									R.string.container_removed_to_playlist_sucessfully));
+																		}
+																	});
 
 															break;
 														default:
@@ -311,11 +299,10 @@ public class HomeNetworkView extends DMRListenerView {
 
 							@Override
 							public void run() {
-								MainActivity.INSTANCE.showLoadingMessage(getContext().getString(
-										R.string.adding_item_to_playlist_)
-										+ allPlaylist.get(which).getName() + "\"");
-								PlaylistItem playlistItem = PlaylistManager
-										.getPlaylistProcessor(allPlaylist.get(which)).addDIDLObject(item);
+								MainActivity.INSTANCE.showLoadingMessage(getContext()
+										.getString(R.string.adding_item_to_playlist_) + allPlaylist.get(which).getName() + "\"");
+								PlaylistItem playlistItem = PlaylistManager.getPlaylistProcessor(allPlaylist.get(which))
+										.addDIDLObject(item);
 								MainActivity.INSTANCE.dismissLoadingDialog();
 								if (playlistItem != null) {
 									MainActivity.INSTANCE.showToast(getContext().getString(
@@ -355,8 +342,7 @@ public class HomeNetworkView extends DMRListenerView {
 			playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
 			PlaylistItem added = playlistProcessor.addDIDLObject(object);
 			if (added != null) {
-				// TODO: aaaaaa
-				// m_adapter.notifyVisibleItemChanged(m_gridView);
+				m_adapter.notifyVisibleItemChanged(m_gridView);
 				switch (added.getType()) {
 				case AUDIO_LOCAL:
 				case AUDIO_REMOTE:
@@ -446,8 +432,7 @@ public class HomeNetworkView extends DMRListenerView {
 						m_progressDlg.dismiss();
 						if (!m_loadMore)
 							m_gridView.smoothScrollToPosition(0);
-						// TODO: aaaaaa
-						// m_adapter.notifyVisibleItemChanged(m_gridView);
+						m_adapter.notifyVisibleItemChanged(m_gridView);
 					}
 				}
 			});
@@ -567,16 +552,10 @@ public class HomeNetworkView extends DMRListenerView {
 		return m_browseListener;
 	}
 
-	public void updateListView() {
-		super.updateListView();
-		// TODO: aaaaaa
-		// m_adapter.notifyVisibleItemChanged(m_gridView);
+	public void updateGridView() {
+		super.updateGridView();
+		m_adapter.notifyVisibleItemChanged(m_gridView);
 	}
-
-	// public ListView getListView() {
-	// // TODO: aaaaaa
-	// // return m_gridView;
-	// }
 
 	@SuppressWarnings("rawtypes")
 	public void backToPlaylist() {

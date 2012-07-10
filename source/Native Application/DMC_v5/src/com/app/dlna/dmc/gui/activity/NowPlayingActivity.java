@@ -380,16 +380,14 @@ public class NowPlayingActivity extends Activity {
 		m_surface.setVisibility(View.GONE);
 		updateSurfaceView();
 		m_rendererControl.disconnectToDMR();
-		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-		if (playlistProcessor != null)
-			playlistProcessor.removeListener(m_playlistListener);
+		if (MainActivity.UPNP_PROCESSOR != null)
+			MainActivity.UPNP_PROCESSOR.removePlaylistListener(m_playlistListener);
 		m_adapter = null;
 	}
 
 	public void updatePlaylist() {
-		PlaylistProcessor playlistProcessor = MainActivity.UPNP_PROCESSOR.getPlaylistProcessor();
-		if (playlistProcessor != null)
-			playlistProcessor.addListener(m_playlistListener);
+		if (MainActivity.UPNP_PROCESSOR != null)
+			MainActivity.UPNP_PROCESSOR.addPlaylistListener(m_playlistListener);
 	}
 
 	public void updateDMRControlView() {

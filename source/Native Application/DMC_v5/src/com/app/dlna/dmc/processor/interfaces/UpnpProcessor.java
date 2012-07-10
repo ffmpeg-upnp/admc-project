@@ -7,12 +7,23 @@ import org.teleal.cling.model.meta.Device;
 import org.teleal.cling.model.types.UDN;
 import org.teleal.cling.registry.Registry;
 
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListener;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
+
 public interface UpnpProcessor {
 	void addDevicesListener(DevicesListener listener);
 
 	void removeDevicesListener(DevicesListener listener);
 
 	void addSystemListener(SystemListener listener);
+
+	void addDMRListener(DMRProcessorListener listener);
+
+	void removeDMRListener(DMRProcessorListener listener);
+
+	void addPlaylistListener(PlaylistListener listener);
+
+	void removePlaylistListener(PlaylistListener listener);
 
 	void removeSystemListener(SystemListener listener);
 
@@ -23,7 +34,7 @@ public interface UpnpProcessor {
 	void setCurrentDMS(UDN uDN);
 
 	void setCurrentDMR(UDN uDN);
-	
+
 	void refreshDevicesList();
 
 	Registry getRegistry();
@@ -51,7 +62,7 @@ public interface UpnpProcessor {
 	DownloadProcessor getDownloadProcessor();
 
 	void setPlaylistProcessor(PlaylistProcessor playlistProcessor);
-	
+
 	void setDMSExproted(boolean value);
 
 	public interface DevicesListener {
@@ -81,5 +92,5 @@ public interface UpnpProcessor {
 
 		void onRouterDisabledEvent();
 	}
-	
+
 }

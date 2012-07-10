@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package app.dlna.controller.v4;
+package app.dlna.controller.v5;
 
 public final class R {
     public static final class anim {
@@ -302,6 +302,7 @@ public final class R {
         public static final int cannot_process_playlist=0x7f0a003a;
         public static final int cannot_start_upnp_service_please_try_again_later=0x7f0a0023;
         public static final int change_dmr=0x7f0a0003;
+        public static final int change_playlist_name=0x7f0a0089;
         public static final int check_item_url_=0x7f0a0038;
         public static final int clean_playlist_sucessfully=0x7f0a0061;
         public static final int cleaning_playlist=0x7f0a0060;
@@ -321,6 +322,7 @@ public final class R {
         public static final int create_playlist_fail=0x7f0a0058;
         public static final int current_playlist_is_empty=0x7f0a0067;
         public static final int current_playlist_is_full=0x7f0a004d;
+        public static final int delete_playlist=0x7f0a0087;
         public static final int delete_playlist_failed_try_again_later=0x7f0a005c;
         public static final int delete_playlist_success=0x7f0a005b;
         public static final int dev1_email=0x7f0a001b;
@@ -381,6 +383,7 @@ public final class R {
         public static final int processing=0x7f0a003e;
         public static final int refresh=0x7f0a0002;
         public static final int remove_container_from_playlist_=0x7f0a0048;
+        public static final int remove_playlist_sucessfully=0x7f0a0088;
         public static final int save_playlist=0x7f0a0054;
         public static final int scan_content_on_sdcard=0x7f0a006d;
         public static final int scanning=0x7f0a006e;

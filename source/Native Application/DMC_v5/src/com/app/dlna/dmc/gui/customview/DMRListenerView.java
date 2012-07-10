@@ -7,16 +7,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.view.Window;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import app.dlna.controller.v5.R;
 
 import com.app.dlna.dmc.gui.activity.MainActivity;
-import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
-import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListener;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.ChangeMode;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
+import com.app.dlna.dmc.processor.model.PlaylistItem;
 
 public class DMRListenerView extends LinearLayout {
-	// protected ListView m_listView;
+	protected GridView m_gridView;
 	protected CustomArrayAdapter m_adapter;
 	protected String m_currentURI = "";
 	protected ProgressDialog m_pdlg;
@@ -29,7 +32,7 @@ public class DMRListenerView extends LinearLayout {
 		m_pdlg.setCancelable(false);
 	}
 
-	DMRProcessorListner m_dmrListner = new DMRProcessorListner() {
+	DMRProcessorListener m_dmrListner = new DMRProcessorListener() {
 
 		private String TAG = DMRListenerView.class.getName();
 
@@ -41,8 +44,8 @@ public class DMRListenerView extends LinearLayout {
 			// if
 			// (!m_currentURI.equals(MainActivity.UPNP_PROCESSOR.getDMRProcessor().getCurrentTrackURI()))
 			// {
-			// int start = m_listView.getFirstVisiblePosition();
-			// int end = m_listView.getLastVisiblePosition();
+			// int start = m_gridView.getFirstVisiblePosition();
+			// int end = m_gridView.getLastVisiblePosition();
 			// for (int i = start, j = end; i <= j; i++) {
 			// final int position = i;
 			// MainActivity.INSTANCE.runOnUiThread(new Runnable() {
@@ -50,7 +53,7 @@ public class DMRListenerView extends LinearLayout {
 			// @Override
 			// public void run() {
 			// try {
-			// m_adapter.updateSingleView(m_listView, position);
+			// m_adapter.updateSingleView(m_gridView, position);
 			// } catch (Exception e) {
 			//
 			// }
@@ -86,7 +89,6 @@ public class DMRListenerView extends LinearLayout {
 
 				@Override
 				public void run() {
-					// TODO Auto-generated method stub
 					Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
 				}
 			});
@@ -122,10 +124,26 @@ public class DMRListenerView extends LinearLayout {
 		}
 	};
 
-	public void updateListView() {
-		DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-		if (dmrProcessor != null)
-			dmrProcessor.addListener(m_dmrListner);
+	protected PlaylistListener m_playlistListener = new PlaylistListener() {
+
+		@Override
+		public void onItemChanged(PlaylistItem item, ChangeMode changeMode) {
+			MainActivity.INSTANCE.runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					((CustomArrayAdapter) m_gridView.getAdapter()).notifyDataSetChanged();
+				}
+			});
+		}
+	};
+
+	public void updateGridView() {
+		if (MainActivity.UPNP_PROCESSOR != null) {
+			MainActivity.UPNP_PROCESSOR.addDMRListener(m_dmrListner);
+			MainActivity.UPNP_PROCESSOR.addPlaylistListener(m_playlistListener);
+		}
+
 	}
 
 }

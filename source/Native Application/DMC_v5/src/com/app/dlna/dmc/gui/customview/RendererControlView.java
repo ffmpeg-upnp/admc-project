@@ -33,7 +33,7 @@ import com.app.dlna.dmc.gui.activity.NowPlayingActivity;
 import com.app.dlna.dmc.processor.async.AsyncTaskWithProgressDialog;
 import com.app.dlna.dmc.processor.impl.PlaylistManager;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
-import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListner;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListener;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
 import com.app.dlna.dmc.processor.model.Playlist;
 import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
@@ -245,16 +245,13 @@ public class RendererControlView extends LinearLayout {
 	};
 
 	public void connectToDMR() {
-		DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-		if (dmrProcessor != null)
-			dmrProcessor.addListener(m_dmrListener);
+		if (MainActivity.UPNP_PROCESSOR != null)
+			MainActivity.UPNP_PROCESSOR.addDMRListener(m_dmrListener);
 	}
 
 	public void disconnectToDMR() {
-		DMRProcessor dmrProcessor = MainActivity.UPNP_PROCESSOR.getDMRProcessor();
-		if (dmrProcessor == null)
-			return;
-		dmrProcessor.removeListener(m_dmrListener);
+		if (MainActivity.UPNP_PROCESSOR != null)
+			MainActivity.UPNP_PROCESSOR.removeDMRListener(m_dmrListener);
 	}
 
 	private OnClickListener onPlayPauseClick = new OnClickListener() {
@@ -334,7 +331,7 @@ public class RendererControlView extends LinearLayout {
 		}
 	};
 
-	private DMRProcessorListner m_dmrListener = new DMRProcessorListner() {
+	private DMRProcessorListener m_dmrListener = new DMRProcessorListener() {
 
 		@Override
 		public void onUpdatePosition(final long current, final long max) {

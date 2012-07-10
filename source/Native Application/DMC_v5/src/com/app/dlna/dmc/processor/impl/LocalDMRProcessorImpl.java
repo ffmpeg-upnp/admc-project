@@ -26,7 +26,7 @@ import com.app.dlna.dmc.utility.Utility.CheckResult;
 
 public class LocalDMRProcessorImpl implements DMRProcessor {
 	private static final int SLEEP_INTERVAL = 1000;
-	private List<DMRProcessorListner> m_listeners;
+	private List<DMRProcessorListener> m_listeners;
 	private LocalMediaPlayer m_player;
 	private PlaylistItem m_currentItem;
 	private PlaylistProcessor m_playlistProcessor;
@@ -102,7 +102,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	}
 
 	public LocalDMRProcessorImpl(Context context) {
-		m_listeners = new ArrayList<DMRProcessor.DMRProcessorListner>();
+		m_listeners = new ArrayList<DMRProcessor.DMRProcessorListener>();
 		m_currentItem = new PlaylistItem();
 		m_audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		m_maxVolume = m_audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -317,7 +317,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	}
 
 	@Override
-	public void addListener(DMRProcessorListner listener) {
+	public void addListener(DMRProcessorListener listener) {
 		synchronized (m_listeners) {
 			if (m_listeners.contains(listener)) {
 				m_listeners.remove(listener);
@@ -328,7 +328,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 	}
 
 	@Override
-	public void removeListener(DMRProcessorListner listener) {
+	public void removeListener(DMRProcessorListener listener) {
 		synchronized (m_listeners) {
 			m_listeners.remove(listener);
 		}
@@ -379,7 +379,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	private void fireUpdatePositionEvent(long current, long max) {
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onUpdatePosition(current, max);
 			}
 		}
@@ -387,7 +387,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	private void fireOnStopedEvent() {
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onStoped();
 			}
 		}
@@ -395,7 +395,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	private void fireOnPausedEvent() {
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onPaused();
 			}
 		}
@@ -403,7 +403,7 @@ public class LocalDMRProcessorImpl implements DMRProcessor {
 
 	private void fireOnPlayingEvent() {
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onPlaying();
 			}
 		}

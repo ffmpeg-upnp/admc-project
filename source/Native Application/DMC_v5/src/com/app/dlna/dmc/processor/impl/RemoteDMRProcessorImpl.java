@@ -54,7 +54,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	private Service m_avtransportService = null;
 	@SuppressWarnings("rawtypes")
 	private Service m_renderingControl = null;
-	private List<DMRProcessorListner> m_listeners;
+	private List<DMRProcessorListener> m_listeners;
 	private PlaylistProcessor m_playlistProcessor;
 	private int m_currentVolume;
 	private boolean m_isBusy = false;
@@ -171,7 +171,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		m_renderingControl = m_device.findService(new ServiceType("schemas-upnp-org", "RenderingControl"));
 		if (m_renderingControl.getAction("SetVolume") == null || m_renderingControl.getAction("GetVolume") == null)
 			m_renderingControl = null;
-		m_listeners = new ArrayList<DMRProcessor.DMRProcessorListner>();
+		m_listeners = new ArrayList<DMRProcessor.DMRProcessorListener>();
 		m_currentItem = new PlaylistItem();
 		m_updateThread = new UpdateThread();
 		m_updateThread.start();
@@ -255,7 +255,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	}
 
 	@Override
-	public void addListener(DMRProcessorListner listener) {
+	public void addListener(DMRProcessorListener listener) {
 		synchronized (m_listeners) {
 			if (!m_listeners.contains(listener))
 				m_listeners.add(listener);
@@ -265,7 +265,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	}
 
 	@Override
-	public void removeListener(DMRProcessorListner listener) {
+	public void removeListener(DMRProcessorListener listener) {
 		synchronized (m_listeners) {
 			m_listeners.remove(listener);
 		}
@@ -274,7 +274,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	@SuppressWarnings("rawtypes")
 	private void fireOnFailEvent(Action action, UpnpResponse response, String message) {
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onActionFail(action, response, message);
 			}
 		}
@@ -284,7 +284,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		if (m_isBusy)
 			return;
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onUpdatePosition(current, max);
 			}
 		}
@@ -294,7 +294,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		if (m_isBusy)
 			return;
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onStoped();
 			}
 		}
@@ -304,7 +304,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		if (m_isBusy)
 			return;
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onPaused();
 			}
 		}
@@ -314,7 +314,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 		if (m_isBusy)
 			return;
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onPlaying();
 			}
 		}
@@ -341,7 +341,7 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 
 	private void fireOnErrorEvent(String error) {
 		synchronized (m_listeners) {
-			for (DMRProcessorListner listener : m_listeners) {
+			for (DMRProcessorListener listener : m_listeners) {
 				listener.onErrorEvent(error);
 			}
 		}

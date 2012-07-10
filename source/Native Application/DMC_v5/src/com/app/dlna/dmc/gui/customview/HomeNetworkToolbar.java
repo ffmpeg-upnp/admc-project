@@ -26,8 +26,8 @@ public class HomeNetworkToolbar extends LinearLayout {
 
 	public HomeNetworkToolbar(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-				R.layout.cv_toolbar_homenetwork, this);
+		((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.cv_toolbar_homenetwork,
+				this);
 		m_btn_back = ((ImageView) findViewById(R.id.btn_back));
 		m_btn_back.setOnClickListener(onBackClick);
 		m_btn_back.setOnLongClickListener(onBackLongclick);
@@ -108,11 +108,10 @@ public class HomeNetworkToolbar extends LinearLayout {
 				@Override
 				public void run() {
 					String message = actionType.equals(DMSProcessor.ACTION_ADD) ? getContext().getString(
-							R.string.waiting_for_add_all_items) : getContext().getString(
-							R.string.waiting_for_remove_all_items);
+							R.string.waiting_for_add_all_items) : getContext().getString(R.string.waiting_for_remove_all_items);
 
-					m_progreProgressDialog = ProgressDialog.show(getContext(),
-							getContext().getString(R.string.processing), message);
+					m_progreProgressDialog = ProgressDialog.show(getContext(), getContext().getString(R.string.processing),
+							message);
 					m_progreProgressDialog.setCancelable(false);
 				}
 			});
@@ -127,8 +126,7 @@ public class HomeNetworkToolbar extends LinearLayout {
 				public void run() {
 					m_progreProgressDialog.dismiss();
 					Toast.makeText(getContext(), R.string.error_occur_ + ex.getMessage(), Toast.LENGTH_SHORT).show();
-					// TODO: aaaaaa
-					// m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getListView());
+					m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getGridView());
 				}
 			});
 
@@ -144,8 +142,7 @@ public class HomeNetworkToolbar extends LinearLayout {
 					Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
 					LibraryActivity activity = (LibraryActivity) getContext();
 					activity.getPlaylistView().udpateCurrentPlaylistProcessor();
-					// TODO: aaaaaa
-					// m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getListView());
+					m_homeNetworkAdapter.notifyVisibleItemChanged(m_homeNetworkView.getGridView());
 				}
 			});
 

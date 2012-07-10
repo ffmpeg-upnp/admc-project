@@ -23,9 +23,9 @@ public interface DMRProcessor {
 
 	int getMaxVolume();
 
-	void addListener(DMRProcessorListner listener);
+	void addListener(DMRProcessorListener listener);
 
-	void removeListener(DMRProcessorListner listener);
+	void removeListener(DMRProcessorListener listener);
 
 	void dispose();
 
@@ -39,7 +39,7 @@ public interface DMRProcessor {
 
 	PlaylistItem getCurrentItem();
 	
-	public interface DMRProcessorListner {
+	public interface DMRProcessorListener {
 		void onUpdatePosition(long current, long max);
 
 		void onPaused();

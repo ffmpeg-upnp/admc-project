@@ -2,6 +2,8 @@ package com.app.dlna.dmc.processor.upnp;
 
 import java.net.NetworkInterface;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.teleal.cling.UpnpService;
@@ -58,8 +60,10 @@ import com.app.dlna.dmc.processor.impl.LocalDMRProcessorImpl;
 import com.app.dlna.dmc.processor.impl.PlaylistManager;
 import com.app.dlna.dmc.processor.impl.RemoteDMRProcessorImpl;
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListener;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
 import com.app.dlna.dmc.system.NetworkStateReceiver;
 import com.app.dlna.dmc.system.NetworkStateReceiver.RouterStateListener;
 import com.app.dlna.dmc.utility.Cache;
@@ -88,6 +92,8 @@ public class CoreUpnpService extends Service {
 	private UDN m_localDMR_UDN = null;
 	private RegistryListener m_registryListener;
 	private WakeLock m_serviceWakeLock;
+	private List<DMRProcessorListener> m_dmrListeners;
+	private List<PlaylistListener> m_playlistListeners;
 
 	@Override
 	public void onCreate() {
@@ -167,6 +173,8 @@ public class CoreUpnpService extends Service {
 			showNotification();
 			startLocalDMS();
 			startLocalDMR();
+			m_dmrListeners = new ArrayList<DMRProcessor.DMRProcessorListener>();
+			m_playlistListeners = new ArrayList<PlaylistProcessor.PlaylistListener>();
 		}
 	}
 
@@ -289,6 +297,10 @@ public class CoreUpnpService extends Service {
 					m_dmrProcessor = new LocalDMRProcessorImpl(CoreUpnpService.this);
 				else
 					m_dmrProcessor = new RemoteDMRProcessorImpl(m_currentDMR, getControlPoint());
+				synchronized (m_dmrListeners) {
+					for (DMRProcessorListener listener : m_dmrListeners)
+						m_dmrProcessor.addListener(listener);
+				}
 			} else {
 				Toast.makeText(getApplicationContext(), R.string.set_dmr_fail_cannot_get_dmr_info_udn_ + uDN.toString(),
 						Toast.LENGTH_SHORT).show();
@@ -330,6 +342,10 @@ public class CoreUpnpService extends Service {
 			if (m_playlistProcessor != null)
 				m_playlistProcessor.saveState();
 			m_playlistProcessor = playlistProcessor;
+			synchronized (m_playlistListeners) {
+				for (PlaylistListener listener : m_playlistListeners)
+					m_playlistProcessor.addListener(listener);
+			}
 		}
 
 		public void addRegistryListener(RegistryListener listener) {
@@ -341,6 +357,41 @@ public class CoreUpnpService extends Service {
 			if (m_upnpService != null)
 				m_upnpService.getConfiguration().getStreamServerConfiguration().setExported(value);
 		}
+
+		public void addPlaylistListener(PlaylistListener listener) {
+			synchronized (m_playlistListeners) {
+				if (!m_playlistListeners.contains(listener))
+					m_playlistListeners.add(listener);
+				if (m_playlistProcessor != null)
+					m_playlistProcessor.addListener(listener);
+			}
+		}
+
+		public void removePlaylistListener(PlaylistListener listener) {
+			synchronized (m_playlistListeners) {
+				m_playlistListeners.remove(listener);
+				if (m_playlistProcessor != null)
+					m_playlistProcessor.removeListener(listener);
+			}
+		}
+
+		public void addDMRListener(DMRProcessorListener listener) {
+			synchronized (m_dmrListeners) {
+				if (!m_dmrListeners.contains(listener))
+					m_dmrListeners.add(listener);
+				if (m_dmrProcessor != null)
+					m_dmrProcessor.addListener(listener);
+			}
+		}
+
+		public void removeDMRListener(DMRProcessorListener listener) {
+			synchronized (m_dmrListeners) {
+				m_dmrListeners.remove(listener);
+				if (m_dmrProcessor != null)
+					m_dmrProcessor.removeListener(listener);
+			}
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")

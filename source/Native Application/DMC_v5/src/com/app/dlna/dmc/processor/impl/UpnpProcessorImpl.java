@@ -22,9 +22,11 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 
 import com.app.dlna.dmc.processor.interfaces.DMRProcessor;
+import com.app.dlna.dmc.processor.interfaces.DMRProcessor.DMRProcessorListener;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
 import com.app.dlna.dmc.processor.interfaces.DownloadProcessor;
 import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
 import com.app.dlna.dmc.processor.upnp.CoreUpnpService;
 import com.app.dlna.dmc.processor.upnp.CoreUpnpService.CoreUpnpServiceBinder;
@@ -395,6 +397,31 @@ public class UpnpProcessorImpl implements UpnpProcessor, RegistryListener, CoreU
 	public void setDMSExproted(boolean value) {
 		if (m_upnpService != null)
 			m_upnpService.setDMSExported(value);
+	}
+
+	@Override
+	public void addDMRListener(DMRProcessorListener listener) {
+		if (m_upnpService != null)
+			m_upnpService.addDMRListener(listener);
+	}
+
+	@Override
+	public void removeDMRListener(DMRProcessorListener listener) {
+		if (m_upnpService != null)
+			m_upnpService.removeDMRListener(listener);
+	}
+
+	@Override
+	public void addPlaylistListener(PlaylistListener listener) {
+		if (m_upnpService != null)
+			m_upnpService.addPlaylistListener(listener);
+	}
+
+	@Override
+	public void removePlaylistListener(PlaylistListener listener) {
+		if (m_upnpService != null)
+			m_upnpService.removePlaylistListener(listener);
+
 	}
 
 }

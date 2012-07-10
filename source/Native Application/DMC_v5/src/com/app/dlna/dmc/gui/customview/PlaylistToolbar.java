@@ -78,7 +78,7 @@ public class PlaylistToolbar extends LinearLayout {
 
 		@Override
 		public void onClick(View v) {
-			new AlertDialog.Builder(getContext()).setMessage(R.string.warning)
+			new AlertDialog.Builder(getContext()).setMessage(R.string.warning).setTitle(R.string.confirm_delete)
 					.setMessage(R.string.this_will_clear_all_item_in_this_playlist)
 					.setPositiveButton(getContext().getString(R.string.ok), new DialogInterface.OnClickListener() {
 
@@ -199,7 +199,8 @@ public class PlaylistToolbar extends LinearLayout {
 		final PlaylistProcessor processor = m_playlistView.getCurrentPlaylistProcessor();
 		AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
 		alert.setTitle(R.string.confirm_delete);
-		alert.setMessage(R.string.are_you_sure_to_delete_ + processor.getData().getName() + "\"?");
+		alert.setMessage(getContext().getString(R.string.are_you_sure_to_delete_) + processor.getData().getName()
+				+ "\"?");
 		alert.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
 			@Override

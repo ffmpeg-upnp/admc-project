@@ -78,7 +78,7 @@
     <string name="are_you_sure_want_to_exit_">Bạn có thật sự muốn tắt ứng dụng?</string>
     <string name="cannot_find_specified_device_from_nfc_tag_please_check_if_device_is_connected_to_the_network_or_the_data_on_your_tag">Không tìm thấy thiết bị được lưu trong thẻ NFC, hãy kiểm tra lại thiết bị đã kết nối hay chưa hoặc dữ liệu trên thẻ NFC của bạn</string>
     <string name="write_device_info_to_nfc_tag_complete_">Ghi thông tin của thiết bị vào thẻ NFC</string>
-    <string name="write_failed_cause_">"Quá trình ghi bị lỗi; nguyên nhân : "</string>
+    <string name="write_failed_cause_">Quá trình ghi bị lỗi; nguyên nhân : </string>
     <string name="please_enable_nfc_on_you_device_first">Hãy mở chức năng NFC trên thiết bị trước</string>
     <string name="loading_image">Đang tải ảnh</string>
     <string name="cannot_connect_to_renderer">Không thể kết nối vào Renderer</string>
@@ -90,16 +90,16 @@
     <string name="waiting_for_add_all_items">Đang thêm tất cả các nội dung vào playlist</string>
     <string name="waiting_for_remove_all_items">Đang xóa tất cả các nội dung trong playlist</string>
     <string name="processing">Đang xử lý</string>
-    <string name="error_occur_">"Có lỗi xảy ra: "</string>
+    <string name="error_occur_">"Có lỗi xảy ra: </string>
     <string name="loading">Đang tải</string>
     <string name="waiting_for_loading_items">Đang tải các mục nội dung</string>
     <string name="folder_is_empty">Thư mục rỗng</string>
     <string name="select_action">Chọn chức năng</string>
     <string name="select_playlist">Chọn playlist</string>
-    <string name="adding_item_to_playlist_">Đang thêm các nội dung vào playlist "</string>
+    <string name="adding_item_to_playlist_">Đang thêm các nội dung vào playlist </string>
     <string name="container_added_to_playlist_failed">Thêm thư mục thất bại. Hãy thử lại sau.</string>
     <string name="container_added_to_playlist_sucessfully">Thêm thư mục thành công</string>
-    <string name="remove_container_from_playlist_">Đang xóa các nội dung khỏi playlist "</string>
+    <string name="remove_container_from_playlist_">Đang xóa các nội dung khỏi playlist </string>
     <string name="container_removed_from_playlist_failed">Xóa thư mục thất bại. Hãy thử lại sau.</string>
     <string name="container_removed_to_playlist_sucessfully">Xóa thư mục thành công</string>
     <string name="select_playlist_to_add">Chọn playlist</string>
@@ -117,7 +117,7 @@
     <string name="playlist_is_empty">Playlist rỗng</string>
     <string name="create_playlist_fail">Tạo playlist thất bại. Hãy thử lại sau.</string>
     <string name="confirm_delete">Xác nhận xóa</string>
-    <string name="are_you_sure_to_delete_">Bạn có thật sự muốn xóa "</string>
+    <string name="are_you_sure_to_delete_">Bạn có thật sự muốn xóa \"</string>
     <string name="delete_playlist_success">Xóa playlist thành công</string>
     <string name="delete_playlist_failed_try_again_later">Xóa playlist thất bại, hãy thử lại sau</string>
     <string name="comfirm">Xác nhận</string>
@@ -138,8 +138,8 @@
     <string name="scanning_content_on_sdcard">Đang quét nội dung trên thẻ nhớ</string>
     <string name="scan_content_on_sdcard">Quét nội dung trên thẻ nhớ</string>
     <string name="scanning">Đang quét</string>
-    <string name="set_dmr_fail_cannot_get_dmr_info_udn_">"Không thể kết nối đến Media Renderer. UDN = "</string>
-    <string name="set_dms_fail_cannot_get_dms_info_udn_">"Không thể kết nối đến Media Server. UDN = "</string>
+    <string name="set_dmr_fail_cannot_get_dmr_info_udn_">"Không thể kết nối đến Media Renderer. UDN = \"</string>
+    <string name="set_dms_fail_cannot_get_dms_info_udn_">"Không thể kết nối đến Media Server. UDN = \"</string>
     <string name="service_is_running">Service đang chạy</string>
     <string name="coreupnpservice_started">CoreUpnpService khởi động</string>
     <string name="contacting_to_youtube">Đang lấy thông tin từ Youtube</string>
@@ -150,9 +150,9 @@
     <string name="downloading_content">Đang tải nội dung</string>
     <string name="download_content">Tải nội dung</string>
     <string name="download_complete">Tải nội dung hoàn tất</string>
-    <string name="cannot_download_item_">Không thể tải về nội dung "</string>
-    <string name="download_failed_file_">"Tải về thất bại, nội dung: "</string>
-    <string name="download_complete_file_">"Tải về hoàn tất, nội dung: "</string>
+    <string name="cannot_download_item_">Không thể tải về nội dung: </string>
+    <string name="download_failed_file_">"Tải về thất bại, nội dung: </string>
+    <string name="download_complete_file_">"Tải về hoàn tất, nội dung: </string>
     <string name="contacting_to_youtube_server">Đang lấy dữ liệu từ Youtube</string>
     <string name="starting_download">Bắt đầu tải về</string>
     <string name="action_canceled">Hành động bị hủy</string>

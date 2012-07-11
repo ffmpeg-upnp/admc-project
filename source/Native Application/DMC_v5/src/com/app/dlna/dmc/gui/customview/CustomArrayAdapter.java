@@ -163,28 +163,6 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 		m_isDropDown = value;
 	}
 
-	// private void initYoutubeItem(YoutubeItem data, ViewHolder holder) {
-	// holder.name.setText(data.getTitle());
-	// holder.name.setTextSize(15);
-	// holder.name.setSingleLine(false);
-	// holder.name.setMaxLines(2);
-	// holder.desc.setText(Utility.getTimeString(data.getDuration()));
-	// holder.desc.setTextSize(11);
-	// holder.playing.setVisibility(View.GONE);
-	// holder.action.setVisibility(View.GONE);
-	// HashMap<String, Bitmap> cache = Cache.getBitmapCache();
-	// String imageUrl = data.getThumbnail();
-	// holder.icon.setTag(imageUrl);
-	// if (cache.containsKey(imageUrl) && cache.get(imageUrl) != null) {
-	// holder.icon.setImageBitmap(cache.get(imageUrl));
-	// } else {
-	// holder.icon.setImageBitmap(BM_VIDEO);
-	// cache.put(imageUrl, BM_VIDEO);
-	// Utility.loadImageItemThumbnail(holder.icon, imageUrl,
-	// Cache.getBitmapCache(), MAX_SIZE);
-	// }
-	// }
-
 	private void initPlaylist(Playlist data, ViewHolder holder, int position) {
 		holder.action.setVisibility(View.GONE);
 		holder.name.setText(data.getName());
@@ -347,10 +325,12 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 		switch (object.getType()) {
 		case AUDIO_LOCAL:
 		case AUDIO_REMOTE:
+			holder.icon.setTag("");
 			holder.icon.setImageBitmap(BM_AUDIO);
 			break;
 		case VIDEO_LOCAL:
 		case VIDEO_REMOTE:
+			holder.icon.setTag("");
 			holder.icon.setImageBitmap(BM_VIDEO);
 			break;
 		case IMAGE_LOCAL:
@@ -367,9 +347,11 @@ public class CustomArrayAdapter extends ArrayAdapter<AdapterItem> {
 			break;
 		}
 		case YOUTUBE:
+			holder.icon.setTag("");
 			holder.icon.setImageBitmap(BM_YOUTUBE);
 			break;
 		default:
+			holder.icon.setTag("");
 			holder.icon.setImageBitmap(BM_UNKNOW);
 			break;
 		}

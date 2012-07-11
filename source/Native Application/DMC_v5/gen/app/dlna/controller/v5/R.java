@@ -278,6 +278,8 @@ public final class R {
         public static final int ic_launcher=0x7f060000;
     }
     public static final class string {
+        public static final int _items_inserted=0x7f0a008c;
+        public static final int _items_removed=0x7f0a008d;
         public static final int action_canceled=0x7f0a0080;
         public static final int added_item_to_playlist=0x7f0a0086;
         public static final int adding_item_to_playlist_=0x7f0a0045;
@@ -379,6 +381,8 @@ public final class R {
         public static final int play=0x7f0a000b;
         public static final int play_to=0x7f0a0018;
         public static final int playlist_is_empty=0x7f0a0057;
+        public static final int playlist_is_full_0_items_inserted_=0x7f0a008b;
+        public static final int playlist_processor_is_null=0x7f0a008a;
         public static final int please_enable_nfc_on_you_device_first=0x7f0a0034;
         public static final int processing=0x7f0a003e;
         public static final int refresh=0x7f0a0002;

@@ -39,13 +39,13 @@
             android:visibility="gone" />
     </RelativeLayout>
 
-    <ListView
+    <GridView
         android:id="@+id/playlist"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/rendererControlView"
         android:layout_below="@+id/viewFlipper" >
-    </ListView>
+    </GridView>
 
     <ViewFlipper
         android:id="@+id/viewFlipper"

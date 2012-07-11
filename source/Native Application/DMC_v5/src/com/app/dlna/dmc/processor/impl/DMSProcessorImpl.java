@@ -20,6 +20,7 @@ import org.teleal.cling.support.model.DIDLObject;
 import org.teleal.cling.support.model.container.Container;
 import org.teleal.cling.support.model.item.Item;
 
+import app.dlna.controller.v5.R;
 import com.app.dlna.dmc.gui.activity.AppPreference;
 import com.app.dlna.dmc.gui.activity.MainActivity;
 import com.app.dlna.dmc.processor.interfaces.DMSProcessor;
@@ -73,8 +74,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 			actionInvocation.setInput("BrowseFlag", "BrowseDirectChildren");
 			actionInvocation.setInput("Filter", "*");
 			actionInvocation.setInput("StartingIndex", new UnsignedIntegerFourBytes(m_startIndex));
-			actionInvocation.setInput("RequestedCount", new UnsignedIntegerFourBytes(
-					AppPreference.getMaxItemPerLoad() + 1));
+			actionInvocation.setInput("RequestedCount", new UnsignedIntegerFourBytes(AppPreference.getMaxItemPerLoad() + 1));
 			actionInvocation.setInput("SortCriteria", null);
 			ActionCallback actionCallback = new ActionCallback(actionInvocation) {
 
@@ -154,14 +154,12 @@ public class DMSProcessorImpl implements DMSProcessor {
 	}
 
 	@Override
-	public void removeCurrentItemsFromPlaylist(PlaylistProcessor playlistProcessor,
-			DMSAddRemoveContainerListener actionListener) {
+	public void removeCurrentItemsFromPlaylist(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener) {
 		modifyCurrentItems(playlistProcessor, actionListener, ACTION_REMOVE);
 	}
 
 	@Override
-	public void addCurrentItemsToPlaylist(PlaylistProcessor playlistProcessor,
-			DMSAddRemoveContainerListener actionListener) {
+	public void addCurrentItemsToPlaylist(PlaylistProcessor playlistProcessor, DMSAddRemoveContainerListener actionListener) {
 		modifyCurrentItems(playlistProcessor, actionListener, ACTION_ADD);
 	}
 
@@ -218,15 +216,16 @@ public class DMSProcessorImpl implements DMSProcessor {
 						List<Item> items = content.getItems();
 						PlaylistProcessor playlistProcessor = PlaylistManager.getPlaylistProcessor(playlist);
 						if (playlistProcessor == null) {
-							actionListener.onActionFail(new RuntimeException("Playlist processor is null"));
+							actionListener.onActionFail(new RuntimeException(MainActivity.INSTANCE
+									.getString(R.string.playlist_processor_is_null)));
 						} else {
 							if (actionType.equals(ACTION_ADD)) {
 								List<PlaylistItem> playlistItems = new ArrayList<PlaylistItem>();
-								int numberItem = playlistProcessor.getMaxSize()
-										- playlistProcessor.getAllItems().size();
+								int numberItem = playlistProcessor.getMaxSize() - playlistProcessor.getAllItems().size();
 								int count = 0;
 								if (numberItem == 0) {
-									actionListener.onActionComplete("Playlist is full, 0 items inserted.");
+									actionListener.onActionComplete(MainActivity.INSTANCE
+											.getString(R.string.playlist_is_full_0_items_inserted_));
 								} else {
 									for (Item item : items) {
 										PlaylistItem playlistItem = PlaylistItem.createFromDLDIObject(item);
@@ -236,9 +235,10 @@ public class DMSProcessorImpl implements DMSProcessor {
 												break;
 										}
 									}
-									int insertedCount = PlaylistManager.insertAllItem(playlistItems, playlistProcessor
-											.getData().getId());
-									actionListener.onActionComplete(String.valueOf(insertedCount) + " items inserted");
+									int insertedCount = PlaylistManager.insertAllItem(playlistItems, playlistProcessor.getData()
+											.getId());
+									actionListener.onActionComplete(String.valueOf(insertedCount)
+											+ MainActivity.INSTANCE.getString(R.string._items_inserted));
 								}
 							} else if (actionType.equals(ACTION_REMOVE)) {
 								int count = 0;
@@ -251,11 +251,12 @@ public class DMSProcessorImpl implements DMSProcessor {
 										}
 									}
 								}
-								actionListener.onActionComplete(String.valueOf(count) + " items removed");
+								actionListener.onActionComplete(String.valueOf(count)
+										+ MainActivity.INSTANCE.getString(R.string._items_removed));
 							}
 							if (MainActivity.UPNP_PROCESSOR.getPlaylistProcessor() != null
-									&& playlistProcessor.getData().getId() == MainActivity.UPNP_PROCESSOR
-											.getPlaylistProcessor().getData().getId()) {
+									&& playlistProcessor.getData().getId() == MainActivity.UPNP_PROCESSOR.getPlaylistProcessor()
+											.getData().getId()) {
 								MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().updateItemList();
 							}
 						}
@@ -275,8 +276,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 		}
 	}
 
-	private PlaylistItem modifyItem(final PlaylistProcessor playlistProcessor, final String actionType,
-			DIDLObject object) {
+	private PlaylistItem modifyItem(final PlaylistProcessor playlistProcessor, final String actionType, DIDLObject object) {
 		if (actionType.equals(ACTION_ADD))
 			return playlistProcessor.addDIDLObject(object);
 		else if (actionType.equals(ACTION_REMOVE))
@@ -291,8 +291,7 @@ public class DMSProcessorImpl implements DMSProcessor {
 	}
 
 	@Override
-	public void addAllToPlaylist(final Playlist playlist, String containerID,
-			final DMSAddRemoveContainerListener actionListener) {
+	public void addAllToPlaylist(final Playlist playlist, String containerID, final DMSAddRemoveContainerListener actionListener) {
 		modifyContainerItemsInPlaylist(playlist, containerID, actionListener, ACTION_ADD);
 	}
 }

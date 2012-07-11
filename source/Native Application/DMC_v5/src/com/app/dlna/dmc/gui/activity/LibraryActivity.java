@@ -1,6 +1,7 @@
 package com.app.dlna.dmc.gui.activity;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -44,6 +45,13 @@ public class LibraryActivity extends Activity {
 		m_playlistView.preparePlaylist();
 		m_playlistView.updateGridView();
 		m_homeNetworkView.updateGridView();
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+			m_playlistView.getGridView().setNumColumns(1);
+			m_homeNetworkView.getGridView().setNumColumns(1);
+		} else {
+			m_playlistView.getGridView().setNumColumns(2);
+			m_homeNetworkView.getGridView().setNumColumns(2);
+		}
 	}
 
 	@Override

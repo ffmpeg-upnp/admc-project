@@ -178,5 +178,9 @@
     <string name="delete_playlist">Delete Playlist</string>
     <string name="remove_playlist_sucessfully">Remove playlist sucessfully</string>
     <string name="change_playlist_name">Change Playlist Name</string>
+    <string name="playlist_processor_is_null">Playlist processor is null</string>
+    <string name="playlist_is_full_0_items_inserted_">Playlist is full, 0 items inserted.</string>
+    <string name="_items_inserted">" items inserted"</string>
+    <string name="_items_removed">" items removed"</string>
 
 </resources>

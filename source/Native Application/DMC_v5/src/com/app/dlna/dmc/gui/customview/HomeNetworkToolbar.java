@@ -110,8 +110,7 @@ public class HomeNetworkToolbar extends LinearLayout {
 					String message = actionType.equals(DMSProcessor.ACTION_ADD) ? getContext().getString(
 							R.string.waiting_for_add_all_items) : getContext().getString(R.string.waiting_for_remove_all_items);
 
-					m_progreProgressDialog = ProgressDialog.show(getContext(), getContext().getString(R.string.processing),
-							message);
+					m_progreProgressDialog = ProgressDialog.show(getContext(), "", message);
 					m_progreProgressDialog.setCancelable(false);
 				}
 			});

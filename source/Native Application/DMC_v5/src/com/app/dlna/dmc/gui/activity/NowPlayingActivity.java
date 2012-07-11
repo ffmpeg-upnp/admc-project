@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -19,7 +20,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +57,7 @@ public class NowPlayingActivity extends Activity {
 	private Bitmap m_previousBitmap;
 	private boolean m_lastInfoState = true;
 	private SwipeDetector m_swipeDetector;
-	private ListView m_playlistView;
+	private GridView m_playlistView;
 	private CustomArrayAdapter m_adapter;
 	private AsyncTask<String, Void, Bitmap> m_loadingImageTask;
 
@@ -109,8 +110,13 @@ public class NowPlayingActivity extends Activity {
 		m_viewFlipper.setOnTouchListener(m_swipeDetector);
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
 		m_viewFlipper.addView(getLayoutInflater().inflate(R.layout.cv_tv_title, null));
-		m_playlistView = (ListView) findViewById(R.id.playlist);
+		m_playlistView = (GridView) findViewById(R.id.playlist);
 		m_playlistView.setTag(AppPreference.getPlaylistViewMode());
+		if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+			m_playlistView.setNumColumns(1);
+		} else {
+			m_playlistView.setNumColumns(2);
+		}
 		m_adapter = new CustomArrayAdapter(NowPlayingActivity.this, 0);
 		m_adapter.setTag(AppPreference.getPlaylistViewMode());
 		m_adapter.setDropDownMode(true);

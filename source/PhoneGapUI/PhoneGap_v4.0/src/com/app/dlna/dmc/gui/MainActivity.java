@@ -26,7 +26,9 @@ import android.widget.Toast;
 
 import com.app.dlna.dmc.phonegap.R;
 import com.app.dlna.dmc.phonegap.plugin.DevicesPlugin;
+import com.app.dlna.dmc.phonegap.plugin.PlaylistPlugin;
 import com.app.dlna.dmc.processor.impl.UpnpProcessorImpl;
+import com.app.dlna.dmc.processor.interfaces.PlaylistProcessor.PlaylistListener;
 import com.app.dlna.dmc.processor.interfaces.UpnpProcessor;
 import com.app.dlna.dmc.processor.systemservice.RestartService;
 import com.app.dlna.dmc.processor.upnp.CoreUpnpService;
@@ -97,6 +99,18 @@ public class MainActivity extends UpnpListenerDroidGapActivity {
 		super.onStartComplete();
 		devicesPlugin = new DevicesPlugin(MainActivity.this);
 		UPNP_PROCESSOR.addDevicesListener(devicesPlugin);
+		UPNP_PROCESSOR.getPlaylistProcessor().addListener(new PlaylistListener() {
+			
+			@Override
+			public void onPrev() {
+				new PlaylistPlugin(MainActivity.this).updateCurrentItem(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getCurrentItem());
+			}
+			
+			@Override
+			public void onNext() {
+				new PlaylistPlugin(MainActivity.this).updateCurrentItem(MainActivity.UPNP_PROCESSOR.getPlaylistProcessor().getCurrentItem());
+			}
+		});
 	}
 
 	public void refreshDMSList() {

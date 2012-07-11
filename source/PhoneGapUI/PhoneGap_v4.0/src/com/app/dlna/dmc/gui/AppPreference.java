@@ -64,4 +64,8 @@ public class AppPreference {
 		return true;
 	}
 
+	public static boolean getAutoNext() {
+		return true;
+	}
+
 }

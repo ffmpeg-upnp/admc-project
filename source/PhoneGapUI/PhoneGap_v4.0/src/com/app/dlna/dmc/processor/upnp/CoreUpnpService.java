@@ -248,6 +248,7 @@ public class CoreUpnpService extends Service {
 			m_currentDMR = m_upnpService.getRegistry().getDevice(uDN, true);
 			if (m_currentDMR != null) {
 				m_dmrProcessor = new RemoteDMRProcessorImpl(m_currentDMR, getControlPoint());
+				m_dmrProcessor.setPlaylistProcessor(m_playlistProcessor);
 			} else {
 				Toast.makeText(getApplicationContext(), "Set DMR fail. Cannot get DMR info; UDN = " + uDN.toString(),
 						Toast.LENGTH_SHORT).show();

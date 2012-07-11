@@ -136,4 +136,9 @@ public class PlaylistPlugin extends Plugin {
 		}
 	}
 
+	public void updateCurrentItem(PlaylistItem item) {
+		if (item != null)
+			sendJavascript("setCurrentPlaylistItemTitle('" + item.getTitle() + "');");
+	}
+
 }

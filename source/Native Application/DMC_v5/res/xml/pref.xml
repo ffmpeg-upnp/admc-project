@@ -9,7 +9,8 @@
             android:key="kill_process"
             android:summary="WARNING: Not recommended. Use this option only when application do something wrong."
             android:title="Kill process after exit" />
-        <ListPreference
+
+        <ListPreference
             android:defaultValue="en"
             android:entries="@array/applicationLanguage"
             android:entryValues="@array/applicationLanguageValue"
@@ -80,6 +81,12 @@
             android:key="random_track"
             android:summary="Play random track"
             android:title="Shuttle" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="auto_next"
+            android:key="auto_next_image"
+            android:summary="Similar slide show. If this option is not checked, application will not do next when viewing image"
+            android:title="Auto next on image" />
 
         <ListPreference
             android:defaultValue="512"

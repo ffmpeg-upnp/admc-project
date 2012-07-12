@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,6 +32,7 @@ import com.app.dlna.dmc.processor.interfaces.UpnpProcessor.SystemListener;
 import com.app.dlna.dmc.processor.model.Playlist;
 import com.app.dlna.dmc.processor.model.PlaylistItem;
 import com.app.dlna.dmc.processor.model.YoutubeItem;
+import com.app.dlna.dmc.processor.model.Playlist.ViewMode;
 import com.app.dlna.dmc.processor.upnp.LocalContentDirectoryService;
 
 public class DMRListActivity extends Activity implements SystemListener {
@@ -137,9 +139,11 @@ public class DMRListActivity extends Activity implements SystemListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_dmrlist);
+
 		m_upnpProcessor = new UpnpProcessorImpl(DMRListActivity.this);
 		m_upnpProcessor.bindUpnpService();
-
+		AppPreference.PREF = PreferenceManager.getDefaultSharedPreferences(DMRListActivity.this);
+		AppPreference.setPlaylistViewMode(ViewMode.ALL);
 		m_listView = (ListView) findViewById(R.id.listView);
 		m_adapter = new CustomArrayAdapter(DMRListActivity.this, 0);
 		m_listView.setAdapter(m_adapter);
@@ -186,7 +190,7 @@ public class DMRListActivity extends Activity implements SystemListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 			new AlertDialog.Builder(DMRListActivity.this).setMessage(R.string.sorry_this_item_cannot_be_played_)
-					.setTitle(R.string.cannot_play_item).setPositiveButton("Ok", new OnClickListener() {
+					.setTitle(R.string.cannot_play_item).setPositiveButton(R.string.ok, new OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
@@ -243,5 +247,20 @@ public class DMRListActivity extends Activity implements SystemListener {
 		m_upnpProcessor.removeDevicesListener(m_devicesListener);
 		m_upnpProcessor.removeSystemListener(this);
 		m_upnpProcessor.unbindUpnpService();
+	}
+
+	public void onRefreshClick(View view) {
+		if (m_upnpProcessor != null) {
+			m_upnpProcessor.refreshDevicesList();
+		}
+	}
+
+	public void onCloseClick(View view) {
+		if (m_upnpProcessor != null)
+			try {
+				m_upnpProcessor.unbindUpnpService();
+			} catch (Exception e) {
+			}
+		this.finish();
 	}
 }

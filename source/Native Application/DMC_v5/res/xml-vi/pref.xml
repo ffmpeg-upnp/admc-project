@@ -80,6 +80,12 @@
             android:key="random_track"
             android:summary="Chuyển sang một nội dung có thứ tự bất kỳ trong playlist"
             android:title="Shuttle" />
+         <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="auto_next"
+            android:key="auto_next_image"
+            android:summary="Tương tự như slide show. Nếu phần này không được bật, ứng dụng sẽ không tự động chuyển sang nội dung khác khi trình chiếu một nội dung dạng hình ảnh"
+            android:title="Auto next on image" />
 
         <ListPreference
             android:defaultValue="512"

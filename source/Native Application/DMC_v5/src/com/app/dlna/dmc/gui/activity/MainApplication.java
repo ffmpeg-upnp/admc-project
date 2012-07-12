@@ -10,10 +10,18 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 public class MainApplication extends Application {
+
+	private static MainApplication INSTANCE;
+
 	@Override
 	public void onCreate() {
 		updateLanguage(this);
 		super.onCreate();
+		INSTANCE = this;
+	}
+
+	public static Context getContext() {
+		return INSTANCE.getApplicationContext();
 	}
 
 	public static void updateLanguage(Context ctx) {

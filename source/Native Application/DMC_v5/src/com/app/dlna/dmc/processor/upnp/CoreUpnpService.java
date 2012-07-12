@@ -297,6 +297,7 @@ public class CoreUpnpService extends Service {
 					m_dmrProcessor = new LocalDMRProcessorImpl(CoreUpnpService.this);
 				else
 					m_dmrProcessor = new RemoteDMRProcessorImpl(m_currentDMR, getControlPoint());
+				m_dmrProcessor.setPlaylistProcessor(m_playlistProcessor);
 				synchronized (m_dmrListeners) {
 					for (DMRProcessorListener listener : m_dmrListeners)
 						m_dmrProcessor.addListener(listener);
@@ -342,6 +343,9 @@ public class CoreUpnpService extends Service {
 			if (m_playlistProcessor != null)
 				m_playlistProcessor.saveState();
 			m_playlistProcessor = playlistProcessor;
+			if (m_dmrProcessor != null){
+				m_dmrProcessor.setPlaylistProcessor(m_playlistProcessor);
+			}
 			synchronized (m_playlistListeners) {
 				for (PlaylistListener listener : m_playlistListeners)
 					m_playlistProcessor.addListener(listener);

@@ -321,20 +321,20 @@ public class RemoteDMRProcessorImpl implements DMRProcessor {
 	}
 
 	private void fireOnEndTrackEvent() {
-		if (m_isBusy)
+		if (m_isBusy || m_playlistProcessor == null)
 			return;
-		synchronized (m_listeners) {
-			if (AppPreference.getAutoNext()) {
-				Log.e(TAG, "onEndTrack, m_autoNextPending = " + m_autoNextPending);
-				if (m_autoNextPending <= 0) {
-					if (m_playlistProcessor != null) {
-						Log.e(TAG, "Call playlist next");
-						m_playlistProcessor.next();
-					}
-					m_autoNextPending = AUTO_NEXT_DELAY;
-				} else {
-					--m_autoNextPending;
-				}
+		PlaylistItem currentItem = m_playlistProcessor.getCurrentItem();
+		if (AppPreference.getAutoNext()) {
+			if (currentItem != null && (currentItem.getType() == Type.IMAGE_LOCAL || currentItem.getType() == Type.IMAGE_REMOTE)
+					&& !AppPreference.getAutoNextImage())
+				return;
+			Log.e(TAG, "onEndTrack, m_autoNextPending = " + m_autoNextPending);
+			if (m_autoNextPending <= 0) {
+				Log.e(TAG, "Call playlist next");
+				m_playlistProcessor.next();
+				m_autoNextPending = AUTO_NEXT_DELAY;
+			} else {
+				--m_autoNextPending;
 			}
 		}
 	}

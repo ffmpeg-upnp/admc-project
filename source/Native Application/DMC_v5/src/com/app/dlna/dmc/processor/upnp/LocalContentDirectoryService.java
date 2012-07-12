@@ -254,18 +254,21 @@ public class LocalContentDirectoryService extends AbstractContentDirectoryServic
 		for (MusicTrack music : m_listMusic) {
 			if (music.getResources().get(0).getValue().equals(uriToPlay)) {
 				result = music;
+				break;
 			}
 		}
 		if (null == result)
 			for (ImageItem image : m_listPhoto) {
 				if (image.getResources().get(0).getValue().equals(uriToPlay)) {
 					result = image;
+					break;
 				}
 			}
 		if (null == result)
 			for (VideoItem video : m_listVideo) {
 				if (video.getResources().get(0).getValue().equals(uriToPlay)) {
 					result = video;
+					break;
 				}
 			}
 		if (null == result) {

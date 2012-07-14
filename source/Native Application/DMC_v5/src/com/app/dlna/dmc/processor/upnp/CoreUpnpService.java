@@ -302,6 +302,8 @@ public class CoreUpnpService extends Service {
 					for (DMRProcessorListener listener : m_dmrListeners)
 						m_dmrProcessor.addListener(listener);
 				}
+				if (m_playlistProcessor != null)
+					m_dmrProcessor.setURIandPlay(m_playlistProcessor.getCurrentItem());
 			} else {
 				Toast.makeText(getApplicationContext(), R.string.set_dmr_fail_cannot_get_dmr_info_udn_ + uDN.toString(),
 						Toast.LENGTH_SHORT).show();
@@ -343,7 +345,7 @@ public class CoreUpnpService extends Service {
 			if (m_playlistProcessor != null)
 				m_playlistProcessor.saveState();
 			m_playlistProcessor = playlistProcessor;
-			if (m_dmrProcessor != null){
+			if (m_dmrProcessor != null) {
 				m_dmrProcessor.setPlaylistProcessor(m_playlistProcessor);
 			}
 			synchronized (m_playlistListeners) {
